@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CartListingActivity">
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
+    android:background="@color/colorGrey"
+    android:layout_above="@+id/total_amount"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/padding_10"
     android:id="@+id/cart_listing"/>
-</LinearLayout>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_amount">
+        <LinearLayout
+            android:padding="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textColor="@color/White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="No. of Items"/>
+            <TextView
+                android:gravity="right"
+                android:textColor="@color/White"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Amount"/>
+        </LinearLayout>
+        <Button
+            android:id="@+id/place_order"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Place Order"/>
+    </LinearLayout>
+</RelativeLayout>

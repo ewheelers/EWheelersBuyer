@@ -61,8 +61,7 @@ public class CartListingActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    Log.i("responsecartlist:",status+msg+mStatusCode);
-                    Toast.makeText(CartListingActivity.this, "message:" +status + msg, Toast.LENGTH_SHORT).show();
+                    Log.i("responsecartlist:","status = "+status+"message "+msg+"status code"+mStatusCode);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartcount = dataJsonObject.getString("cartItemsCount");
                     JSONArray jsonArraycartList = dataJsonObject.getJSONArray("products");

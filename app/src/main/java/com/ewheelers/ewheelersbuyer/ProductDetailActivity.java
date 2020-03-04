@@ -99,6 +99,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         productId = getIntent().getStringExtra("productid");
         Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
 
+        Log.i("tokenVal:",tokenvalue);
 
         //  Toast.makeText(this, "selected id from home:"+productId, Toast.LENGTH_SHORT).show();
 
