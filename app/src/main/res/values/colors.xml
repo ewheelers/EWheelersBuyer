@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#9C3C34</color>
+    <color name="colorPrimaryDark">#9C3C34</color>
+    <color name="colorAccent">#9C3C34</color>
+
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorGreen">#00B300</color>
+    <color name="colorNavy">#0E93A5</color>
+    <color name="colorAddress">#2F7092</color>
+    <color name="colorHeadings">#3797CF</color>
+    <color name="colorSolidCircle">#AAFFFFFF</color>
+    <color name="colorBorder">#30FFFFFF</color>
+    <color name="gradEnd">#C8FF9800</color>
+    <color name="gradStart">#E2FF5722</color>
+    <color name="followersbg">#F8EEA920</color>
+    <color name="followingBg">#E6F88811</color>
+    <color name="colorGrey">#E5E5E5</color>
+    <color name="colordarkGrey">#607D8B</color>
+
+    <color name="background">#dddddd</color>
+
+    <color name="vpi__background_holo_dark">#ff000000</color>
+    <color name="vpi__background_holo_light">#fff3f3f3</color>
+    <color name="vpi__bright_foreground_holo_dark">@color/vpi__background_holo_light</color>
+    <color name="vpi__bright_foreground_holo_light">@color/vpi__background_holo_dark</color>
+    <color name="vpi__bright_foreground_disabled_holo_dark">#ff4c4c4c</color>
+    <color name="vpi__bright_foreground_disabled_holo_light">#ffb2b2b2</color>
+    <color name="vpi__bright_foreground_inverse_holo_dark">@color/vpi__bright_foreground_holo_light</color>
+    <color name="vpi__bright_foreground_inverse_holo_light">@color/vpi__bright_foreground_holo_dark</color>
+
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginBottom="1dp">
+
+    <LinearLayout
+        android:weightSum="2"
+        android:background="@color/colorGrey"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.8"
+            android:id="@+id/option_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="EV Battery"
+            android:textAllCaps="true"
+            android:paddingRight="2dp"
+            android:paddingLeft="2dp"
+            android:textColor="@color/colorBlack" />
+
+        <Spinner
+            android:layout_marginLeft="2dp"
+            android:layout_weight="1.2"
+            android:id="@+id/spinner_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Colors"
+            android:textAllCaps="true"
+            android:layout_marginStart="2dp" />
+    </LinearLayout>
+</RelativeLayout>

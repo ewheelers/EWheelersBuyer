@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ProductDescriptionActivity">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="20dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_margin="@dimen/padding_10"
+            android:layout_width="96dp"
+            android:layout_height="96dp"/>
+        <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:layout_margin="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:textColor="@color/colorBlack"
+                android:id="@+id/product_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="product title"/>
+            <TextView
+                android:id="@+id/product_price"
+                android:paddingTop="@dimen/padding_10"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="product price"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+<com.google.android.material.tabs.TabLayout
+    android:id="@+id/tabs"
+    app:tabSelectedTextColor="@color/colorPrimary"
+    app:tabUnboundedRipple="true"
+    android:layout_marginTop="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="38dp"
+    app:tabMode="fixed"
+    app:tabGravity="fill"/>
+<androidx.viewpager.widget.ViewPager
+    android:id="@+id/view_pager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGrey"/>
+</LinearLayout>

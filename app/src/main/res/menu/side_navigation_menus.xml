@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dealer"
+            android:icon="@drawable/ic_finddealer"
+            android:title="Find dealer" />
+        <item
+            android:id="@+id/nav_partner"
+            android:icon="@drawable/ic_partner"
+            android:title="Partner with us" />
+        <item
+            android:id="@+id/nav_account"
+            android:icon="@drawable/ic_person_outline_black_24dp"
+            android:title="My Account" />
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_ordertrack"
+            android:title="Track Order" />
+
+        <item
+            android:id="@+id/nav_blog"
+            android:icon="@drawable/ic_blog"
+            android:title="Blog" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_support"
+                android:title="Support" />
+            <item
+                android:id="@+id/nav_contactus"
+                android:icon="@drawable/ic_about"
+                android:title="About us" />
+
+
+        </menu>
+    </item>
+
+</menu>

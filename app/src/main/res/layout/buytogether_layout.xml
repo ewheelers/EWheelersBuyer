@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/border_bg"
+    android:weightSum="2.5">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:padding="10dp"
+        android:id="@+id/thumviewimage"
+        android:layout_width="96dp"
+        android:layout_height="96dp" />
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:orientation="vertical">
+
+        <TextView
+            android:textStyle="bold"
+            android:padding="5dp"
+            android:id="@+id/buywith_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"
+            android:id="@+id/buywith_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/buywith_decrease"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:onClick="decreaseInteger"
+            android:text="-" />
+
+        <TextView
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/buywith_integer_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/buywith_increase"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:onClick="increaseInteger"
+            android:text="+" />
+    </LinearLayout>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/checkoradd"/>
+
+</LinearLayout>
