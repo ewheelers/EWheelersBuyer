@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -110,7 +111,6 @@ public class CartListingActivity extends AppCompatActivity {
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
-
             }
         }) {
 
@@ -135,6 +135,9 @@ public class CartListingActivity extends AppCompatActivity {
             }
 
         };
+        // Add the realibility on the connection.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
+
     }
 }
