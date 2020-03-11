@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border_bg"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/item_lay">
 
     <TextView
         android:id="@+id/shop_name"
@@ -11,7 +12,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_10"
         android:text="Shop name"
-        android:textColor="@color/colorGrey"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -44,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Brand"
-                android:textColor="@color/colorGrey"
+                android:textColor="@color/colorPrimary"
                 android:textStyle="normal" />
 
             <TextView

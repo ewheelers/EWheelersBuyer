@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -53,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
-    String productId;
+    String productId,cart_Items;
     RecyclerView recyclerView, options, offersrecyclerview, buywithlistview, similarproductsview, bottomButtonView;
     ImageView imageView;
     ProductdetailsAdapter productdetailsAdapter, productdetailsAdapter2, productdetailsAdapterbuywith, productdetailsAdapterSimilar;
@@ -63,7 +64,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     List<ProductDetails> similarList = new ArrayList<>();
     List<ProductDetails> optionsList = new ArrayList<>();
     List<ProductSpecifications> productSpecs = new ArrayList<>();
-    List<OptionValues> spinnerlist = new ArrayList<>();
+    ArrayList<OptionValues> spinnerlist = new ArrayList<>();
     List<ProductDetails> buttondata = new ArrayList<>();
     ImageLoader imageLoader;
     TextView textView_product_details, shareicon;
@@ -97,21 +98,17 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
-        Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "cat items:"+cart_Items, Toast.LENGTH_SHORT).show();
 
-        Log.i("tokenVal:",tokenvalue);
-
-        //  Toast.makeText(this, "selected id from home:"+productId, Toast.LENGTH_SHORT).show();
-
-       /* try {
+        /*try {
             imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-*/
+        }*/
+
         cartCount = findViewById(R.id.cart_count);
         snackbarLayout = findViewById(R.id.snak_layout);
         addcart = findViewById(R.id.add_cart);
@@ -161,7 +158,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         addcart.setOnClickListener(this);
         cartCount.setOnClickListener(this);
 
-        getProductDetails(productId);
+       // getProductDetails(productId);
+
 
         ProductdetailsAdapter productdetailsAdapter = new ProductdetailsAdapter(ProductDetailActivity.this, getOfferData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false);
@@ -175,8 +173,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         return productId;
     }
 
-    private List<ProductDetails> getOfferData() {
-        List<ProductDetails> offerData = new ArrayList<>();
+    private ArrayList<ProductDetails> getOfferData() {
+        ArrayList<ProductDetails> offerData = new ArrayList<>();
         offerData.add(new ProductDetails(2, "Cash back", R.drawable.ic_rupee));
         offerData.add(new ProductDetails(2, "Test drive", R.drawable.ic_bestoffer));
         offerData.add(new ProductDetails(2, "Exchange", R.drawable.ic_exchange));
@@ -204,6 +202,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                    String cartItemCount = dataJsonObject.getString("cartItemsCount");
+                    cartCount.setText(cartItemCount);
 
                     JSONArray jsonArrayDataOptions = dataJsonObject.getJSONArray("optionRows");
                     for (int optionarray = 0; optionarray < jsonArrayDataOptions.length(); optionarray++) {
@@ -212,7 +212,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                         JSONArray jsonArrayOptionValue = jsonObjectOptionTitle.getJSONArray("values");
 
-                        List<OptionValues> optionValueList = new ArrayList<OptionValues>();
+                        ArrayList<OptionValues> optionValueList = new ArrayList<OptionValues>();
 
                         for (int k = 0; k < jsonArrayOptionValue.length(); k++) {
                             JSONObject option_value = jsonArrayOptionValue.getJSONObject(k);
@@ -397,7 +397,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("HTTP_X_TOKEN", tokenvalue);
+                params.put("X-TOKEN", tokenvalue);
                 return params;
             }
 
@@ -407,6 +407,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             }
 
         };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
     }
 
@@ -428,16 +429,18 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 startActivity(i);
                 break;
             case R.id.add_cart:
-                addTocart();
+                addTocart(selproductid,"cart");
                 break;
             case R.id.dealers_list:
                 selectDealerDialog();
                 break;
             case R.id.plus_img:
+
                 quantity++;
                 editqty.setText(String.valueOf(quantity));
                 break;
             case R.id.minus_img:
+
                 if (quantity > 1)
                     quantity--;
                 editqty.setText(String.valueOf(quantity));
@@ -545,7 +548,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void addTocart() {
+    public void addTocart(String productid,String buttonText) {
         String Login_url = Apis.addtocart;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
@@ -556,15 +559,24 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
-                            Toast.makeText(ProductDetailActivity.this, "addcart msg:" + message, Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(ProductDetailActivity.this, "addcart msg:" + message, Toast.LENGTH_SHORT).show();
                             JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                             String cartcount = jsonObjectData.getString("cartItemsCount");
                             //setCartItemCount(cartcount);
-                            cartCount.setText(cartcount);
-                            Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
-                                    "Added to cart", Snackbar.LENGTH_LONG);
-                            mySnackbar.setAction("Opencart", new OpencartListner());
-                            mySnackbar.show();
+                            if(buttonText.equals("cart")) {
+                                cartCount.setText(cartcount);
+                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
+                                        "Added to cart", Snackbar.LENGTH_LONG);
+                                mySnackbar.setAction("Opencart", new OpencartListner());
+                                mySnackbar.show();
+                            }else if(buttonText.equals("BUY")){
+                                Intent i = new Intent(getApplicationContext(),CartListingActivity.class);
+                                startActivity(i);
+                            }else if(buttonText.equals("book")){
+                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
+                                        message, Snackbar.LENGTH_LONG);
+                                mySnackbar.show();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -581,7 +593,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 //params.put("Content-Type", "application/json");
-                params.put("HTTP_X_TOKEN", tokenvalue);
+                params.put("X-TOKEN", tokenvalue);
                 return params;
             }
 
@@ -590,14 +602,18 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                 Map<String, String> data3 = new HashMap<String, String>();
 
-                data3.put("selprod_id", selproductid);
+                data3.put("selprod_id", productid);
                 data3.put("quantity", editqty.getText().toString());
-                data3.put("addons", "");
+                if(buttonText.equals("cart")||buttonText.equals("BUY"))
+                    data3.put("addons", "");
+                else if(buttonText.equals("book"))
+                    data3.put("type","book");
 
                 return data3;
 
             }
         };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
 
@@ -608,7 +624,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
 
     public void SwitchFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.framecontent, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.framecontent, fragment).commitAllowingStateLoss();
     }
 
     private void selectDealerDialog() {
@@ -616,6 +632,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 .setTitle("Dealers")
                 .setMessage(shopname + "\n" + city + "," + statename + "," + countryname)
                 .show();
+    }
+
+    @Override
+    public void onResume() {
+        getProductDetails(productId);
+        super.onResume();
     }
 
 

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/colorWhite">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     tools:context=".CartActivity">
 
@@ -13,95 +17,73 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:background="@drawable/border_bg"
             android:id="@+id/layout_linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
-            android:weightSum="4">
+            android:weightSum="2">
 
-            <ImageView
-                android:id="@+id/image"
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_height="96dp"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
+                android:layout_marginLeft="@dimen/padding_10"
+                android:layout_marginTop="@dimen/padding_10"
+                android:layout_marginBottom="@dimen/padding_10"
                 android:padding="@dimen/padding_10"
-                app:srcCompat="@drawable/ic_scooter" />
+                android:layout_height="96dp">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image"
+                android:padding="@dimen/padding_10"
+                android:layout_width="96dp"
+                android:layout_height="96dp"/>
+
+            </androidx.cardview.widget.CardView>
 
             <LinearLayout
+                android:layout_margin="10dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="2"
+                android:layout_weight="1.5"
                 android:orientation="vertical">
 
                 <TextView
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
                     android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="title" />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/options"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="options" />
+                    android:text="" />
 
                 <TextView
+                    android:textSize="18sp"
+                    android:textColor="@color/colorBlack"
                     android:id="@+id/price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="price" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/qty"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="0.5"
-                android:text="qty" />
-
-            <ImageView
-                android:id="@+id/delete_image"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="0.5"
-                android:src="@android:drawable/ic_menu_delete" />
         </LinearLayout>
 
-    <!--    <LinearLayout
+        <View
+            android:layout_marginTop="@dimen/padding_10"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/screen_background_dark_transparent">
+            android:layout_height="1dp"
+            android:background="@color/colorGrey"/>
 
-            <EditText
-                android:id="@+id/enter_promocode"
-                android:textSize="16sp"
-                android:padding="@dimen/padding_10"
-                android:hint="Enter Promo Code"
-                android:textColorHint="@color/White"
-                android:textColor="@color/White"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/apply_promocode"
-                android:textSize="16sp"
-                android:textColor="@color/White"
-                android:gravity="center"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="Apply" />
-        </LinearLayout>
--->
         <LinearLayout
             android:layout_marginTop="@dimen/padding_10"
-            android:background="@drawable/border_bg"
             android:padding="@dimen/padding_10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,6 +98,8 @@
                     android:layout_height="wrap_content"
                     android:text="Location : "/>
                 <EditText
+                    android:padding="5dp"
+                    android:background="@drawable/border_bg"
                     android:id="@+id/enter_location"
                     android:layout_width="0dp"
                     android:layout_weight="1.5"
@@ -123,6 +107,7 @@
                     android:hint="Enter Location"/>
             </LinearLayout>
             <LinearLayout
+                android:layout_marginTop="@dimen/padding_10"
                 android:weightSum="2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -132,6 +117,8 @@
                     android:layout_height="wrap_content"
                     android:text="Phone No : "/>
                 <EditText
+                    android:padding="5dp"
+                    android:background="@drawable/border_bg"
                     android:id="@+id/enter_phoneno"
                     android:layout_width="0dp"
                     android:layout_weight="1.5"
@@ -139,6 +126,7 @@
                     android:hint="Enter Phone No"/>
             </LinearLayout>
             <LinearLayout
+                android:layout_marginTop="@dimen/padding_10"
                 android:weightSum="2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -148,9 +136,12 @@
                     android:drawableRight="@drawable/ic_date"
                     android:layout_width="0dp"
                     android:layout_weight="0.5"
+                    android:paddingRight="5dp"
                     android:layout_height="wrap_content"
                     android:text="Date : "/>
                 <EditText
+                    android:padding="5dp"
+                    android:background="@drawable/border_bg"
                     android:id="@+id/date"
                     android:layout_width="0dp"
                     android:layout_weight="1.5"
@@ -158,6 +149,7 @@
                     android:hint="Date"/>
             </LinearLayout>
             <LinearLayout
+                android:layout_marginTop="@dimen/padding_10"
                 android:weightSum="2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -167,9 +159,12 @@
                     android:drawableRight="@drawable/ic_time"
                     android:layout_width="0dp"
                     android:layout_weight="0.5"
+                    android:paddingRight="5dp"
                     android:layout_height="wrap_content"
                     android:text="Time : "/>
                 <EditText
+                    android:padding="5dp"
+                    android:background="@drawable/border_bg"
                     android:id="@+id/time"
                     android:layout_width="0dp"
                     android:layout_weight="1.5"
@@ -179,13 +174,51 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_10"
+            android:gravity="center_horizontal">
+
+            <CheckBox
+                android:id="@+id/check_terms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/termsandcond"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="all"
+                android:text="Terms and Conditions "
+                android:textColor="@color/colorHeadings"></TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" by ewheelers"
+                android:textColor="@color/colorPrimary"></TextView>
+
+        </LinearLayout>
+
         <Button
-            android:layout_marginTop="20dp"
+            android:enabled="false"
+            android:id="@+id/submitButton"
+            android:layout_marginTop="25dp"
             android:layout_gravity="center_horizontal"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:text="Submit"/>
 
+        <Button
+            android:enabled="true"
+            android:id="@+id/cancelButton"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Cancel"/>
+
     </LinearLayout>
 
-</LinearLayout>
+</LinearLayout></ScrollView>

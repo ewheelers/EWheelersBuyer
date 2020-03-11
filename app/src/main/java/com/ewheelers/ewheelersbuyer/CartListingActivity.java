@@ -1,12 +1,19 @@
 package com.ewheelers.ewheelersbuyer;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.media.MediaCas;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.CartListingAdapter;
 import com.ewheelers.ewheelersbuyer.ModelClass.CartListClass;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
+import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,24 +40,37 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CartListingActivity extends AppCompatActivity {
+import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
+
+public class CartListingActivity extends AppCompatActivity implements View.OnClickListener {
     RecyclerView cartListing;
     CartListingAdapter cartListingAdapter;
     List<CartListClass> cartListClassList = new ArrayList<>();
     String tokenvalue;
     String optionname, optionvalue_name;
     private int mStatusCode = 0;
+    Button placeOrder;
+    TextView cartEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_listing);
         cartListing = findViewById(R.id.cart_listing);
+        placeOrder = findViewById(R.id.place_order);
+        cartEmpty = findViewById(R.id.emptyview);
+        placeOrder.setOnClickListener(this);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
-        Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
-        Log.i("token_val:",tokenvalue);
+      /*  Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
+        Log.i("token_val:",tokenvalue);*/
+
+
         cartListing();
+
+
     }
+
+    ArrayList<String> options;
 
     public void cartListing() {
         final RequestQueue queue = Volley.newRequestQueue(this);
@@ -57,14 +78,14 @@ public class CartListingActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    Log.i("responsecartlist:","status = "+status+"message "+msg+"status code"+mStatusCode);
+                    Log.i("responsecartlist:", "status = " + status + "message " + msg + "status code" + mStatusCode);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartcount = dataJsonObject.getString("cartItemsCount");
+                    String netpayble = dataJsonObject.getString("netPayable");
                     JSONArray jsonArraycartList = dataJsonObject.getJSONArray("products");
                     for (int k = 0; k < jsonArraycartList.length(); k++) {
                         JSONObject jsonObjectListdata = jsonArraycartList.getJSONObject(k);
@@ -75,30 +96,42 @@ public class CartListingActivity extends AppCompatActivity {
                         String price = jsonObjectListdata.getString("theprice");
                         String brandname = jsonObjectListdata.getString("brand_name");
                         String minOrderquantity = jsonObjectListdata.getString("selprod_min_order_qty");
+                        JSONObject jsonObjectSelleraddressArray = jsonObjectListdata.getJSONObject("seller_address");
+                        String shopname = jsonObjectSelleraddressArray.getString("shop_name");
                         JSONArray jsonArrayOptions = jsonObjectListdata.getJSONArray("options");
+                        options = new ArrayList<>();
                         for (int j = 0; j < jsonArrayOptions.length(); j++) {
                             JSONObject jsonObjectoptionList = jsonArrayOptions.getJSONObject(j);
                             optionname = jsonObjectoptionList.getString("option_name");
                             optionvalue_name = jsonObjectoptionList.getString("optionvalue_name");
+                            options.add(optionname + ":" + optionvalue_name);
                         }
-                        JSONObject jsonObjectSelleraddressArray = jsonObjectListdata.getJSONObject("seller_address");
-                        String shopname = jsonObjectSelleraddressArray.getString("shop_name");
 
                         CartListClass cartListClass = new CartListClass();
                         cartListClass.setBrandname(brandname);
                         cartListClass.setImageurl(imageurl);
                         cartListClass.setProductName(productname);
                         cartListClass.setProductPrice(price);
-                        cartListClass.setMinimuborderqty(minOrderquantity);
+                        cartListClass.setProduct_qty(quantity);
                         cartListClass.setShopname(shopname);
-                        cartListClass.setProductOption(optionname);
+                       /* cartListClass.setProductOption(optionname);
+                        cartListClass.setOptionvalue(optionvalue_name);*/
+                        cartListClass.setOptions(options);
+                        cartListClass.setKeyvalue(key);
                         cartListClassList.add(cartListClass);
-                        Log.i("cartlistdata:",cartListClassList.toString());
                     }
-                    cartListingAdapter = new CartListingAdapter(CartListingActivity.this, cartListClassList);
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CartListingActivity.this, RecyclerView.VERTICAL, false);
-                    cartListing.setLayoutManager(linearLayoutManager);
-                    cartListing.setAdapter(cartListingAdapter);
+
+                    if (cartListClassList.isEmpty()) {
+                        cartEmpty.setVisibility(View.VISIBLE);
+                    }else {
+                        cartEmpty.setVisibility(View.GONE);
+                        cartListingAdapter = new CartListingAdapter(CartListingActivity.this, cartListClassList);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CartListingActivity.this, RecyclerView.VERTICAL, false);
+                        cartListing.setLayoutManager(linearLayoutManager);
+                        cartListing.setAdapter(cartListingAdapter);
+                        cartListingAdapter.notifyDataSetChanged();
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -117,10 +150,10 @@ public class CartListingActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/json");
-                params.put("HTTP_X_TOKEN", tokenvalue);
+                params.put("X-TOKEN", tokenvalue);
                 return params;
             }
+
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 if (response != null) {
@@ -129,6 +162,7 @@ public class CartListingActivity extends AppCompatActivity {
                 assert response != null;
                 return super.parseNetworkResponse(response);
             }
+
             @Override
             public Map<String, String> getParams() {
                 return null;
@@ -140,4 +174,15 @@ public class CartListingActivity extends AppCompatActivity {
         queue.add(stringRequest);
 
     }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.place_order:
+                Intent i = new Intent(getApplicationContext(), CartSummaryActivity.class);
+                startActivity(i);
+                break;
+        }
+    }
+
 }

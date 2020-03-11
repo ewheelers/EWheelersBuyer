@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ewheelers.ewheelersbuyer.Adapters.ViewPagerAdapter;
 import com.google.android.material.snackbar.Snackbar;
@@ -49,12 +50,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         textView_call.setOnClickListener(this);
         imageView.setOnClickListener(this);
 
-        String tokenvalue = new SessionStorage().getStrings(LoginActivity.this, SessionStorage.tokenvalue);
-        if (tokenvalue != null) {
-            Intent i = new Intent(LoginActivity.this, NavAppBarActivity.class);
-            startActivity(i);
-            finish();
-        }
     }
 
     public void call_action() {

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -146,12 +147,6 @@ public class FragmentForgotPassword extends Fragment implements View.OnClickList
             }
         }) {
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-                return params;
-            }
 
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
@@ -165,6 +160,7 @@ public class FragmentForgotPassword extends Fragment implements View.OnClickList
 
             }
         };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(getActivity()).addToRequestQueue(strRequest);
     }
 

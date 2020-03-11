@@ -5,5 +5,5 @@ import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import java.util.List;
 
 public interface ItemClickListener {
-    void onItemClick(String item);
+    void cartCountItems(String item);
 }

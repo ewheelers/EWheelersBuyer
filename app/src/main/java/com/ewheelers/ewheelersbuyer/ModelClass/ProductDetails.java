@@ -31,7 +31,7 @@ public class ProductDetails implements Parcelable {
     private String optionName;
    // private ArrayList<String> optionslist;
 
-    private List<OptionValues> optionValuesArrayList;
+    private ArrayList<OptionValues> optionValuesArrayList;
 
 
     //offers list
@@ -135,11 +135,11 @@ public class ProductDetails implements Parcelable {
     };
 
 
-    public List<OptionValues> getOptionValuesArrayList() {
+    public ArrayList<OptionValues> getOptionValuesArrayList() {
         return optionValuesArrayList;
     }
 
-    public void setOptionValuesArrayList(List<OptionValues> optionValuesArrayList) {
+    public void setOptionValuesArrayList(ArrayList<OptionValues> optionValuesArrayList) {
         this.optionValuesArrayList = optionValuesArrayList;
     }
 

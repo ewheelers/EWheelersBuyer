@@ -1,6 +1,8 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CartListClass {
     private String imageurl;
@@ -11,6 +13,34 @@ public class CartListClass {
     private String brandname;
     private String minimuborderqty;
     private String shopname;
+    private String keyvalue;
+    private String optionvalue;
+
+    private ArrayList<String> options;
+
+    public ArrayList<String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArrayList<String> options) {
+        this.options = options;
+    }
+
+    public String getKeyvalue() {
+        return keyvalue;
+    }
+
+    public void setKeyvalue(String keyvalue) {
+        this.keyvalue = keyvalue;
+    }
+
+    public String getOptionvalue() {
+        return optionvalue;
+    }
+
+    public void setOptionvalue(String optionvalue) {
+        this.optionvalue = optionvalue;
+    }
 
     public String getShopname() {
         return shopname;

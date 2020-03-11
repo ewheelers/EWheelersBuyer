@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -98,12 +99,12 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
 
-        try {
+      /*  try {
             imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         agree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -153,7 +154,7 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.terms:
-                String url = "http://www.ewheelers.in/cms/view/3/1";
+                String url = "http://ewheelers.in/cms/view/2";
                 showPrivacyPolicies(url);
                 break;
             case R.id.signup:
@@ -233,13 +234,6 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
                 }) {
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-                return params;
-            }
-
-            @Override
             protected Map<String, String> getParams() {
 
                 String full_name = fullname.getText().toString().trim();
@@ -263,7 +257,7 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
 
             }
         };
-
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(strRequest);
     }
 

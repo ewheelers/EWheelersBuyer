@@ -33,15 +33,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.ewheelersbuyer.Adapters.CollectionProductsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.MenuIconAdapter;
+import com.ewheelers.ewheelersbuyer.Interface.ItemClickListener;
+import com.ewheelers.ewheelersbuyer.ModelClass.HomeCollectionProducts;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
+import com.ewheelers.ewheelersbuyer.ui.home.HomeFragment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -55,10 +61,12 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -67,6 +75,8 @@ import tourguide.tourguide.Overlay;
 import tourguide.tourguide.Pointer;
 import tourguide.tourguide.ToolTip;
 import tourguide.tourguide.TourGuide;
+
+import static com.ewheelers.ewheelersbuyer.SessionStorage.tokenvalue;
 
 public class NavAppBarActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     NavigationView navigationView;
@@ -92,7 +102,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     private static GoogleApiClient mGoogleApiClient;
 
     TextView mainCartCount;
-
+    String tokenvalue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +119,15 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         recyclerView = findViewById(R.id.static_menus);
         showmenuicon = findViewById(R.id.showmenu);
         mainCartCount = findViewById(R.id.maincartcount);
+        tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this,SessionStorage.tokenvalue);
+
+        mainCartCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+                startActivity(i);
+            }
+        });
 
         showmenuicon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +172,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         startActivity(intent);
 
       //  getcurrentLocation();
+        //getCartCountHome();
         initGoogleAPIClient();
         showSettingDialog();
 
@@ -182,11 +202,11 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void setcityDialog() {
-        final String[] multiChoiceItems = {"Hyderabad","Bangalore"};
+        final String[] multiChoiceItems = {"Hyderabad"};
         new AlertDialog.Builder(this)
                 .setTitle("Select your City")
                 .setCancelable(false)
-                .setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, multiChoiceItems), new DialogInterface.OnClickListener() {
+                .setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, multiChoiceItems), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         getuser_location.setText(multiChoiceItems[which]);
@@ -296,8 +316,11 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "charge"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "mechanic"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_punctureflat, "puncture"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares")); // tyreshops + automobiles
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories")); // helmets
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "water wash"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "battery")); //battery service + battery shop
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_keyrepair, "key repair"));
         return homeMenuIcons;
     }
 
@@ -308,6 +331,12 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         if (id == R.id.nav_dealer) {
             // Handle the camera action
             Toast.makeText(this, "under development", Toast.LENGTH_SHORT).show();
+        }
+        if(id == R.id.nav_logout){
+            SessionStorage.clearString(NavAppBarActivity.this,SessionStorage.tokenvalue);
+            Intent i = new Intent(getApplicationContext(),LoginActivity.class);
+            startActivity(i);
+            finish();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -367,5 +396,62 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         mGoogleApiClient.connect();
     }
 
+    public void getCartCountHome(){
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        String serverurl = Apis.home;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String msg = jsonObject.getString("msg");
+                    if(status.equals("1")) {
+                        JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+
+                        String cartcount = dataJsonObject.getString("cartItemsCount");
+                        mainCartCount.setText(cartcount);
+
+                    }else {
+                        Toast.makeText(NavAppBarActivity.this, ""+msg, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error: " + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+            @Override
+            public Map<String, String> getParams() {
+                return null;
+            }
+
+        };
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        queue.add(stringRequest);
+    }
+
+    @Override
+    public void onResume() {
+        getCartCountHome();
+        super.onResume();
+    }
 
 }

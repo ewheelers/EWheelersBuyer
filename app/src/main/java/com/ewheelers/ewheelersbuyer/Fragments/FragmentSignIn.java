@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -88,12 +89,12 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
         imageButtoncall.setOnClickListener(this);
         sign_in.setOnClickListener(this);
         textViewterms.setOnClickListener(this);
-        try {
+      /*  try {
             imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         pDialog = new KAlertDialog(getActivity(), KAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Loading");
@@ -244,13 +245,6 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
         }) {
 
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-                return params;
-            }
-
-            @Override
             public Map<String, String> getParams() {
                 String susername = username.getText().toString();
                 String spass = password.getText().toString();
@@ -264,6 +258,7 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
 
             }
         };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(getActivity()).addToRequestQueue(strRequest);
     }
 

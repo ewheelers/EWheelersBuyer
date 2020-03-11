@@ -59,12 +59,12 @@
 
             <TextView
                 android:textAlignment="textEnd"
-                android:maxLength="2"
+                android:maxLength="4"
                 android:id="@+id/cart_count"
                 android:layout_gravity="center_vertical|end"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:text="0"
+                android:text=""
                 android:textColor="@color/colorPrimary"
                 android:layout_height="wrap_content"
                 android:drawableRight="@drawable/cart" />

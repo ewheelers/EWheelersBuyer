@@ -6,11 +6,13 @@ public class HomeCollectionProducts implements Serializable {
     public static final int PRODUCTS=0;
     public static final int BRANDS=1;
     public static final int PREVIEW=2;
-    public static final int SLIDES=3;
+    public static final int CATEGORY=3;
+    public static final int SHOPS=4;
 
 
     int type;
        //products
+    private String cartItems;
     private String is_in_any_wishlist;
     private String product_id;
     private String selprod_id;
@@ -46,8 +48,135 @@ public class HomeCollectionProducts implements Serializable {
 
     private String slideImageurl;
 
+    private String collectionName;
+
+    private String shopid;
+    private String shopname;
+    private String shopuserid;
+    private String countryname;
+    private String statename;
+    private String rating;
+    private String shoplogo;
+    private String shopbanner;
+
+    private String prodcategory_id;
+    private String prodcategory_name;
+    private String prodcategory_description;
+    private String prodcategory_imageurl;
+
+    public String getProdcategory_id() {
+        return prodcategory_id;
+    }
+
+    public void setProdcategory_id(String prodcategory_id) {
+        this.prodcategory_id = prodcategory_id;
+    }
+
+    public String getProdcategory_name() {
+        return prodcategory_name;
+    }
+
+    public void setProdcategory_name(String prodcategory_name) {
+        this.prodcategory_name = prodcategory_name;
+    }
+
+    public String getProdcategory_description() {
+        return prodcategory_description;
+    }
+
+    public void setProdcategory_description(String prodcategory_description) {
+        this.prodcategory_description = prodcategory_description;
+    }
+
+    public String getProdcategory_imageurl() {
+        return prodcategory_imageurl;
+    }
+
+    public void setProdcategory_imageurl(String prodcategory_imageurl) {
+        this.prodcategory_imageurl = prodcategory_imageurl;
+    }
+
+    public String getShopid() {
+        return shopid;
+    }
+
+    public void setShopid(String shopid) {
+        this.shopid = shopid;
+    }
+
+    public String getShopname() {
+        return shopname;
+    }
+
+    public void setShopname(String shopname) {
+        this.shopname = shopname;
+    }
+
+    public String getShopuserid() {
+        return shopuserid;
+    }
+
+    public void setShopuserid(String shopuserid) {
+        this.shopuserid = shopuserid;
+    }
+
+    public String getCountryname() {
+        return countryname;
+    }
+
+    public void setCountryname(String countryname) {
+        this.countryname = countryname;
+    }
+
+    public String getStatename() {
+        return statename;
+    }
+
+    public void setStatename(String statename) {
+        this.statename = statename;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getShoplogo() {
+        return shoplogo;
+    }
+
+    public void setShoplogo(String shoplogo) {
+        this.shoplogo = shoplogo;
+    }
+
+    public String getShopbanner() {
+        return shopbanner;
+    }
+
+    public void setShopbanner(String shopbanner) {
+        this.shopbanner = shopbanner;
+    }
+
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
+    }
 
     public HomeCollectionProducts() {
+    }
+
+    public String getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(String cartItems) {
+        this.cartItems = cartItems;
     }
 
     public String getSlideImageurl() {

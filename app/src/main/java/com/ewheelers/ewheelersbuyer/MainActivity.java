@@ -16,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
      /*   webView = findViewById(R.id.webView1);
         WebSettings webSetting = webView.getSettings();
         webSetting.setJavaScriptEnabled(true);
@@ -24,9 +27,16 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(i);
-                finish();
+                String tokenvalue = new SessionStorage().getStrings(MainActivity.this, SessionStorage.tokenvalue);
+                if (tokenvalue != null) {
+                    Intent i = new Intent(MainActivity.this, NavAppBarActivity.class);
+                    startActivity(i);
+                    finish();
+                }else {
+                    Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(i);
+                    finish();
+                }
             }
 
         }, 3*1000); // wait for

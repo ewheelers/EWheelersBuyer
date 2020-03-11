@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class RecommendProductsActivity extends AppCompatActivity  {
     RecyclerView recyclerView;
-    List<ProductDetails> buyDetailsList = new ArrayList<>();
+    ArrayList<ProductDetails> buyDetailsList = new ArrayList<>();
     ProductdetailsAdapter productdetailsAdapter;
     String buttonText;
     String productid;

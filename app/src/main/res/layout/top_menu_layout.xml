@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:id="@+id/menu_click_layout"
     android:layout_gravity="center_horizontal"
     android:layout_marginLeft="@dimen/padding_10"
     android:layout_marginRight="@dimen/padding_10">

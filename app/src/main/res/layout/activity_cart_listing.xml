@@ -6,10 +6,8 @@
     tools:context=".CartListingActivity">
 <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
-    android:background="@color/colorGrey"
     android:layout_above="@+id/total_amount"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/padding_10"
     android:id="@+id/cart_listing"/>
     <LinearLayout
         android:layout_alignParentBottom="true"
@@ -18,25 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/total_amount">
-        <LinearLayout
-            android:padding="@dimen/padding_10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:textColor="@color/White"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="No. of Items"/>
-            <TextView
-                android:gravity="right"
-                android:textColor="@color/White"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Amount"/>
-        </LinearLayout>
+
         <Button
             android:id="@+id/place_order"
             android:layout_gravity="center"
@@ -44,4 +24,16 @@
             android:layout_height="wrap_content"
             android:text="Place Order"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/emptyview"
+        android:visibility="gone"
+        android:drawablePadding="@dimen/padding_10"
+        android:drawableBottom="@drawable/cart"
+        android:textSize="16sp"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cart is Empty"/>
+
 </RelativeLayout>

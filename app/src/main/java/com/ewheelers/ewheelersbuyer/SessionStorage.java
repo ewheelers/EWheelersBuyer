@@ -22,7 +22,7 @@ public static String location = "location";
     public static void clearString(Context context,String key){
         SharedPreferences sharedPref = context.getSharedPreferences("Pref", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(key, "");
+        editor.putString(key, null);
         editor.apply();
     }
 }

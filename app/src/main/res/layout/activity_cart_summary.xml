@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_10"
+    android:id="@+id/linear_layout"
+    tools:context=".CartSummaryActivity">
+
+    <LinearLayout
+        android:background="@drawable/border_bg"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:padding="@dimen/dimen_15dp"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seller Address"/>
+        <TextView
+            android:visibility="gone"
+            android:gravity="right"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Change"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/seller_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Seller Address"/>
+    <TextView
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delivery Process"
+        android:drawablePadding="@dimen/padding_10"
+        android:drawableEnd="@drawable/iicon"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/padding_10"
+        android:background="@drawable/border_bg"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:padding="@dimen/dimen_15dp"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Billing Address"/>
+            <TextView
+                android:id="@+id/changeAddress"
+                android:textColor="@color/blue"
+                android:gravity="right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Change"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/customer_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="customer Address"/>
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/walletBal"
+        android:padding="@dimen/padding_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wallet Balance"/>
+
+    <TextView
+        android:id="@+id/wallet_details"
+        android:padding="@dimen/padding_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Details"/>
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use my Wallet Balance"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/remainBalance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remaining Wallet Balance"/>
+
+    <LinearLayout
+        android:padding="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:textColor="@color/blue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Wallet Balance Applied"/>
+        <TextView
+            android:id="@+id/totalAmount"
+            android:gravity="right"
+            android:textColor="@color/colorPrimary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Amount"/>
+    </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/apply_promo_layout"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2">
+        <EditText
+            android:id="@+id/promo_code"
+            android:singleLine="true"
+            android:padding="6dp"
+            android:background="@drawable/border_bg"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:hint="Enter Promo Code"/>
+        <TextView
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/apply_code"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:text="Apply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/promoLayout"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorPrimary"
+        android:padding="@dimen/padding_10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/promo_result"/>
+
+        <Button
+            android:id="@+id/remove_promocode"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Remove"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/button_bg"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/price_list"/>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:padding="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/no_items"
+            android:textColor="@color/blue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Payable Now"/>
+        <TextView
+            android:id="@+id/amount"
+            android:gravity="right"
+            android:textColor="@color/blue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Amount"/>
+    </LinearLayout>
+
+    <Button
+        android:layout_gravity="center"
+        android:id="@+id/payment"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:text="Pay"/>
+
+</LinearLayout>
