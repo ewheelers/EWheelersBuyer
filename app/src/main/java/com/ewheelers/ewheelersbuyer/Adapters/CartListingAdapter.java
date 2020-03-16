@@ -1,5 +1,6 @@
 package com.ewheelers.ewheelersbuyer.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +42,7 @@ import java.util.Map;
 public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.MyCartListHolder> {
     private Context context;
     private List<CartListClass> cartListClasses;
-    int quantity;
+    private int quantity=1;
 
     public CartListingAdapter(Context context, List<CartListClass> cartListClasses) {
         this.context = context;
@@ -91,6 +92,9 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                         if (getStatus.equals("1")) {
                                             holder.item_lay.setVisibility(View.GONE);
                                             Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                            if (context instanceof CartListingActivity) {
+                                                ((CartListingActivity)context).restartActivity();
+                                            }
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -152,6 +156,9 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                     String message = jsonObject.getString("msg");
                                     if (getStatus.equals("1")) {
                                         holder.quantity.setText(String.valueOf(quantity));
+                                        if (context instanceof CartListingActivity) {
+                                            ((CartListingActivity)context).restartActivity();
+                                        }
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -191,7 +198,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                 quantity = Integer.parseInt(quant);
                 quantity--;
 
-                if (quantity > 0) {
+              //  if (quantity > 0) {
 
                     String key = cartListClasses.get(position).getKeyvalue();
 
@@ -210,6 +217,9 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                         String message = jsonObject.getString("msg");
                                         if (getStatus.equals("1")) {
                                             holder.quantity.setText(String.valueOf(quantity));
+                                            if (context instanceof CartListingActivity) {
+                                                ((CartListingActivity)context).restartActivity();
+                                            }
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -241,7 +251,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                     };
                     strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
                     VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
-                }
+              //  }
             }
         });
 

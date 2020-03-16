@@ -1,6 +1,7 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
 public class ServiceProvidersClass {
+    private String serviceProviderIs;
     private String serviceprovider_name;
     private String serviceprovider_shopname;
     private String serviceprovider_phone_number;
@@ -9,6 +10,14 @@ public class ServiceProvidersClass {
     private String serviceprovider_address;
     private String serviceprovider_latitude;
     private String serviceprovider_longitude;
+
+    public String getServiceProviderIs() {
+        return serviceProviderIs;
+    }
+
+    public void setServiceProviderIs(String serviceProviderIs) {
+        this.serviceProviderIs = serviceProviderIs;
+    }
 
     public String getServiceprovider_name() {
         return serviceprovider_name;

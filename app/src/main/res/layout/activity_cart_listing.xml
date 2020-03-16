@@ -4,11 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CartListingActivity">
-<androidx.recyclerview.widget.RecyclerView
+
+    <androidx.recyclerview.widget.RecyclerView
     android:layout_width="match_parent"
-    android:layout_above="@+id/total_amount"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:id="@+id/cart_listing"/>
+
     <LinearLayout
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
@@ -16,6 +17,79 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/total_amount">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <TextView
+            android:padding="@dimen/dimen_5dp"
+            android:layout_gravity="start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sub Total"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"/>
+        <TextView
+            android:id="@+id/subtotal"
+            android:padding="@dimen/dimen_5dp"
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="00.00"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorWhite"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="@dimen/dimen_5dp"
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tax"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"/>
+            <TextView
+                android:id="@+id/tax"
+                android:padding="@dimen/dimen_5dp"
+                android:gravity="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:padding="@dimen/dimen_5dp"
+                android:layout_gravity="start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Payable Now"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"/>
+            <TextView
+                android:id="@+id/netpay"
+                android:padding="@dimen/dimen_5dp"
+                android:gravity="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="00.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorWhite"/>
+        </LinearLayout>
+
 
         <Button
             android:id="@+id/place_order"

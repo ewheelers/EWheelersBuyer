@@ -43,6 +43,7 @@
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="160dp" />
+
         <com.ewheelers.ewheelersbuyer.ModelClass.CirclePageIndicator
             android:id="@+id/indicator"
             android:layout_width="wrap_content"
@@ -59,41 +60,61 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="2">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/collection_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1.6"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/showallebikes"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_weight="0.4"
+                    android:autoLink="all"
+                    android:paddingTop="5dp"
+                    android:text="All eBikes"
+                    android:textColor="@color/colorHeadings" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/collection_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="#faf8f8"
+                android:dividerHeight="2dp"
+                android:paddingBottom="0dp" />
 
             <TextView
-                android:id="@+id/collection_title"
-                android:layout_width="0dp"
+                android:id="@+id/categories_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1.6"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/showallebikes"
-                android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/collection_categories"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_weight="0.4"
-                android:autoLink="all"
-                android:paddingTop="5dp"
-                android:text="All eBikes"
-                android:textColor="@color/colorHeadings" />
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/collection_products"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="#faf8f8"
-            android:dividerHeight="2dp"
-            android:paddingBottom="0dp" />
+                android:divider="#faf8f8"
+                android:dividerHeight="2dp"
+                android:paddingBottom="0dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -164,25 +185,8 @@
                 </LinearLayout>
             </LinearLayout>
 
-        <TextView
-            android:id="@+id/brands_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/colorPrimary" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/collection_brands"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="#faf8f8"
-            android:dividerHeight="2dp"
-            android:paddingBottom="0dp" />
-
             <TextView
-                android:id="@+id/categories_title"
+                android:id="@+id/brands_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -190,15 +194,14 @@
                 android:text=""
                 android:textColor="@color/colorPrimary" />
 
-
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/collection_categories"
+                android:id="@+id/collection_brands"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="#faf8f8"
                 android:dividerHeight="2dp"
                 android:paddingBottom="0dp" />
+
 
             <TextView
                 android:id="@+id/shops_title"

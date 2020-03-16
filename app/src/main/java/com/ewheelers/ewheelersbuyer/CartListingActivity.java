@@ -27,6 +27,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.CartListingAdapter;
+import com.ewheelers.ewheelersbuyer.Adapters.ProductdetailsAdapter;
 import com.ewheelers.ewheelersbuyer.ModelClass.CartListClass;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
@@ -51,7 +52,8 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     private int mStatusCode = 0;
     Button placeOrder;
     TextView cartEmpty;
-
+    String addons;
+    TextView total,tax,netpayab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +61,10 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         cartListing = findViewById(R.id.cart_listing);
         placeOrder = findViewById(R.id.place_order);
         cartEmpty = findViewById(R.id.emptyview);
+        total = findViewById(R.id.subtotal);
+        tax = findViewById(R.id.tax);
+        netpayab = findViewById(R.id.netpay);
+
         placeOrder.setOnClickListener(this);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
       /*  Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
@@ -73,6 +79,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     ArrayList<String> options;
 
     public void cartListing() {
+        cartListClassList.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.cartListing;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
@@ -85,7 +92,18 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                     Log.i("responsecartlist:", "status = " + status + "message " + msg + "status code" + mStatusCode);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartcount = dataJsonObject.getString("cartItemsCount");
-                    String netpayble = dataJsonObject.getString("netPayable");
+                  //  String netpayble = dataJsonObject.getString("netPayable");
+
+                    JSONObject jsonObjectSummary = dataJsonObject.getJSONObject("cartSummary");
+                    String cartsubtotal = jsonObjectSummary.getString("cartTotal");
+                    String cartTex = jsonObjectSummary.getString("cartTaxTotal");
+                    total.setText("\u20B9"+cartsubtotal);
+                    tax.setText("\u20B9"+cartTex);
+                    JSONObject jsonObjectNetpayable= dataJsonObject.getJSONObject("netPayable");
+                    String netpayable = jsonObjectNetpayable.getString("value");
+                    netpayab.setText(netpayable);
+
+
                     JSONArray jsonArraycartList = dataJsonObject.getJSONArray("products");
                     for (int k = 0; k < jsonArraycartList.length(); k++) {
                         JSONObject jsonObjectListdata = jsonArraycartList.getJSONObject(k);
@@ -98,6 +116,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         String minOrderquantity = jsonObjectListdata.getString("selprod_min_order_qty");
                         JSONObject jsonObjectSelleraddressArray = jsonObjectListdata.getJSONObject("seller_address");
                         String shopname = jsonObjectSelleraddressArray.getString("shop_name");
+
                         JSONArray jsonArrayOptions = jsonObjectListdata.getJSONArray("options");
                         options = new ArrayList<>();
                         for (int j = 0; j < jsonArrayOptions.length(); j++) {
@@ -123,7 +142,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
 
                     if (cartListClassList.isEmpty()) {
                         cartEmpty.setVisibility(View.VISIBLE);
-                    }else {
+                    } else {
                         cartEmpty.setVisibility(View.GONE);
                         cartListingAdapter = new CartListingAdapter(CartListingActivity.this, cartListClassList);
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(CartListingActivity.this, RecyclerView.VERTICAL, false);
@@ -183,6 +202,12 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                 startActivity(i);
                 break;
         }
+    }
+
+    public void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
 }

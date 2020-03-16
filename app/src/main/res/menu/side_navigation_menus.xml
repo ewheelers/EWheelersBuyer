@@ -25,10 +25,7 @@
             android:id="@+id/nav_blog"
             android:icon="@drawable/ic_blog"
             android:title="Blog" />
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@drawable/ic_power_settings_new_black_24dp"
-            android:title="Logout" />
+
     </group>
 
     <item android:title="Communicate">
@@ -43,6 +40,15 @@
                 android:title="About us" />
 
 
+        </menu>
+    </item>
+
+    <item android:title="Exit">
+        <menu>
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_power_settings_new_black_24dp"
+                android:title="Logout" />
         </menu>
     </item>
 

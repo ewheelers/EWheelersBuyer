@@ -9,6 +9,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,7 +44,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.CollectionProductsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.MenuIconAdapter;
-import com.ewheelers.ewheelersbuyer.Interface.ItemClickListener;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeCollectionProducts;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
@@ -163,7 +163,8 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         navigationView.setNavigationItemSelectedListener(this);
 
         menuIconAdapter = new MenuIconAdapter(this, homeMenuIcons());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(this,4);
+       // LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(menuIconAdapter);
 
@@ -316,10 +317,10 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "charge"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "mechanic"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_punctureflat, "puncture"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares")); // tyreshops + automobiles
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories")); // helmets
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "water wash"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "battery")); //battery service + battery shop
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "battery"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_keyrepair, "key repair"));
         return homeMenuIcons;
     }

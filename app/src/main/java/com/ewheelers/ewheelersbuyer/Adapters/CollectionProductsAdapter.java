@@ -83,7 +83,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ProductDetailActivity.class);
                         intent.putExtra("productid", homeCollectionProducts.get(position).getSelprod_id());
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                     }
                 });
@@ -148,11 +148,12 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
 
     @Override
     public int getItemCount() {
-        if (homeCollectionProducts.size() == 0) {
+       /* if (homeCollectionProducts.size() == 0) {
             return 0;
         } else {
             return homeCollectionProducts.size();
-        }
+        }*/
+        return homeCollectionProducts.size();
     }
 
     @Override

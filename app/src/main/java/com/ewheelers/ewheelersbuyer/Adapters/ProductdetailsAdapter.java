@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -33,38 +33,43 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.ewheelers.ewheelersbuyer.CartActivity;
+import com.ewheelers.ewheelersbuyer.CartListingActivity;
+import com.ewheelers.ewheelersbuyer.ModelClass.AddonsClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ProductDetailActivity;
 import com.ewheelers.ewheelersbuyer.R;
-import com.ewheelers.ewheelersbuyer.RecommendProductsActivity;
+import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
-import com.google.android.gms.common.util.Strings;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAdapter.MyHolder> {
     private Context context;
     private List<ProductDetails> productDetails;
-    private List<OptionValues> items = new ArrayList<>();
+    private ArrayList<OptionValues> items = new ArrayList<>();
     private int optionIdselection;
     int quantity;
     String homeproid;
+    JSONObject jsonObject1;
+    String addons;
+    String tokenvalue;
 
     public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails) {
         this.context = context;
         this.productDetails = productDetails;
+    }
+
+    public ProductdetailsAdapter() {
+
     }
 
     @NonNull
@@ -133,17 +138,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         holder.optionvalues.setSelection(j);
                     }
                 }
-                ArrayList<OptionValues> optionValues = new ArrayList<>();
                 holder.optionvalues.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                           /* if (context instanceof ProductDetailActivity) {
-                                ((ProductDetailActivity) context).getProductDetails(optionValues.get(position).getOptionUrlValue());
-                            }*/
-                        //  Toast.makeText(context, "id"+ optionValues.get(position).getOptionUrlValue(), Toast.LENGTH_SHORT).show();
-
-                        //holder.optionvalues.setSelection(parent.getSelectedItemPosition());
 
                     }
 
@@ -152,6 +149,16 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
                     }
                 });
+
+               /* holder.viewoptionslayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, ViewOptionsActivity.class);
+                        i.putParcelableArrayListExtra("optionvaluelist",items);
+                        context.startActivity(i);
+                    }
+                });*/
+
                 break;
             case ProductDetails.OFFERS:
                 holder.icon.setImageResource(productDetails.get(position).getImageicon());
@@ -176,6 +183,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         //int count= Integer.parseInt(String.valueOf(holder.txtQuantity.getText()));
                         quantity++;
                         holder.buywithinteger.setText(String.valueOf(quantity));
+                        holder.buyWithcheckBox.setChecked(false);
                        /* if (holder.buyWithcheckBox.isChecked()) {
                             String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
                             Toast.makeText(context, "selected: " + selbuywithprodid + ":" + holder.buywithinteger.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -192,6 +200,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         if (quantity > 1)
                             quantity--;
                         holder.buywithinteger.setText(String.valueOf(quantity));
+                        holder.buyWithcheckBox.setChecked(false);
                         /*if (holder.buyWithcheckBox.isChecked()) {
                             String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
                             Toast.makeText(context, "selected: " + selbuywithprodid + ":" + holder.buywithinteger.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -199,21 +208,43 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
                     }
                 });
-
                 holder.buyWithcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                        JSONObject jsonObject1 = new JSONObject();
-                        try {
-                            for (int i = 0; i < productDetails.size(); i++) {
-                                String selbuywithprodid = productDetails.get(i).getButwithselectedProductId();
-                                jsonObject1.put(selbuywithprodid, String.valueOf(quantity));
+                            //jsonObject1 = new JSONObject();
+
+                            try {
+                              /*  for (int i = 0; i < productDetails.size(); i++) {
+
+                                    String selbuywithprodid = productDetails.get(i).getButwithselectedProductId();
+                                    jsonObject1.put(selbuywithprodid, String.valueOf(quantity));
+
+                                }
+
+                            */
+                              for(int i =0;i<productDetails.size();i++) {
+                                  if (buttonView.isChecked()) {
+                                      String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
+                                      jsonObject1 = new JSONObject();
+                                      jsonObject1.put(selbuywithprodid, String.valueOf(quantity));
+                                  }
+                              }
+
+                                addons = jsonObject1.toString();
+                                Log.i("jsonObjectList", jsonObject1.toString());
+                                // Toast.makeText(context, "addons: "+addons, Toast.LENGTH_SHORT).show();
+                                ((ProductDetailActivity) context).jsonaddons(addons);
+
+                             /*   Intent intent = new Intent("custom-message");
+                                intent.putExtra("jsonaddons", addons);
+                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);*/
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        // Toast.makeText(context, jsonObject1.toString(), Toast.LENGTH_SHORT).show();
+
+
 
                     }
                 });
@@ -264,18 +295,20 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                             context.startActivity(i);
                         }
                         if (holder.bottomBtn.getText().toString().equals("Book Now")) {
-                            if (context instanceof ProductDetailActivity) {
-                                ((ProductDetailActivity)context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()),"book");
-                            }
+                          /*  if (context instanceof ProductDetailActivity) {
+                                ((ProductDetailActivity) context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()), "book");
+                            }*/
+
                         }
                         if (holder.bottomBtn.getText().toString().equals("Rent")) {
 
                         }
-                        if (holder.bottomBtn.getText().toString().equals("BUY")) {
+                       /* if (holder.bottomBtn.getText().toString().equals("BUY")) {
                             if (context instanceof ProductDetailActivity) {
-                            ((ProductDetailActivity)context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()),"BUY");
-                        }
-                        }
+                                ((ProductDetailActivity) context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()), "BUY");
+                            }
+                        }*/
+
 
                     }
                 });
@@ -306,6 +339,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
         Button buyWithminus, buyWithplus, bottomBtn;
         LinearLayout linearLayoutsimilar;
         CheckBox buyWithcheckBox;
+        LinearLayout viewoptionslayout;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -329,6 +363,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
             linearLayoutsimilar = itemView.findViewById(R.id.click_similarproduct);
             bottomBtn = itemView.findViewById(R.id.bottom_button);
             buyWithcheckBox = itemView.findViewById(R.id.checkoradd);
+
+            viewoptionslayout = itemView.findViewById(R.id.viewoptions_layout);
+
         }
 
     }

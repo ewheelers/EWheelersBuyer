@@ -25,6 +25,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -41,12 +42,14 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.ProductdetailsAdapter;
+import com.ewheelers.ewheelersbuyer.Adapters.ServiceProvidersAdapter;
 import com.ewheelers.ewheelersbuyer.Fragments.PolicyFragment;
 import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductSpecifications;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +73,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     Button submitForDrive,cancel_button;
     String selproductid,productname,productprice, productmodel, testDriveEnable, producturl;
     NetworkImageView networkImageView;
+    LinearLayout linearLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +94,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         networkImageView = findViewById(R.id.image);
         productName = findViewById(R.id.title);
         productPrice = findViewById(R.id.price);
+        linearLayout = findViewById(R.id.testdrivelayout);
 
         txtDate.setOnClickListener(this);
         txtTime.setOnClickListener(this);
@@ -137,10 +142,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             }else if(!checkBoxTerms.isChecked()){
                 checkBoxTerms.setError("Check the terms and conditions");
             }else{
-                submitForDrive.setBackgroundResource(R.drawable.button_bg);
-                submitForDrive.setTextColor(Color.WHITE);
-                submitForDrive.setEnabled(true);
-                TestDrive();
+                TestDrive(v);
             }
             break;
     }
@@ -183,12 +185,17 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog mDate = new DatePickerDialog(getActivity(), this, year, month, day);
+            mDate.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            return mDate;
         }
         public void onDateSet(DatePicker view, int year, int month, int day) {
+            view.setMinDate(System.currentTimeMillis() - 1000);
             // Do something with the date chosen by the user
-            edit_date.setText(day + "/" + (month + 1) + "/" + year);
+            edit_date.setText(year + "-" + (month + 1) + "-" + day);
         }
     }
 
@@ -244,6 +251,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         producturl = jsonObjectdata.getString("productUrl");
                         productName.setText(productname+"( "+productmodel+" )");
                         productPrice.setText("\u20B9 "+productprice);
+                        Log.i("producturl",producturl);
                         ImageLoader imageLoader = VolleySingleton.getInstance(CartActivity.this).getImageLoader();
                         imageLoader.get(producturl, ImageLoader.getImageListener(networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
                         networkImageView.setImageUrl(producturl, imageLoader);
@@ -280,7 +288,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         queue.add(stringRequest);
     }
 
-    public void TestDrive(){
+    public void TestDrive(View v){
         String Login_url = Apis.testdrive;
 
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -293,10 +301,14 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if(getStatus.equals("1")){
-                                submitForDrive.setTextColor(Color.parseColor("#9C3C34"));
-                                submitForDrive.setBackgroundColor(Color.WHITE);
-                                submitForDrive.setEnabled(false);
+                                Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), "Request "+message+" Our executive will be contact to given number soon. ( Thanking you!.. )", Snackbar.LENGTH_LONG).setTextColor(Color.YELLOW);
+                               // mySnackbar.setAction("Update", new ServiceProvidersAdapter.MyUndoListener());
+                                mySnackbar.show();
 
+                            }else {
+                                Snackbar mySnackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT);
+                                // mySnackbar.setAction("Update", new ServiceProvidersAdapter.MyUndoListener());
+                                mySnackbar.show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

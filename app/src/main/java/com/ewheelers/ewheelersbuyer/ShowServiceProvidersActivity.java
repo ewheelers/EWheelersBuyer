@@ -1,10 +1,13 @@
 package com.ewheelers.ewheelersbuyer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -29,6 +32,7 @@ import com.ewheelers.ewheelersbuyer.ModelClass.CartListClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.ServiceProvidersClass;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.google.gson.JsonObject;
+import com.kinda.alert.KAlertDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,12 +49,19 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
     List<ServiceProvidersClass> serviceProvidersClassesList = new ArrayList<>();
     String provider_is;
     String url = "";
+    KAlertDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_service_providers);
         recyclerView = findViewById(R.id.serviceProviders_list);
+
+        pDialog = new KAlertDialog(this, KAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+        pDialog.setTitleText("Loading...");
+        pDialog.setCancelable(false);
+
         provider_is = getIntent().getStringExtra("providerIs");
 
         assert provider_is != null;
@@ -64,22 +75,22 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
             url = "https://script.google.com/macros/s/AKfycbxdsfQFL113Xtuj8uf7B10z85OIDwOav4eZv2S33V59gnSX-IxI/exec?action=getItems";
         }
         if(provider_is.equals("spares")){
-            url = "";
+            url = "https://script.google.com/macros/s/AKfycbw1CBgKC8DKEeAnMRuBy3PwiL5CwcPx6nUIYNDEMrvA_ygtp_OB/exec?action=getItems";
         }
         if(provider_is.equals("accessories")){
-            url = "";
+            url = "https://script.google.com/macros/s/AKfycbwCazYe6eveZapEPtZVZUNCyZbz_GIww_Tncw1mbtDjlutAOWs/exec?action=getItems";
         }
 
         if(provider_is.equals("water wash")){
-            url = "";
+            url = "https://script.google.com/macros/s/AKfycbz2x7hyAkGeqZ4o_nmPXRxn7B5LWKflaj697eijstBBKY3Qr64/exec?action=getItems";
 
         }
         if(provider_is.equals("battery")){
-            url = "";
+            url = "https://script.google.com/macros/s/AKfycbw51r-VxmtwgRPFsPdlEAet83eVInQ4QP_khnEHip0J9M5YurE0/exec?action=getItems";
 
         }
         if(provider_is.equals("key repair")){
-            url = "";
+            url = "https://script.google.com/macros/s/AKfycbzKuNTXT2DD1yWYQZWCPUDlyZtUUx5wehGsDH3bOLAXvl1Z2Js/exec?action=getItems";
 
         }
         getItems(url);
@@ -88,13 +99,15 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
 
     private void getItems(String url_link) {
         final RequestQueue queue = Volley.newRequestQueue(this);
-
+        pDialog.show();
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                pDialog.dismiss();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
+
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
                             String Service_Provider_name = jsonObjectdata.getString("Service Provider name");
@@ -114,6 +127,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
                             serviceProvidersClass.setServiceprovider_address(Service_Provider_adress);
                             serviceProvidersClass.setServiceprovider_latitude(Service_Provider_latitude);
                             serviceProvidersClass.setServiceprovider_longitude(Service_Provider_longitude);
+                            serviceProvidersClass.setServiceProviderIs(provider_is);
                             serviceProvidersClassesList.add(serviceProvidersClass);
                         }
                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this,RecyclerView.VERTICAL,false);
@@ -131,6 +145,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                pDialog.dismiss();
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -147,5 +162,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
     }
+
+
 
 }

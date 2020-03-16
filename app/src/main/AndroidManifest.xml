@@ -23,7 +23,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup,android:usesCleartextTraffic">
-        <activity android:name=".ShowServiceProvidersActivity"></activity>
+        <activity android:name=".SetupBillingAddressActivity"></activity>
+        <activity android:name=".ViewOptionsActivity" />
+        <activity android:name=".UpdateProfileActivity" />
+        <activity android:name=".ShowServiceProvidersActivity" />
         <activity
             android:name=".CartSummaryActivity"
             android:configChanges="orientation"

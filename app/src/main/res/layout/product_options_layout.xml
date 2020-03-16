@@ -7,6 +7,7 @@
     android:layout_marginBottom="1dp">
 
     <LinearLayout
+        android:id="@+id/viewoptions_layout"
         android:weightSum="2"
         android:background="@color/colorGrey"
         android:layout_width="match_parent"
@@ -23,6 +24,18 @@
             android:paddingRight="2dp"
             android:paddingLeft="2dp"
             android:textColor="@color/colorBlack" />
+
+        <TextView
+            android:visibility="gone"
+            android:layout_marginLeft="2dp"
+            android:layout_weight="1.2"
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_gravity="center_vertical"
+            android:drawableRight="@drawable/ic_rightarrow"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:layout_marginStart="2dp" />
 
         <Spinner
             android:layout_marginLeft="2dp"

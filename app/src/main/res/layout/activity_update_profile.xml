@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:id="@+id/updatelayout">
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/padding_10"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_10"
+    tools:context=".UpdateProfileActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Country *" />
+
+    <Spinner
+        android:id="@+id/countries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select State *" />
+
+    <Spinner
+        android:id="@+id/states"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User name" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/username_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone number" />
+
+    <EditText
+        android:maxLength="10"
+        android:inputType="number"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/userphone_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="City" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/usercity_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Company" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/usercompany_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Brief Profile" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/userprofileinfo_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What Kind Products Services Advertise" />
+
+    <EditText
+        android:inputType="textPersonName"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/userprodservices_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Date of birth" />
+
+    <EditText
+        android:inputType="date"
+        android:drawablePadding="@dimen/padding_10"
+        android:drawableLeft="@drawable/ic_date"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:padding="@dimen/dimen_5dp"
+        android:background="@drawable/border_bg"
+        android:id="@+id/userdob_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:layout_marginTop="@dimen/dimen_15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:id="@+id/upadate_btn"/>
+</LinearLayout>
+</ScrollView>

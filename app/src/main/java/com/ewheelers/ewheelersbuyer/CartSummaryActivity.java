@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.SpannableString;
@@ -41,21 +42,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CartSummaryActivity extends AppCompatActivity implements View.OnClickListener,TextWatcher {
-    TextView netamount,sellerAddress,walletBalance,customerAddress,walletDetails,applyCode,promoResult;
+public class CartSummaryActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
+    TextView netamount, sellerAddress, walletBalance, customerAddress, walletDetails, applyCode, promoResult;
     String tokenvalue;
     EditText editTextPromo;
-    LinearLayout promoLayout,linear_layout,apply_layout;
-    Button removeButton,pay;
+    LinearLayout promoLayout, linear_layout, apply_layout;
+    Button removeButton, pay;
     List<PriceDetailsClass> priceDetailsClasses = new ArrayList<>();
     RecyclerView pricelist;
     PricedetailAdapter pricedetailAdapter;
     String net_amount;
+    TextView changeAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,16 +78,19 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         pricelist = findViewById(R.id.price_list);
         apply_layout = findViewById(R.id.apply_promo_layout);
         pay = findViewById(R.id.payment);
+        changeAddress = findViewById(R.id.changeAddress);
         applyCode.setOnClickListener(this);
         removeButton.setOnClickListener(this);
         editTextPromo.addTextChangedListener(this);
         pay.setOnClickListener(this);
+        changeAddress.setOnClickListener(this);
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
-        walletDetails.setText("Wallet Balance "+"\u20B9 0.00 "+"can be Applied "+getResources().getString(R.string.details));
+        walletDetails.setText("Wallet Balance " + "\u20B9 0.00 " + "can be Applied " + getResources().getString(R.string.details));
         //cartListing();
 
     }
+
     public void cartListing() {
         priceDetailsClasses.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
@@ -98,11 +105,11 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     String msg = jsonObject.getString("msg");
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String wallet_balance = dataJsonObject.getString("displayUserWalletBalance");
-                    walletBalance.setText("Wallet Balance "+wallet_balance);
+                    walletBalance.setText("Wallet Balance " + wallet_balance);
                     String cartcount = dataJsonObject.getString("cartItemsCount");
                     net_amount = dataJsonObject.getString("orderNetAmount");
                     JSONArray jsonArrayPricedetails = dataJsonObject.getJSONArray("priceDetail");
-                    for(int i=0;i<jsonArrayPricedetails.length();i++){
+                    for (int i = 0; i < jsonArrayPricedetails.length(); i++) {
                         JSONObject jsonObjectvalue = jsonArrayPricedetails.getJSONObject(i);
                         String key = jsonObjectvalue.getString("key");
                         String val = jsonObjectvalue.getString("value");
@@ -117,28 +124,32 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     netamount.setText(amount);
 
                     JSONObject jsonObjectBillAddress = dataJsonObject.getJSONObject("cartSelectedBillingAddress");
-                    String customername = jsonObjectBillAddress.getString("ua_name");
-                    String u_address1 = jsonObjectBillAddress.getString("ua_address1");
-                    String ua_address2 = jsonObjectBillAddress.getString("ua_address2");
-                    String u_city = jsonObjectBillAddress.getString("ua_city");
-                    String u_phone = jsonObjectBillAddress.getString("ua_phone");
+                    if(jsonObjectBillAddress.toString().equals("{}")){
+                        customerAddress.setText("Setup Billing Address");
+                        customerAddress.setTextColor(Color.RED);
+                    }else {
+                        String customername = jsonObjectBillAddress.getString("ua_name");
+                        String u_address1 = jsonObjectBillAddress.getString("ua_address1");
+                        String ua_address2 = jsonObjectBillAddress.getString("ua_address2");
+                        String u_city = jsonObjectBillAddress.getString("ua_city");
+                        String u_phone = jsonObjectBillAddress.getString("ua_phone");
 
-                    customerAddress.setText(customername+","+u_address1+","+ua_address2+","+u_phone);
-
+                        customerAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_phone);
+                    }
                     JSONArray jsonArrayProduct = dataJsonObject.getJSONArray("products");
-                    for(int i=0;i<jsonArrayProduct.length();i++){
+                    for (int i = 0; i < jsonArrayProduct.length(); i++) {
                         JSONObject jsonObjectProducts = jsonArrayProduct.getJSONObject(i);
                         JSONObject jsonObjectselleraddress = jsonObjectProducts.getJSONObject("seller_address");
                         String shopcontact_name = jsonObjectselleraddress.getString("shop_contact_person");
                         String shop_city = jsonObjectselleraddress.getString("shop_city");
                         String shop_address_line_1 = jsonObjectselleraddress.getString("shop_address_line_1");
                         String shop_address_line_2 = jsonObjectselleraddress.getString("shop_address_line_2");
-                        sellerAddress.setText(shopcontact_name+","+shop_city+","+shop_address_line_1+","+shop_address_line_2);
+                        sellerAddress.setText(shopcontact_name + "," + shop_city + "," + shop_address_line_1 + "," + shop_address_line_2);
                     }
 
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
                     pricelist.setLayoutManager(linearLayoutManager);
-                    pricedetailAdapter = new PricedetailAdapter(CartSummaryActivity.this,priceDetailsClasses);
+                    pricedetailAdapter = new PricedetailAdapter(CartSummaryActivity.this, priceDetailsClasses);
                     pricelist.setAdapter(pricedetailAdapter);
                     pricedetailAdapter.notifyDataSetChanged();
 
@@ -178,7 +189,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.apply_code:
                 ApplyPromocode();
                 break;
@@ -186,12 +197,16 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 RemovePromoCode();
                 break;
             case R.id.payment:
-                Intent in = new Intent(getApplicationContext(),StartPaymentActivity.class);
-                in.putExtra("netamount",net_amount);
+                Intent in = new Intent(getApplicationContext(), StartPaymentActivity.class);
+                in.putExtra("netamount", net_amount);
                /* in.putExtra("name",);
                 in.putExtra("mobile",);
                 in.putExtra("Productname",);*/
                 startActivity(in);
+                break;
+            case R.id.changeAddress:
+                Intent i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
+                startActivity(i);
                 break;
         }
     }
@@ -208,12 +223,12 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
-                            if(getStatus.equals("1")) {
+                            if (getStatus.equals("1")) {
                                 apply_layout.setVisibility(View.GONE);
                                 promoLayout.setVisibility(View.VISIBLE);
-                                promoResult.setText("Coupon '"+editTextPromo.getText().toString()+"' applied");
+                                promoResult.setText("Coupon '" + editTextPromo.getText().toString() + "' applied");
                                 cartListing();
-                            }else {
+                            } else {
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                 mySnackbar.show();
                             }
@@ -260,12 +275,12 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    if(status.equals("1")) {
+                    if (status.equals("1")) {
                         apply_layout.setVisibility(View.VISIBLE);
                         promoLayout.setVisibility(View.GONE);
                         cartListing();
-                    }else {
-                        Toast.makeText(CartSummaryActivity.this, ""+msg, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(CartSummaryActivity.this, "" + msg, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -289,6 +304,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 params.put("X-TOKEN", tokenvalue);
                 return params;
             }
+
             @Override
             public Map<String, String> getParams() {
                 return null;
@@ -318,11 +334,11 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void afterTextChanged(Editable s) {
         CharSequence charSequence = s.toString();
-    if(charSequence.equals(editTextPromo.getEditableText().toString())){
-        if(charSequence.length()==0){
-            promoLayout.setVisibility(View.GONE);
-            promoResult.setText("");
+        if (charSequence.equals(editTextPromo.getEditableText().toString())) {
+            if (charSequence.length() == 0) {
+                promoLayout.setVisibility(View.GONE);
+                promoResult.setText("");
+            }
         }
-    }
     }
 }

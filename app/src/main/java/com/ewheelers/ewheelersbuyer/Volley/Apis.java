@@ -17,5 +17,9 @@ public class Apis {
     public static String testdrive = base + "test-drive/setup";
     public static String bookproduct = base + "cart/add";
     public static String collectionView = base+"collections/search";
+    public static String profileInfo = base+"account/profile-info";
+    public static String UpdateProfileInfo = base+"account/update-profile-info";
+    public static String getCountries = base+"home/countries";
+    public static String getStates = base+"home/states/";
 
 }

@@ -134,6 +134,12 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
     public void getCollectionProducts(final View view) {
+        homeCollectionSliderList.clear();
+        homeCollectionCategoriesList.clear();
+        homeCollectionShopsList.clear();
+        homeCollectionProductsList.clear();
+        homeCollectionbrandList.clear();
+
         final RequestQueue queue = Volley.newRequestQueue(getActivity());
         String serverurl = Apis.home;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
@@ -177,10 +183,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                                 //collectionTitle.setText(collectionname);
 
-                              /*  if (collectionType.equals("2")) {
+                                if (collectionType.equals("2")) {
 
                                     String collection_id = jsonObjectProducts.getString("collection_id");
-                                    String collectionimage = jsonObjectProducts.getString("collection_image");
+                                  //  String collectionimage = jsonObjectProducts.getString("collection_image");
                                     String collection_name = jsonObjectProducts.getString("collection_name");
                                     categoriesTitle.setText(collection_name);
 
@@ -188,10 +194,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                                     for (int s = 0; s < jsonArrayCategories.length(); s++) {
                                         JSONObject jsonObjectcat = jsonArrayCategories.getJSONObject(s);
-                                        String prodcat_id = jsonObjectProducts.getString("prodcat_id");
-                                        String prodcat_name = jsonObjectProducts.getString("prodcat_name");
-                                        String prodcat_description = jsonObjectProducts.getString("prodcat_description");
-                                        String category_image_url = jsonObjectProducts.getString("category_image_url");
+                                        String prodcat_id = jsonObjectcat.getString("prodcat_id");
+                                        String prodcat_name = jsonObjectcat.getString("prodcat_name");
+                                        String prodcat_description = jsonObjectcat.getString("prodcat_description");
+                                        String category_image_url = jsonObjectcat.getString("category_image_url");
                                         HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
                                         homeCollectionProducts.setProdcategory_name(prodcat_name);
                                         homeCollectionProducts.setProdcategory_imageurl(category_image_url);
@@ -201,7 +207,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                                     }
 
-                                }*/
+                                }
 
                                 if (collectionType.equals("3")) {
                                     String collectionName = jsonObjectProducts.getString("collection_name");
@@ -234,9 +240,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
 
 
-                          /*  if (collectionType.equals("1")) {
+                            if (collectionType.equals("1")) {
                                 String collection_id = jsonObjectProducts.getString("collection_id");
-                                String collectionimage = jsonObjectProducts.getString("collection_image");
+                             //   String collectionimage = jsonObjectProducts.getString("collection_image");
                                 String collection_name = jsonObjectProducts.getString("collection_name");
                                 collectionTitle.setText(collection_name);
                                 JSONArray jsonArrayProducts = jsonObjectProducts.getJSONArray("products");
@@ -266,7 +272,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                     homeCollectionProductsList.add(homeCollectionProducts);
                                 }
 
-                            }*/
+                            }
 
                                if (collectionType.equals("4")) {
                                     String collection_Name = jsonObjectProducts.getString("collection_name");

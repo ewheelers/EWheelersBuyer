@@ -29,6 +29,8 @@ public class ProductDetails implements Parcelable {
 
     //for options & spinner data
     private String optionName;
+    private String optionid;
+    private String optioniscolor;
    // private ArrayList<String> optionslist;
 
     private ArrayList<OptionValues> optionValuesArrayList;

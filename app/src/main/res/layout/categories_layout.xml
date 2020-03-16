@@ -4,10 +4,11 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 <TextView
+    android:textColor="@color/colorHeadings"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/category_name"
-    android:layout_gravity="center_horizontal"
+    android:gravity="center"
     android:padding="@dimen/padding_10"/>
     <com.android.volley.toolbox.NetworkImageView
         android:layout_width="96dp"
