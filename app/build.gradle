@@ -68,4 +68,5 @@ dependencies {
     implementation 'com.payumoney.core:payumoney-sdk:7.6.0'
     implementation 'com.payumoney.sdkui:plug-n-play:1.6.0'
     implementation 'com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1'
+    implementation 'com.github.vihtarb:tooltip:0.1.9'
 }

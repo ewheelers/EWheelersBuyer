@@ -3,6 +3,8 @@ package com.ewheelers.ewheelersbuyer.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.cardview.widget.CardView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +47,8 @@ import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 import com.google.android.material.snackbar.Snackbar;
+import com.tooltip.OnClickListener;
+import com.tooltip.Tooltip;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +57,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import tourguide.tourguide.Overlay;
+import tourguide.tourguide.Pointer;
+import tourguide.tourguide.ToolTip;
+import tourguide.tourguide.TourGuide;
 
 public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAdapter.MyHolder> {
     private Context context;
@@ -86,9 +97,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
             case ProductDetails.OFFERS:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.available_offers_layout, parent, false);
                 return new MyHolder(v);
-            case ProductDetails.BUYWITH:
+           /* case ProductDetails.BUYWITH:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.buytogether_layout, parent, false);
-                return new MyHolder(v);
+                return new MyHolder(v);*/
             case ProductDetails.SIMILARPRODUCTS:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.similarproducts_layout, parent, false);
                 return new MyHolder(v);
@@ -160,12 +171,8 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                 });*/
 
                 break;
-            case ProductDetails.OFFERS:
-                holder.icon.setImageResource(productDetails.get(position).getImageicon());
-                holder.offertitle.setText(productDetails.get(position).getOffertitle());
-                // holder.offercaption.setText(productDetails.get(position).getOffercaption());
-                break;
-            case ProductDetails.BUYWITH:
+
+          /*  case ProductDetails.BUYWITH:
                 holder.buywithname.setText(productDetails.get(position).getBuywithproductname());
                 holder.buywithprice.setText("\u20B9 " + productDetails.get(position).getBuywithproductprice());
                 String buywithurl = productDetails.get(position).getBuywithimageurl();
@@ -184,11 +191,11 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         quantity++;
                         holder.buywithinteger.setText(String.valueOf(quantity));
                         holder.buyWithcheckBox.setChecked(false);
-                       /* if (holder.buyWithcheckBox.isChecked()) {
+                       *//* if (holder.buyWithcheckBox.isChecked()) {
                             String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
                             Toast.makeText(context, "selected: " + selbuywithprodid + ":" + holder.buywithinteger.getText().toString(), Toast.LENGTH_SHORT).show();
 
-                        }*/
+                        }*//*
                     }
                 });
 
@@ -201,10 +208,10 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                             quantity--;
                         holder.buywithinteger.setText(String.valueOf(quantity));
                         holder.buyWithcheckBox.setChecked(false);
-                        /*if (holder.buyWithcheckBox.isChecked()) {
+                        *//*if (holder.buyWithcheckBox.isChecked()) {
                             String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
                             Toast.makeText(context, "selected: " + selbuywithprodid + ":" + holder.buywithinteger.getText().toString(), Toast.LENGTH_SHORT).show();
-                        }*/
+                        }*//*
 
                     }
                 });
@@ -215,14 +222,14 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                             //jsonObject1 = new JSONObject();
 
                             try {
-                              /*  for (int i = 0; i < productDetails.size(); i++) {
+                              *//*  for (int i = 0; i < productDetails.size(); i++) {
 
                                     String selbuywithprodid = productDetails.get(i).getButwithselectedProductId();
                                     jsonObject1.put(selbuywithprodid, String.valueOf(quantity));
 
                                 }
 
-                            */
+                            *//*
                               for(int i =0;i<productDetails.size();i++) {
                                   if (buttonView.isChecked()) {
                                       String selbuywithprodid = productDetails.get(position).getButwithselectedProductId();
@@ -236,9 +243,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                                 // Toast.makeText(context, "addons: "+addons, Toast.LENGTH_SHORT).show();
                                 ((ProductDetailActivity) context).jsonaddons(addons);
 
-                             /*   Intent intent = new Intent("custom-message");
+                             *//*   Intent intent = new Intent("custom-message");
                                 intent.putExtra("jsonaddons", addons);
-                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);*/
+                                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);*//*
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -249,7 +256,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                     }
                 });
 
-                break;
+                break;*/
             case ProductDetails.SIMILARPRODUCTS:
                 holder.pro_name.setText(productDetails.get(position).getSimilarproductname());
                 holder.price.setText("\u20B9 " + productDetails.get(position).getSimilarproductprice());
@@ -313,6 +320,37 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                     }
                 });
                 break;
+            case ProductDetails.OFFERS:
+                holder.icon.setImageResource(productDetails.get(position).getImageicon());
+                holder.offertitle.setText(productDetails.get(position).getOffertitle());
+                // holder.offercaption.setText(productDetails.get(position).getOffercaption());
+                holder.icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(position==1){
+                            ((ProductDetailActivity)context).OfferClick(position);
+                           /* Intent i = new Intent(context,CartActivity.class);
+                            i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
+                            i.putExtra("buttontext", String.valueOf(productDetails.get(position).getOffertitle()));
+                            context.startActivity(i);*/
+                        }else {
+                            Tooltip tooltip = new Tooltip.Builder(v)
+                                    .setText("Sorry. No "+productDetails.get(position).getOffertitle()+" Offers Available Now.")
+                                    .setTextColor(Color.WHITE)
+                                    .setBackgroundColor(Color.parseColor("#9c3c34"))
+                                    .setCancelable(true)
+                                    .show();
+                           /* new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tooltip.dismiss();
+                                }
+                            },2000);*/
+                            //((ProductDetailActivity)context).showSnackbar(productDetails.get(position).getOffertitle());
+                        }
+                    }
+                });
+                break;
         }
 
 
@@ -335,10 +373,11 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
         Spinner optionvalues;
         TextView optionnames;
         ImageView icon;
-        TextView offertitle, offercaption, buywithname, buywithprice, buywithinteger, price, pro_name;
+        TextView offertitle, offercaption, price, pro_name;
+       // TextView  buywithname, buywithprice, buywithinteger;
         Button buyWithminus, buyWithplus, bottomBtn;
         LinearLayout linearLayoutsimilar;
-        CheckBox buyWithcheckBox;
+       // CheckBox buyWithcheckBox;
         LinearLayout viewoptionslayout;
 
         public MyHolder(@NonNull View itemView) {
@@ -351,18 +390,18 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
             offertitle = itemView.findViewById(R.id.title_offer);
             // offercaption = itemView.findViewById(R.id.caption_offer);
             buywithimgIcon = itemView.findViewById(R.id.thumviewimage);
-            buywithname = itemView.findViewById(R.id.buywith_title);
+           /* buywithname = itemView.findViewById(R.id.buywith_title);
             buywithprice = itemView.findViewById(R.id.buywith_price);
             buywithinteger = itemView.findViewById(R.id.buywith_integer_number);
             buyWithminus = itemView.findViewById(R.id.buywith_decrease);
-            buyWithplus = itemView.findViewById(R.id.buywith_increase);
+            buyWithplus = itemView.findViewById(R.id.buywith_increase);*/
 
             product_image = itemView.findViewById(R.id.image_view);
             price = itemView.findViewById(R.id.product_price);
             pro_name = itemView.findViewById(R.id.product_name);
             linearLayoutsimilar = itemView.findViewById(R.id.click_similarproduct);
             bottomBtn = itemView.findViewById(R.id.bottom_button);
-            buyWithcheckBox = itemView.findViewById(R.id.checkoradd);
+          //  buyWithcheckBox = itemView.findViewById(R.id.checkoradd);
 
             viewoptionslayout = itemView.findViewById(R.id.viewoptions_layout);
 

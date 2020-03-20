@@ -58,7 +58,7 @@
             android:textColor="@color/colorBlack"
             android:layout_height="wrap_content"
             android:layout_weight="0.65"
-            android:text="2.1km"/>
+            android:text=""/>
     </LinearLayout>
 
 </LinearLayout>

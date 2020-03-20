@@ -4,16 +4,12 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
-import android.provider.Telephony;
-import android.telephony.PhoneNumberUtils;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,56 +22,54 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ewheelers.ewheelersbuyer.GPSTracker;
-import com.ewheelers.ewheelersbuyer.Interface.ItemClickListener;
 import com.ewheelers.ewheelersbuyer.ModelClass.ServiceProvidersClass;
+import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.ShowServiceProvidersActivity;
 import com.ewheelers.ewheelersbuyer.UpdateProfileActivity;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
-import com.google.android.material.snackbar.Snackbar;
+import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
+
+import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
+import static com.payu.custombrowser.CBActivity.b;
 
 
 public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvidersAdapter.ServiceProviderHolder> {
     private Context context;
     private List<ServiceProvidersClass> serviceProvidersClassList;
-    GPSTracker gps;
-    double latitude, longitude;
-    String tokenValue;
+    private String tokenValue;
 
     public ServiceProvidersAdapter(Context context, List<ServiceProvidersClass> serviceProvidersClassList) {
         this.context = context;
         this.serviceProvidersClassList = serviceProvidersClassList;
-        gps = new GPSTracker(context);
-        if (gps.canGetLocation()) {
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-        }
     }
 
     @NonNull
@@ -169,7 +163,8 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                                     }else {
                                         onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), latitude, longitude, user_name, user_phone);
                                     }*/
-                                    onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), latitude, longitude, user_name, user_phone);
+
+                                    onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), serviceProvidersClassList.get(position).getCurrentlongitude(), serviceProvidersClassList.get(position).getCurrentlatitude(), user_name, user_phone);
 
 
                                 } catch (JSONException e) {
@@ -212,9 +207,14 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                 });
             }
         });
-        Location startPoint = new Location("locationA");
-        startPoint.setLatitude(latitude);
-        startPoint.setLongitude(longitude);
+
+       /* double latitude = ((ShowServiceProvidersActivity) context).lat();
+        double longitude = ((ShowServiceProvidersActivity) context).longi();*/
+//        Toast.makeText(context, "curr: "+serviceProvidersClassList.get(position).getCurrentlatitude()+" / "+serviceProvidersClassList.get(position).getCurrentlongitude(), Toast.LENGTH_SHORT).show();
+
+       /* Location startPoint = new Location("locationA");
+        startPoint.setLatitude(serviceProvidersClassList.get(position).getCurrentlatitude());
+        startPoint.setLongitude(serviceProvidersClassList.get(position).getCurrentlongitude());
 
         Location endPoint = new Location("locationA");
         endPoint.setLatitude(Double.parseDouble(serviceProvidersClassList.get(position).getServiceprovider_latitude()));
@@ -222,8 +222,53 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
 
         double distance = startPoint.distanceTo(endPoint);
         double kms = distance / 1000;
-        BigDecimal bd = new BigDecimal(kms).setScale(2, RoundingMode.HALF_UP);
-        holder.locate.setText(bd + "km");
+        BigDecimal bd = new BigDecimal(kms).setScale(2, RoundingMode.HALF_UP);*/
+
+       Log.d("currentlatlong",serviceProvidersClassList.get(position).getCurrentlatitude()+","+serviceProvidersClassList.get(position).getCurrentlongitude());
+        Log.d("servicelatlong",serviceProvidersClassList.get(position).getServiceprovider_latitude()+","+serviceProvidersClassList.get(position).getServiceprovider_longitude());
+
+        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + serviceProvidersClassList.get(position).getCurrentlongitude() + "," + serviceProvidersClassList.get(position).getCurrentlatitude() + "&destinations=" + serviceProvidersClassList.get(position).getServiceprovider_latitude() + "," + serviceProvidersClassList.get(position).getServiceprovider_longitude() + "&key=AIzaSyAyuQjmdCe43w40mbR422_ix8QPzgDbgxs";
+        StringRequest strRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONArray dist = jsonObject.getJSONArray("rows");
+                            JSONObject obj2 = (JSONObject) dist.get(0);
+                            JSONArray disting = (JSONArray) obj2.get("elements");
+                            JSONObject obj3 = (JSONObject) disting.get(0);
+                            JSONObject obj4 = (JSONObject) obj3.get("distance");
+                            JSONObject obj5 = (JSONObject) obj3.get("duration");
+                            String distance = obj4.getString("text");
+                            holder.locate.setText(distance);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+                Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getParams() {
+
+                Map<String, String> data3 = new HashMap<String, String>();
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
+
         holder.locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -258,7 +303,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
         }
     }
 
-    public void onShareClick(View v, String servicename, String number, double lat, double lon,String username,String usermobile) {
+    public void onShareClick(View v, String servicename, String number, double lat, double lon, String username, String usermobile) {
         List<Intent> targetShareIntents = new ArrayList<Intent>();
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -274,7 +319,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                     if (packageName.equals("com.whatsapp")) {
                         intent.setAction(Intent.ACTION_SEND);
                         intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_TEXT, username + " Requesting " + servicename + " contact: " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
+                        intent.putExtra(Intent.EXTRA_TEXT, username + " Requesting for " + servicename + " Service\n"+R.string.contact+" : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
                         intent.putExtra("jid", "91" + number + "@s.whatsapp.net");
                     }
 

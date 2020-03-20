@@ -1,6 +1,5 @@
 package com.ewheelers.ewheelersbuyer.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,10 +41,12 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
     private Context context;
     private List<CartListClass> cartListClasses;
     private int quantity=1;
+    private CartListingAdapter cartListingAdapter;
 
     public CartListingAdapter(Context context, List<CartListClass> cartListClasses) {
         this.context = context;
         this.cartListClasses = cartListClasses;
+        this.cartListingAdapter = this;
     }
 
     @NonNull
@@ -90,11 +90,13 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                         String getStatus = jsonObject.getString("status");
                                         String message = jsonObject.getString("msg");
                                         if (getStatus.equals("1")) {
-                                            holder.item_lay.setVisibility(View.GONE);
-                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+                                           // holder.item_lay.setVisibility(View.GONE);
                                             if (context instanceof CartListingActivity) {
                                                 ((CartListingActivity)context).restartActivity();
                                             }
+                                            cartListClasses.remove(cartListClasses.get(position));
+                                            cartListingAdapter.notifyDataSetChanged();
+
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -159,6 +161,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                         if (context instanceof CartListingActivity) {
                                             ((CartListingActivity)context).restartActivity();
                                         }
+
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -220,6 +223,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                             if (context instanceof CartListingActivity) {
                                                 ((CartListingActivity)context).restartActivity();
                                             }
+
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();

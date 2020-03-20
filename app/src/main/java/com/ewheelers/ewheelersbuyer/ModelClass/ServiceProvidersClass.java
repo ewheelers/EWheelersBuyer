@@ -11,6 +11,25 @@ public class ServiceProvidersClass {
     private String serviceprovider_latitude;
     private String serviceprovider_longitude;
 
+    private double currentlatitude;
+    private double currentlongitude;
+
+    public double getCurrentlatitude() {
+        return currentlatitude;
+    }
+
+    public void setCurrentlatitude(double currentlatitude) {
+        this.currentlatitude = currentlatitude;
+    }
+
+    public double getCurrentlongitude() {
+        return currentlongitude;
+    }
+
+    public void setCurrentlongitude(double currentlongitude) {
+        this.currentlongitude = currentlongitude;
+    }
+
     public String getServiceProviderIs() {
         return serviceProviderIs;
     }

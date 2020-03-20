@@ -3,6 +3,8 @@ package com.ewheelers.ewheelersbuyer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -13,12 +15,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
@@ -94,7 +105,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     GPSTracker gps;
     Geocoder geocoder;
     List<Address> addresses;
-    double latitude, longitude;
+    static double latitude, longitude;
 
     TextView getuser_location;
 
@@ -103,6 +114,9 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
     TextView mainCartCount;
     String tokenvalue;
+
+    NewGPSTracker newgps;
+    Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +133,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         recyclerView = findViewById(R.id.static_menus);
         showmenuicon = findViewById(R.id.showmenu);
         mainCartCount = findViewById(R.id.maincartcount);
-        tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this,SessionStorage.tokenvalue);
+        tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this, SessionStorage.tokenvalue);
 
         mainCartCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,43 +177,223 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         navigationView.setNavigationItemSelectedListener(this);
 
         menuIconAdapter = new MenuIconAdapter(this, homeMenuIcons());
-        GridLayoutManager linearLayoutManager = new GridLayoutManager(this,4);
-       // LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
+        // GridLayoutManager linearLayoutManager = new GridLayoutManager(this,4);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(menuIconAdapter);
 
-        Intent intent = new Intent(getApplicationContext(), DiscountActivity.class);
+       /* Intent intent = new Intent(getApplicationContext(), DiscountActivity.class);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        startActivity(intent);
+        startActivity(intent);*/
 
-      //  getcurrentLocation();
+        //getcurrentLocation();
         //getCartCountHome();
         initGoogleAPIClient();
         showSettingDialog();
 
-        String location = new SessionStorage().getStrings(this,SessionStorage.location);
-        if(location!=null){
+        String location = new SessionStorage().getStrings(this, SessionStorage.location);
+        if (location != null) {
             getuser_location.setText(location);
             getuser_location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    setcityDialog();
+                    //setcityDialog();
+                    Intent i = new Intent(getApplicationContext(), SelectCityActivity.class);
+                    startActivity(i);
                 }
             });
         }
-        if(getuser_location.getText().toString().equals("location")){
+        if (getuser_location.getText().toString().equals("location")) {
+            final TourGuide mTourGuideHandler = TourGuide.init(this).with(TourGuide.Technique.Click).setPointer(new Pointer()).setToolTip(new ToolTip().setTitle("Choose location!").setDescription("Click on Get Started to begin...")).setOverlay(new Overlay()).playOn(getuser_location);
+            getuser_location.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mTourGuideHandler.cleanUp();
+                    // setcityDialog();
+                    Intent i = new Intent(getApplicationContext(), SelectCityActivity.class);
+                    startActivity(i);
+                }
+            });
+        }
+
+       /* String cityname = new SessionStorage().getStrings(this,SessionStorage.location);
+        if(cityname.isEmpty()){
             final TourGuide mTourGuideHandler = TourGuide.init(this).with(TourGuide.Technique.Click) .setPointer(new Pointer()) .setToolTip(new ToolTip().setTitle("Choose location!").setDescription("Click on Get Started to begin...")) .setOverlay(new Overlay()) .playOn(getuser_location);
             getuser_location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mTourGuideHandler.cleanUp();
-                    setcityDialog();
+                    // setcityDialog();
+                    Intent i = new Intent(getApplicationContext(),SelectCityActivity.class);
+                    startActivity(i);
                 }
             });
+        }else {
+            getuser_location.setText(cityname);
+        }*/
+
+        mContext = this;
+
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(NavAppBarActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+
+        } else {
+            Toast.makeText(mContext,"You need have granted permission",Toast.LENGTH_SHORT).show();
+            newgps = new NewGPSTracker(mContext, NavAppBarActivity.this);
+
+            // Check if GPS enabled
+            if (newgps.canGetLocation()) {
+
+                latitude = newgps.getLatitude();
+                longitude = newgps.getLongitude();
+
+                // \n is for new line
+
+               // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+                try {
+                    geocoder = new Geocoder(this, Locale.ENGLISH);
+                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    StringBuilder str1 = new StringBuilder();
+                    StringBuilder str2 = new StringBuilder();
+                    StringBuilder str3 = new StringBuilder();
+                    StringBuilder str4 = new StringBuilder();
+                    StringBuilder str5 = new StringBuilder();
+                    StringBuilder str6 = new StringBuilder();
+
+                    if (Geocoder.isPresent()) {
+
+                        Address returnAddress = addresses.get(0);
+
+                        String address = returnAddress.getAddressLine(0);
+                        String localityString = returnAddress.getSubLocality();
+                        String citys = returnAddress.getLocality();
+                        String region_code = returnAddress.getCountryName();
+                        String zipcode = returnAddress.getPostalCode();
+                        String statenam = returnAddress.getAdminArea();
+                        str1.append(address);
+                        str2.append(localityString);
+                        str3.append(citys);
+                        str4.append(region_code);
+                        str5.append(zipcode);
+                        str6.append(statenam);
+
+                        //getuser_location.setText(str3);
+                        //  countrycode.setText(str4);
+                        //  pincodeno.setText(str5);
+                        //  statename.setText(str6);
+                        //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
+                        //donator_addre.setEnabled(false);
+                        //city.setText(str1);
+                        Toast.makeText(getApplicationContext(), "Your Location is -" +str3, Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e("tag", e.getMessage());
+                }
+            } else {
+                // Can't get location.
+                // GPS or network is not enabled.
+                // Ask user to enable GPS/network in settings.
+                gps.showSettingsAlert();
+            }
         }
 
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+
+                    // contacts-related task you need to do.
+
+                    newgps = new NewGPSTracker(mContext, NavAppBarActivity.this);
+
+                    // Check if GPS enabled
+                    if (newgps.canGetLocation()) {
+
+                        latitude = newgps.getLatitude();
+                        longitude = newgps.getLongitude();
+
+                        // \n is for new line
+                        //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " +   latitude + "\nLong: " +  longitude, Toast.LENGTH_LONG).show();
+                        try {
+                            geocoder = new Geocoder(this, Locale.ENGLISH);
+                            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                            StringBuilder str1 = new StringBuilder();
+                            StringBuilder str2 = new StringBuilder();
+                            StringBuilder str3 = new StringBuilder();
+                            StringBuilder str4 = new StringBuilder();
+                            StringBuilder str5 = new StringBuilder();
+                            StringBuilder str6 = new StringBuilder();
+
+                            if (Geocoder.isPresent()) {
+
+                                Address returnAddress = addresses.get(0);
+
+                                String address = returnAddress.getAddressLine(0);
+                                String localityString = returnAddress.getSubLocality();
+                                String citys = returnAddress.getLocality();
+                                String region_code = returnAddress.getCountryName();
+                                String zipcode = returnAddress.getPostalCode();
+                                String statenam = returnAddress.getAdminArea();
+                                str1.append(address);
+                                str2.append(localityString);
+                                str3.append(citys);
+                                str4.append(region_code);
+                                str5.append(zipcode);
+                                str6.append(statenam);
+
+                                //getuser_location.setText(str3);
+                                //  countrycode.setText(str4);
+                                //  pincodeno.setText(str5);
+                                //  statename.setText(str6);
+                                //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
+                                //donator_addre.setEnabled(false);
+                                //city.setText(str1);
+                                Toast.makeText(getApplicationContext(), "Your Location is -" +str3, Toast.LENGTH_LONG).show();
+
+                            } else {
+                                Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            Log.e("tag", e.getMessage());
+                        }
+                    } else {
+                        // Can't get location.
+                        // GPS or network is not enabled.
+                        // Ask user to enable GPS/network in settings.
+                        gps.showSettingsAlert();
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    Toast.makeText(mContext, "You need to grant permission", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
+    }
+
+    public double setlatitude() {
+        return latitude;
+    }
+
+    public double setlongitude() {
+        return longitude;
     }
 
     private void setcityDialog() {
@@ -225,18 +419,14 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 || super.onSupportNavigateUp();
     }
 
-    public void getcurrentLocation() {
+   /* public void getcurrentLocation() {
         gps = new GPSTracker(this);
 
         if (gps.canGetLocation()) {
             latitude = gps.getLatitude();
             longitude = gps.getLongitude();
-            // \n is for new line
 
-            // latTextView.setText(String.valueOf(latitude));
-            // lonTextView.setText(String.valueOf(longitude));
-
-            // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
             try {
                 geocoder = new Geocoder(this, Locale.ENGLISH);
                 addresses = geocoder.getFromLocation(latitude, longitude, 1);
@@ -275,7 +465,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
-// TODO Auto-generated catch block
                 Log.e("tag", e.getMessage());
             }
         } else {
@@ -311,17 +500,17 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
-    }
+    }*/
 
     public List<HomeMenuIcons> homeMenuIcons() {
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "charge"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "mechanic"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_punctureflat, "puncture"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "water wash"));
+        //homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
+       // homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "battery"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_keyrepair, "key repair"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "water wash"));
         return homeMenuIcons;
     }
 
@@ -338,6 +527,21 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             Intent i = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(i);
             finish();
+        }
+
+        if (id == R.id.share_app) {
+            // Handle the share action
+            try {
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                String shareMessage = "\nLargest eBike Digital Store\n";
+                shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+                startActivity(Intent.createChooser(shareIntent, "choose one"));
+            } catch (Exception e) {
+                //e.toString();
+            }
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -453,6 +657,27 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     public void onResume() {
         getCartCountHome();
         super.onResume();
+    }
+    boolean doubleBackToExitPressedOnce = false;
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+                finish();
+            }
+        }, 2000);
     }
 
 }

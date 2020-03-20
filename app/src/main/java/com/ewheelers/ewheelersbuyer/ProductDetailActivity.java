@@ -1,17 +1,13 @@
 package com.ewheelers.ewheelersbuyer;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,8 +19,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -44,14 +38,13 @@ import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductSpecifications;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,7 +77,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     TextView brand, productName, cost, policytext, totalreview, totalrating, buywithtit, similarproductTitle;
     String optionname1;
 
-    TextView rentavailbility;
+    TextView rentavailbility,findstore;
 
     String paymetnpolicy, deliverpolicy, refundpolicy, shopname, countryname, statename, city, shopuserid;
     FrameLayout frameLayout;
@@ -98,9 +91,13 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     Button addcart;
     RelativeLayout snackbarLayout;
 
-    TextView cartCount;
+    TextView cartCount,buyerGuide;
     String tokenvalue;
     String jsonaddon;
+    String url,description,titile;
+
+    LinearLayout layoutBottomSheet;
+    BottomSheetBehavior sheetBehavior;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +105,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
+
+        layoutBottomSheet = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+
 //        Toast.makeText(this, "cat items:"+cart_Items, Toast.LENGTH_SHORT).show();
 
         /*try {
@@ -120,7 +121,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }*/
 
         //LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("custom-message"));
-
+        buyerGuide = findViewById(R.id.buyer_guide);
+        findstore = findViewById(R.id.enterpincode);
         cartCount = findViewById(R.id.cart_count);
         snackbarLayout = findViewById(R.id.snak_layout);
         addcart = findViewById(R.id.add_cart);
@@ -169,7 +171,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         dealers_List.setOnClickListener(this);
         addcart.setOnClickListener(this);
         cartCount.setOnClickListener(this);
-
+        findstore.setOnClickListener(this);
+        buyerGuide.setOnClickListener(this);
 
         ProductdetailsAdapter productdetailsAdapter = new ProductdetailsAdapter(ProductDetailActivity.this, getOfferData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false);
@@ -179,6 +182,32 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
         //getProductDetails(productId);
 
+        sheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED: {
+                        //btnBottomSheet.setText("Close Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_COLLAPSED: {
+                        // btnBottomSheet.setText("Expand Sheet");
+                    }
+                    break;
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
 
     }
 
@@ -196,10 +225,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     private ArrayList<ProductDetails> getOfferData() {
         ArrayList<ProductDetails> offerData = new ArrayList<>();
-        offerData.add(new ProductDetails(2, "Cash back", R.drawable.ic_rupee));
-        offerData.add(new ProductDetails(2, "Test drive", R.drawable.ic_bestoffer));
-        offerData.add(new ProductDetails(2, "Exchange", R.drawable.ic_exchange));
-        offerData.add(new ProductDetails(2, " Finance", R.drawable.ic_rupee));
+        offerData.add(new ProductDetails(2, "Cash back", R.drawable.ic_rupee,selctedprod_ID()));
+        offerData.add(new ProductDetails(2, "Test drive", R.drawable.ic_bestoffer,selctedprod_ID()));
+        offerData.add(new ProductDetails(2, "Exchange", R.drawable.ic_exchange,selctedprod_ID()));
+        offerData.add(new ProductDetails(2, " Finance", R.drawable.ic_rupee,selctedprod_ID()));
         return offerData;
     }
 
@@ -225,6 +254,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartItemCount = dataJsonObject.getString("cartItemsCount");
                     cartCount.setText(cartItemCount);
+
+                    JSONObject jsonObjectSocialShare = dataJsonObject.getJSONObject("socialShareContent");
+                    String type = jsonObjectSocialShare.getString("type");
+                    titile = jsonObjectSocialShare.getString("title");
+                    description = jsonObjectSocialShare.getString("description");
+                    url = jsonObjectSocialShare.getString("image");
 
                     JSONArray jsonArrayDataOptions = dataJsonObject.getJSONArray("optionRows");
                     for (int optionarray = 0; optionarray < jsonArrayDataOptions.length(); optionarray++) {
@@ -468,9 +503,19 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.cart_count:
-                Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+            case R.id.buyer_guide:
+                Intent i = new Intent(getApplicationContext(),BuyerGuideActivity.class);
                 startActivity(i);
+                break;
+            case R.id.enterpincode:
+                Intent inten = new Intent(getApplicationContext(),SellersListActivity.class);
+                inten.putExtra("shopname",shopname);
+                inten.putExtra("shopaddress",city+","+statename+","+countryname);
+                startActivity(inten);
+                break;
+            case R.id.cart_count:
+                Intent in = new Intent(getApplicationContext(), CartListingActivity.class);
+                startActivity(in);
                 break;
             case R.id.add_cart:
               //  addTocart(selproductid, "cart");
@@ -502,7 +547,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 startActivity(intent);
                 break;
             case R.id.share:
-                try {
+               /* try {
                     Intent shareIntent = new Intent(Intent.ACTION_SEND);
                     shareIntent.setType("text/plain");
                     shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
@@ -512,7 +557,18 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     startActivity(Intent.createChooser(shareIntent, "choose one"));
                 } catch (Exception e) {
                     //e.toString();
+                }*/
+               
+                try {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, "("+titile+") "+description);
+                    startActivity(Intent.createChooser(shareIntent, "choose one"));
+                } catch (Exception e) {
+                    //e.toString();
                 }
+
+
                 break;
             case R.id.payment_policy:
                 butn_payPolicy.setBackgroundColor(Color.parseColor("#9C3C34"));
@@ -583,6 +639,25 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 break;
         }
 
+    }
+
+    public void showSnackbar(String offertitle) {
+        View contextView = findViewById(android.R.id.content);
+        Snackbar.make(contextView, "Sorry. No "+offertitle+" Offers Available Now.", Snackbar.LENGTH_SHORT)
+                .show();
+    }
+
+    public void OfferClick(int position) {
+        if(position==1){
+            if (sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+               // btnBottomSheet.setText("Close sheet");
+            } else {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+               // btnBottomSheet.setText("Expand sheet");
+            }
+
+        }
     }
 
 

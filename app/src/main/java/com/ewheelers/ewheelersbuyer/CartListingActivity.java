@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.media.MediaCas;
@@ -70,9 +71,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
       /*  Toast.makeText(this, "token val: " + tokenvalue, Toast.LENGTH_SHORT).show();
         Log.i("token_val:",tokenvalue);*/
 
-
         cartListing();
-
 
     }
 

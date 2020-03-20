@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         rentEbike.setOnClickListener(this);
 
         imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
-        imageLoader.get("http://www.ewheelers.in//image//slide//24//3//1//MOBILE?t=1580018050", ImageLoader.getImageListener(bookTestDrive, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+        imageLoader.get("http:/www.ewheelers.in/image/slide/24/3/1/MOBILE?t=1580018050", ImageLoader.getImageListener(bookTestDrive, R.drawable.cart, android.R.drawable.ic_dialog_alert));
         bookTestDrive.setImageUrl("http://www.ewheelers.in//image//slide//24//3//1//MOBILE?t=1580018050", imageLoader);
 
         imageLoader.get("http://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", ImageLoader.getImageListener(rentEbike, R.drawable.cart, android.R.drawable.ic_dialog_alert));

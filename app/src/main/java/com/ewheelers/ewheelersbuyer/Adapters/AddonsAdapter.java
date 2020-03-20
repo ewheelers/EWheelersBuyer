@@ -88,10 +88,9 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
         holder.buyWithcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (int i = 0; i < addonsClasses.size(); i++) {
                     if (buttonView.isChecked()) {
                         try {
-                            selbuywithprodid = addonsClasses.get(i).getButwithselectedProductId();
+                            selbuywithprodid = addonsClasses.get(position).getButwithselectedProductId();
                             jsonObject1 = new JSONObject();
                             jsonObject1.put(selbuywithprodid,String.valueOf(quantity));
                         } catch (JSONException e) {
@@ -103,7 +102,6 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
                     ((ProductDetailActivity) context).jsonaddons(addons);
                 }
 
-            }
         });
 
 

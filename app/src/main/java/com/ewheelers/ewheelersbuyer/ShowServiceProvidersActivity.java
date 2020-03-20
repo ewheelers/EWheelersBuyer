@@ -50,6 +50,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
     String provider_is;
     String url = "";
     KAlertDialog pDialog;
+    double latitude, longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,36 +65,41 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
 
         provider_is = getIntent().getStringExtra("providerIs");
 
+        latitude = new NavAppBarActivity().setlongitude();
+        longitude = new NavAppBarActivity().setlatitude();
+
         assert provider_is != null;
-        if(provider_is.equals("charge")){
+        if (provider_is.equals("charge")) {
             url = "";
         }
-        if(provider_is.equals("mechanic")){
+        if (provider_is.equals("mechanic")) {
             url = "https://script.google.com/macros/s/AKfycbwNuWGvcBCdH_qzJ33MQqUW7O0LeavHiM5tggWp_1ezeaorzoU/exec?action=getItems";
         }
-        if(provider_is.equals("puncture")){
+        if (provider_is.equals("puncture")) {
             url = "https://script.google.com/macros/s/AKfycbxdsfQFL113Xtuj8uf7B10z85OIDwOav4eZv2S33V59gnSX-IxI/exec?action=getItems";
+            getItems(url);
         }
-        if(provider_is.equals("spares")){
+        if (provider_is.equals("spares")) {
             url = "https://script.google.com/macros/s/AKfycbw1CBgKC8DKEeAnMRuBy3PwiL5CwcPx6nUIYNDEMrvA_ygtp_OB/exec?action=getItems";
+            getItems(url);
         }
-        if(provider_is.equals("accessories")){
+        if (provider_is.equals("accessories")) {
             url = "https://script.google.com/macros/s/AKfycbwCazYe6eveZapEPtZVZUNCyZbz_GIww_Tncw1mbtDjlutAOWs/exec?action=getItems";
+            getItems(url);
         }
 
-        if(provider_is.equals("water wash")){
+        if (provider_is.equals("water wash")) {
             url = "https://script.google.com/macros/s/AKfycbz2x7hyAkGeqZ4o_nmPXRxn7B5LWKflaj697eijstBBKY3Qr64/exec?action=getItems";
-
+            getItems(url);
         }
-        if(provider_is.equals("battery")){
+        if (provider_is.equals("battery")) {
             url = "https://script.google.com/macros/s/AKfycbw51r-VxmtwgRPFsPdlEAet83eVInQ4QP_khnEHip0J9M5YurE0/exec?action=getItems";
-
+            getItems(url);
         }
-        if(provider_is.equals("key repair")){
+        if (provider_is.equals("key repair")) {
             url = "https://script.google.com/macros/s/AKfycbzKuNTXT2DD1yWYQZWCPUDlyZtUUx5wehGsDH3bOLAXvl1Z2Js/exec?action=getItems";
-
+            getItems(url);
         }
-        getItems(url);
 
     }
 
@@ -108,33 +114,37 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("items");
 
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
-                            String Service_Provider_name = jsonObjectdata.getString("Service Provider name");
-                            String Service_Provider_shopname = jsonObjectdata.getString("Service ProviderShop Name");
-                            String Service_Provider_phonenumber = jsonObjectdata.getString("Phone Number");
-                            String Service_Provider_alternatenumber = jsonObjectdata.getString("Alternate Nnumber");
-                            String Service_Provider_emailid = jsonObjectdata.getString("Email Id");
-                            String Service_Provider_adress = jsonObjectdata.getString("Address");
-                            String Service_Provider_latitude = jsonObjectdata.getString("Latitude");
-                            String Service_Provider_longitude = jsonObjectdata.getString("Longitude");
-                            ServiceProvidersClass serviceProvidersClass = new ServiceProvidersClass();
-                            serviceProvidersClass.setServiceprovider_name(Service_Provider_name);
-                            serviceProvidersClass.setServiceprovider_shopname(Service_Provider_shopname);
-                            serviceProvidersClass.setServiceprovider_phone_number(Service_Provider_phonenumber);
-                            serviceProvidersClass.setServiceprovider_alternate_number(Service_Provider_alternatenumber);
-                            serviceProvidersClass.setServiceprovider_emailid(Service_Provider_emailid);
-                            serviceProvidersClass.setServiceprovider_address(Service_Provider_adress);
-                            serviceProvidersClass.setServiceprovider_latitude(Service_Provider_latitude);
-                            serviceProvidersClass.setServiceprovider_longitude(Service_Provider_longitude);
-                            serviceProvidersClass.setServiceProviderIs(provider_is);
-                            serviceProvidersClassesList.add(serviceProvidersClass);
-                        }
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this,RecyclerView.VERTICAL,false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        serviceProvidersAdapter = new ServiceProvidersAdapter(ShowServiceProvidersActivity.this,serviceProvidersClassesList);
-                        recyclerView.setAdapter(serviceProvidersAdapter);
-                        serviceProvidersAdapter.notifyDataSetChanged();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
+                        String Service_Provider_name = jsonObjectdata.getString("Service Provider name");
+                        String Service_Provider_shopname = jsonObjectdata.getString("Service ProviderShop Name");
+                        String Service_Provider_phonenumber = jsonObjectdata.getString("Phone Number");
+                        String Service_Provider_alternatenumber = jsonObjectdata.getString("Alternate Nnumber");
+                        String Service_Provider_emailid = jsonObjectdata.getString("Email Id");
+                        String Service_Provider_adress = jsonObjectdata.getString("Address");
+                        String Service_Provider_latitude = jsonObjectdata.getString("Latitude");
+                        String Service_Provider_longitude = jsonObjectdata.getString("Longitude");
+                        ServiceProvidersClass serviceProvidersClass = new ServiceProvidersClass();
+                        serviceProvidersClass.setServiceprovider_name(Service_Provider_name);
+                        serviceProvidersClass.setServiceprovider_shopname(Service_Provider_shopname);
+                        serviceProvidersClass.setServiceprovider_phone_number(Service_Provider_phonenumber);
+                        serviceProvidersClass.setServiceprovider_alternate_number(Service_Provider_alternatenumber);
+                        serviceProvidersClass.setServiceprovider_emailid(Service_Provider_emailid);
+                        serviceProvidersClass.setServiceprovider_address(Service_Provider_adress);
+                        serviceProvidersClass.setServiceprovider_latitude(Service_Provider_latitude);
+                        serviceProvidersClass.setServiceprovider_longitude(Service_Provider_longitude);
+                        serviceProvidersClass.setServiceProviderIs(provider_is);
+
+                        serviceProvidersClass.setCurrentlatitude(latitude);
+                        serviceProvidersClass.setCurrentlongitude(longitude);
+
+                        serviceProvidersClassesList.add(serviceProvidersClass);
+                    }
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
+                    recyclerView.setLayoutManager(linearLayoutManager);
+                    serviceProvidersAdapter = new ServiceProvidersAdapter(ShowServiceProvidersActivity.this, serviceProvidersClassesList);
+                    recyclerView.setAdapter(serviceProvidersAdapter);
+                    serviceProvidersAdapter.notifyDataSetChanged();
 
 
                 } catch (JSONException e) {
@@ -163,6 +173,11 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-
+    public double lat(){
+        return latitude;
+    }
+    public double longi(){
+        return longitude;
+    }
 
 }
