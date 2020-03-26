@@ -137,6 +137,20 @@
     </LinearLayout>
     </LinearLayout>
 
+    <Button
+        android:layout_margin="@dimen/padding_10"
+        android:id="@+id/have_coupons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bg"
+        android:text="I Have a Coupon"
+        android:textColor="@color/white"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/couponlist"/>
+
     <LinearLayout
         android:visibility="visible"
         android:id="@+id/apply_promo_layout"

@@ -3,8 +3,6 @@ package com.ewheelers.ewheelersbuyer.Adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -21,47 +17,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
-import androidx.appcompat.widget.TooltipCompat;
 import androidx.cardview.widget.CardView;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
-import com.ewheelers.ewheelersbuyer.CartActivity;
-import com.ewheelers.ewheelersbuyer.CartListingActivity;
-import com.ewheelers.ewheelersbuyer.ModelClass.AddonsClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ProductDetailActivity;
 import com.ewheelers.ewheelersbuyer.R;
-import com.ewheelers.ewheelersbuyer.SessionStorage;
-import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
-import com.google.android.material.snackbar.Snackbar;
-import com.tooltip.OnClickListener;
 import com.tooltip.Tooltip;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import tourguide.tourguide.Overlay;
-import tourguide.tourguide.Pointer;
-import tourguide.tourguide.ToolTip;
-import tourguide.tourguide.TourGuide;
 
 public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAdapter.MyHolder> {
     private Context context;
@@ -72,7 +43,12 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
     String homeproid;
     JSONObject jsonObject1;
     String addons;
-    String tokenvalue;
+    List<String> string;
+    int currentItem = 0;
+
+    String defaultoption = "";
+    String urls = "";
+    boolean mSpinnerInitialized = true;
 
     public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails) {
         this.context = context;
@@ -87,6 +63,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
     @Override
     public ProductdetailsAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = null;
+
         switch (viewType) {
             case ProductDetails.PREVIEWIMAGES:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.preview_product_layout, parent, false);
@@ -114,6 +91,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
     public void onBindViewHolder(@NonNull final ProductdetailsAdapter.MyHolder holder, final int position) {
 
         final int itemType = getItemViewType(position);
+
         switch (itemType) {
             case ProductDetails.PREVIEWIMAGES:
                 final String url = productDetails.get(position).getProductimg_url();
@@ -140,19 +118,38 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                 //Collections.singletonList(items.toString()
                 holder.optionvalues.setAdapter(new ArrayAdapter<OptionValues>(context, android.R.layout.simple_spinner_dropdown_item, items));
 
-                if (context instanceof ProductDetailActivity) {
-                    homeproid = ((ProductDetailActivity) context).selctedprod_ID();
-                }
+                ArrayList<ProductDetails> productDetailsSelectOptions = ((ProductDetailActivity) context).productDetailSelectValues();
+                Log.i("selexctList", ((ProductDetailActivity) context).productDetailSelectValues().get(position).getOptionselectid());
 
-                for (int j = 0; j < items.size(); j++) {
-                    if (homeproid.equals(items.get(j).getOptionUrlValue())) {
-                        holder.optionvalues.setSelection(j);
+                //  for(int j=0;j<=productDetailsSelectOptions.size();j++){
+
+                int i;
+                String firstselected = null;
+                for (i = 0; i < items.size(); i++) {
+                    Log.i("optionrowsarray ", items.get(i).getOptionValuenames());
+                    if (items.get(i).getOptionvalueid().equals(productDetailsSelectOptions.get(position).getOptionselectid())) {
+                        holder.optionvalues.setSelection(i);
+                        firstselected = items.get(i).getOptionValuenames();
+                        // Toast.makeText(context, "pics: " + firstselected, Toast.LENGTH_SHORT).show();
                     }
                 }
+
+
+                ArrayList<OptionValues> optionValuesData = items;
+                String finalFirstselected = firstselected;
                 holder.optionvalues.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                      /*  Toast.makeText(context, "opt: " +optionValuesData.get(pos).getOptionValuenames(), Toast.LENGTH_SHORT).show();
+                        defaultoption = optionValuesData.get(pos).getOptionValuenames();*/
+                        if (!mSpinnerInitialized) {
+                            // Your code goes gere
+                           // Toast.makeText(context, "opt: " + items.get(pos).getOptionValuenames(), Toast.LENGTH_SHORT).show();
+                            if(!finalFirstselected.equals(items.get(pos).getOptionValuenames())) {
+                                ((ProductDetailActivity) context).getProductDetails(optionValuesData.get(pos).getOptionUrlValue());
+                            }
+                        }
+                        mSpinnerInitialized = false;
                     }
 
                     @Override
@@ -160,6 +157,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
                     }
                 });
+
+
+
 
                /* holder.viewoptionslayout.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -296,10 +296,11 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                     public void onClick(View v) {
 
                         if (holder.bottomBtn.getText().toString().equals("Test Drive")) {
-                            Intent i = new Intent(context, CartActivity.class);
+                            ((ProductDetailActivity) context).getBottomLayout();
+                           /* Intent i = new Intent(context, CartActivity.class);
                             i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
                             i.putExtra("buttontext", String.valueOf(productDetails.get(position).getButtonText()));
-                            context.startActivity(i);
+                            context.startActivity(i);*/
                         }
                         if (holder.bottomBtn.getText().toString().equals("Book Now")) {
                           /*  if (context instanceof ProductDetailActivity) {
@@ -308,13 +309,13 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
                         }
                         if (holder.bottomBtn.getText().toString().equals("Rent")) {
-
+                            ((ProductDetailActivity) context).getBottomLayoutforRent();
                         }
-                       /* if (holder.bottomBtn.getText().toString().equals("BUY")) {
+                        if (holder.bottomBtn.getText().toString().equals("BUY")) {
                             if (context instanceof ProductDetailActivity) {
-                                ((ProductDetailActivity) context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()), "BUY");
+                                ((ProductDetailActivity) context).addTocart(productDetails.get(position).getSelproductid(), "BUY");
                             }
-                        }*/
+                        }
 
 
                     }
@@ -327,15 +328,15 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                 holder.icon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(position==1){
-                            ((ProductDetailActivity)context).OfferClick(position);
+                        if (position == 1) {
+                            ((ProductDetailActivity) context).OfferClick(position);
                            /* Intent i = new Intent(context,CartActivity.class);
                             i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
                             i.putExtra("buttontext", String.valueOf(productDetails.get(position).getOffertitle()));
                             context.startActivity(i);*/
-                        }else {
+                        } else {
                             Tooltip tooltip = new Tooltip.Builder(v)
-                                    .setText("Sorry. No "+productDetails.get(position).getOffertitle()+" Offers Available Now.")
+                                    .setText("Sorry. No " + productDetails.get(position).getOffertitle() + " Offers Available Now.")
                                     .setTextColor(Color.WHITE)
                                     .setBackgroundColor(Color.parseColor("#9c3c34"))
                                     .setCancelable(true)
@@ -353,6 +354,10 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                 break;
         }
 
+
+    }
+
+    public void getSelected(String value) {
 
     }
 
@@ -374,10 +379,10 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
         TextView optionnames;
         ImageView icon;
         TextView offertitle, offercaption, price, pro_name;
-       // TextView  buywithname, buywithprice, buywithinteger;
+        // TextView  buywithname, buywithprice, buywithinteger;
         Button buyWithminus, buyWithplus, bottomBtn;
         LinearLayout linearLayoutsimilar;
-       // CheckBox buyWithcheckBox;
+        // CheckBox buyWithcheckBox;
         LinearLayout viewoptionslayout;
 
         public MyHolder(@NonNull View itemView) {
@@ -401,7 +406,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
             pro_name = itemView.findViewById(R.id.product_name);
             linearLayoutsimilar = itemView.findViewById(R.id.click_similarproduct);
             bottomBtn = itemView.findViewById(R.id.bottom_button);
-          //  buyWithcheckBox = itemView.findViewById(R.id.checkoradd);
+            //  buyWithcheckBox = itemView.findViewById(R.id.checkoradd);
 
             viewoptionslayout = itemView.findViewById(R.id.viewoptions_layout);
 

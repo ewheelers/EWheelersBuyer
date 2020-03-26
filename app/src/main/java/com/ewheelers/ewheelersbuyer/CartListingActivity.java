@@ -1,21 +1,15 @@
 package com.ewheelers.ewheelersbuyer;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
-import android.media.MediaCas;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -28,10 +22,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.CartListingAdapter;
-import com.ewheelers.ewheelersbuyer.Adapters.ProductdetailsAdapter;
 import com.ewheelers.ewheelersbuyer.ModelClass.CartListClass;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
-import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
 
 public class CartListingActivity extends AppCompatActivity implements View.OnClickListener {
     RecyclerView cartListing;
@@ -54,7 +44,9 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     Button placeOrder;
     TextView cartEmpty;
     String addons;
-    TextView total,tax,netpayab;
+    TextView total, tax, netpayab;
+    String rentalprice, rentalsecurity, rentStartdate, rentEnddate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,14 +83,14 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                     Log.i("responsecartlist:", "status = " + status + "message " + msg + "status code" + mStatusCode);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartcount = dataJsonObject.getString("cartItemsCount");
-                  //  String netpayble = dataJsonObject.getString("netPayable");
+                    //  String netpayble = dataJsonObject.getString("netPayable");
 
                     JSONObject jsonObjectSummary = dataJsonObject.getJSONObject("cartSummary");
                     String cartsubtotal = jsonObjectSummary.getString("cartTotal");
                     String cartTex = jsonObjectSummary.getString("cartTaxTotal");
-                    total.setText("\u20B9"+cartsubtotal);
-                    tax.setText("\u20B9"+cartTex);
-                    JSONObject jsonObjectNetpayable= dataJsonObject.getJSONObject("netPayable");
+                    total.setText("\u20B9" + cartsubtotal);
+                    tax.setText("\u20B9" + cartTex);
+                    JSONObject jsonObjectNetpayable = dataJsonObject.getJSONObject("netPayable");
                     String netpayable = jsonObjectNetpayable.getString("value");
                     netpayab.setText(netpayable);
 
@@ -116,6 +108,11 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         JSONObject jsonObjectSelleraddressArray = jsonObjectListdata.getJSONObject("seller_address");
                         String shopname = jsonObjectSelleraddressArray.getString("shop_name");
 
+                       /* rentalprice = jsonObjectListdata.getString("sprodata_rental_price");
+                        rentalsecurity = jsonObjectListdata.getString("sprodata_rental_security");
+                        rentStartdate = jsonObjectListdata.getString("rentalStartDate");
+                        rentEnddate = jsonObjectListdata.getString("rentalEndDate");*/
+
                         JSONArray jsonArrayOptions = jsonObjectListdata.getJSONArray("options");
                         options = new ArrayList<>();
                         for (int j = 0; j < jsonArrayOptions.length(); j++) {
@@ -132,6 +129,10 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         cartListClass.setProductPrice(price);
                         cartListClass.setProduct_qty(quantity);
                         cartListClass.setShopname(shopname);
+                       /* cartListClass.setRentalprice(rentalprice);
+                        cartListClass.setRentalsecurity(rentalsecurity);
+                        cartListClass.setRentStartdate(rentStartdate);
+                        cartListClass.setRentEnddate(rentEnddate);*/
                        /* cartListClass.setProductOption(optionname);
                         cartListClass.setOptionvalue(optionvalue_name);*/
                         cartListClass.setOptions(options);

@@ -55,10 +55,131 @@
             app:pageColor="#FF0000"
             app:snap="false" />
 
+        <Switch
+            android:visibility="gone"
+            android:id="@+id/simpleSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <LinearLayout
+            android:id="@+id/new_ui"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <TextView
+                    android:id="@+id/mechanic"
+                    android:layout_width="0dp"
+                    android:layout_height="75dp"
+                    android:layout_margin="@dimen/dimen_5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/textviewbggray"
+                    android:drawableTop="@drawable/ic_mechanics_white"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_10"
+                    android:text="Mechanic"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/puncture"
+                    android:layout_width="0dp"
+                    android:layout_height="75dp"
+                    android:layout_marginTop="@dimen/dimen_5dp"
+                    android:layout_marginBottom="@dimen/dimen_5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/textviewbggray"
+                    android:drawableTop="@drawable/ic_tyre_white"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_10"
+                    android:text="Puncture"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/waterwash"
+                    android:layout_width="0dp"
+                    android:layout_height="75dp"
+                    android:layout_margin="@dimen/dimen_5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/textviewbggray"
+                    android:drawableTop="@drawable/ic_waterwash_white"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_10"
+                    android:text="Water Wash"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/howworks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_bg_transperent"
+                    android:text="How it works" />
+
+                <Button
+                    android:id="@+id/shareapp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dimen_5dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/sharegraybg"
+                    android:text="Share App"
+                    android:textColor="@color/Black" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:gravity="center_horizontal"
+                android:text="Services Available Only in Hyderabad and Secunderabad"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/openingshortly"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:src="@drawable/openingshortly" />
+
+            <TextView
+                android:id="@+id/terms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:gravity="center_horizontal"
+                android:text="Terms &amp; Conditions"
+                android:textColor="@color/blue"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/old_ui"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"

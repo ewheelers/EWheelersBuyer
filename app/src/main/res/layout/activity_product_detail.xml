@@ -274,7 +274,7 @@
                 android:text="Select Dealer"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="normal" />
-            <TextView
+          <!--  <TextView
                 android:layout_marginLeft="@dimen/padding_10"
                 android:singleLine="true"
                 android:drawableRight="@drawable/ic_downarrow"
@@ -286,7 +286,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textStyle="normal"
                 android:drawableEnd="@drawable/ic_downarrow"
-                android:layout_marginStart="@dimen/padding_10" />
+                android:layout_marginStart="@dimen/padding_10" />-->
+                <Spinner
+                    android:id="@+id/dealers_list"
+                    style="@style/spinner_style"/>
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -840,5 +843,6 @@
 </RelativeLayout>
 
     <include layout="@layout/bottome_sheet_layout" />
+    <include layout="@layout/bottom_sheet_rent_layout" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

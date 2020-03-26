@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ViewOptionsActivity extends AppCompatActivity {
 TextView textView;

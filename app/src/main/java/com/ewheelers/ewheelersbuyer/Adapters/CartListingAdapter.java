@@ -40,7 +40,7 @@ import java.util.Map;
 public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.MyCartListHolder> {
     private Context context;
     private List<CartListClass> cartListClasses;
-    private int quantity=1;
+    private int quantity = 1;
     private CartListingAdapter cartListingAdapter;
 
     public CartListingAdapter(Context context, List<CartListClass> cartListClasses) {
@@ -90,9 +90,9 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                         String getStatus = jsonObject.getString("status");
                                         String message = jsonObject.getString("msg");
                                         if (getStatus.equals("1")) {
-                                           // holder.item_lay.setVisibility(View.GONE);
+                                            // holder.item_lay.setVisibility(View.GONE);
                                             if (context instanceof CartListingActivity) {
-                                                ((CartListingActivity)context).restartActivity();
+                                                ((CartListingActivity) context).restartActivity();
                                             }
                                             cartListClasses.remove(cartListClasses.get(position));
                                             cartListingAdapter.notifyDataSetChanged();
@@ -132,8 +132,6 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                 }
             }
         });
-
-
         holder.addproduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,7 +157,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                                     if (getStatus.equals("1")) {
                                         holder.quantity.setText(String.valueOf(quantity));
                                         if (context instanceof CartListingActivity) {
-                                            ((CartListingActivity)context).restartActivity();
+                                            ((CartListingActivity) context).restartActivity();
                                         }
 
                                     }
@@ -193,7 +191,6 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                 VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
             }
         });
-
         holder.removeproduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,61 +198,61 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                 quantity = Integer.parseInt(quant);
                 quantity--;
 
-              //  if (quantity > 0) {
+                //  if (quantity > 0) {
 
-                    String key = cartListClasses.get(position).getKeyvalue();
+                String key = cartListClasses.get(position).getKeyvalue();
 
-                    String tokenvalue = new SessionStorage().getStrings(context, SessionStorage.tokenvalue);
+                String tokenvalue = new SessionStorage().getStrings(context, SessionStorage.tokenvalue);
 
-                    String Login_url = Apis.updatecartitems;
+                String Login_url = Apis.updatecartitems;
 
-                    StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
-                            new Response.Listener<String>() {
-                                @Override
-                                public void onResponse(String response) {
+                StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
 
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(response);
-                                        String getStatus = jsonObject.getString("status");
-                                        String message = jsonObject.getString("msg");
-                                        if (getStatus.equals("1")) {
-                                            holder.quantity.setText(String.valueOf(quantity));
-                                            if (context instanceof CartListingActivity) {
-                                                ((CartListingActivity)context).restartActivity();
-                                            }
-
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    String getStatus = jsonObject.getString("status");
+                                    String message = jsonObject.getString("msg");
+                                    if (getStatus.equals("1")) {
+                                        holder.quantity.setText(String.valueOf(quantity));
+                                        if (context instanceof CartListingActivity) {
+                                            ((CartListingActivity) context).restartActivity();
                                         }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+
                                     }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyLog.d("Main", "Error :" + error.getMessage());
-                            Log.d("Main", "" + error.getMessage() + "," + error.toString());
-                        }
-                    }) {
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.d("Main", "Error :" + error.getMessage());
+                        Log.d("Main", "" + error.getMessage() + "," + error.toString());
+                    }
+                }) {
 
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("X-TOKEN", tokenvalue);
-                            return params;
-                        }
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("X-TOKEN", tokenvalue);
+                        return params;
+                    }
 
-                        @Override
-                        public Map<String, String> getParams() throws AuthFailureError {
-                            Map<String, String> data3 = new HashMap<String, String>();
-                            data3.put("key", key);
-                            data3.put("quantity", String.valueOf(quantity));
-                            return data3;
+                    @Override
+                    public Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> data3 = new HashMap<String, String>();
+                        data3.put("key", key);
+                        data3.put("quantity", String.valueOf(quantity));
+                        return data3;
 
-                        }
-                    };
-                    strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
-                    VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
-              //  }
+                    }
+                };
+                strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+                VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
+                //  }
             }
         });
 
@@ -267,6 +264,10 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
         return cartListClasses.size();
     }
 
+  /*  @Override
+    public int getItemViewType(int position) {
+        return cartListClasses.get(position).getType();
+    }*/
 
     public class MyCartListHolder extends RecyclerView.ViewHolder {
         TextView shopname, title, options, price, quantity, brandname;
@@ -274,7 +275,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
         Button addproduct, removeproduct;
         ImageView delete;
         LinearLayout item_lay;
-
+       // TextView duration;
         public MyCartListHolder(@NonNull View itemView) {
             super(itemView);
             image_url = itemView.findViewById(R.id.image);
@@ -288,6 +289,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
             removeproduct = itemView.findViewById(R.id.removeproduct);
             delete = itemView.findViewById(R.id.delete_image);
             item_lay = itemView.findViewById(R.id.item_lay);
+           // duration = itemView.findViewById(R.id.duration);
         }
     }
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "634360580579",
+    "firebase_url": "https://ewheelersbuyer-46058.firebaseio.com",
+    "project_id": "ewheelersbuyer-46058",
+    "storage_bucket": "ewheelersbuyer-46058.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634360580579:android:ff31876aeab6ded58438d6",
+        "android_client_info": {
+          "package_name": "com.ewheelers.ewheelersbuyer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634360580579-1bo0ui3a71gth2p3t7a9unhvq6faju90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPevQTzqvoUEzXlOcH6yLmDbHeHzr201w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634360580579-1bo0ui3a71gth2p3t7a9unhvq6faju90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

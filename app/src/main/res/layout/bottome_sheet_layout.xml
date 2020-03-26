@@ -4,11 +4,37 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
     android:background="@color/colorPrimary"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
     android:id="@+id/bottom_sheet"
-    android:layout_gravity="bottom"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/closebottom_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="close"
+            android:textColor="@color/Black"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_margin="@dimen/padding_10"
+            android:background="@drawable/gray_button_background"/>
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Drive Request"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
     <LinearLayout
         android:layout_marginTop="@dimen/padding_10"
         android:padding="@dimen/padding_10"
@@ -85,7 +111,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
-                android:hint="Date"
+                android:hint="yyyy-mm-dd"
                 android:textColorHint="@color/white"/>
         </LinearLayout>
         <LinearLayout
@@ -104,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:text="Time : "/>
             <EditText
+                android:textColor="@color/white"
                 android:textColorHint="@color/white"
                 android:inputType="time"
                 android:padding="5dp"
@@ -112,15 +139,16 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
-                android:hint="Time"/>
+                android:hint="hr:min"/>
         </LinearLayout>
 
     </LinearLayout>
+
     <Button
         android:id="@+id/submitButton"
         android:layout_marginTop="25dp"
         android:layout_gravity="center_horizontal"
-        android:layout_width="250dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Submit"/>
 

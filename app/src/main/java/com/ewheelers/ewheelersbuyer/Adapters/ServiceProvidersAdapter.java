@@ -1,12 +1,12 @@
 package com.ewheelers.ewheelersbuyer.Adapters;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
@@ -17,55 +17,46 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.ModelClass.ServiceProvidersClass;
-import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
-import com.ewheelers.ewheelersbuyer.ShowServiceProvidersActivity;
 import com.ewheelers.ewheelersbuyer.UpdateProfileActivity;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
-import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
-import static com.payu.custombrowser.CBActivity.b;
 
-
-public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvidersAdapter.ServiceProviderHolder> {
+public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private List<ServiceProvidersClass> serviceProvidersClassList;
     private String tokenValue;
+
+    private final int VIEW_TYPE_ITEM = 0;
+    private final int VIEW_TYPE_LOADING = 1;
 
     public ServiceProvidersAdapter(Context context, List<ServiceProvidersClass> serviceProvidersClassList) {
         this.context = context;
@@ -75,32 +66,122 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
     @NonNull
     @Override
     public ServiceProvidersAdapter.ServiceProviderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_providers_layout, parent, false);
-        return new ServiceProviderHolder(v);
+        if (viewType == VIEW_TYPE_ITEM) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.service_providers_layout, parent, false);
+            return new ServiceProviderHolder(v);
+        }else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loadinglayout, parent, false);
+            return new ServiceProviderHolder(view);
+        }
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ServiceProvidersAdapter.ServiceProviderHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        if (holder instanceof ServiceProviderHolder) {
+
+            populateItemRows((ServiceProviderHolder) holder, position);
+        } else if (holder instanceof LoadingViewHolder) {
+            showLoadingView((LoadingViewHolder) holder, position);
+        }
+
+    }
+
+    private boolean isPermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (context.checkSelfPermission(android.Manifest.permission.CALL_PHONE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG", "Permission is granted");
+                return true;
+            } else {
+
+                Log.v("TAG", "Permission is revoked");
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG", "Permission is granted");
+            return true;
+        }
+    }
+
+    public void call_action(String number) {
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + number));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
+        context.startActivity(callIntent);
+    }
+
+
+  /*  @Override
+    public int getItemCount() {
+        return serviceProvidersClassList.size();
+    }*/
+
+    @Override
+    public int getItemCount() {
+        return serviceProvidersClassList == null ? 0 : serviceProvidersClassList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return serviceProvidersClassList.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+    }
+
+    public class ServiceProviderHolder extends RecyclerView.ViewHolder {
+        TextView shop_Name, shop_Address, shopOwner_name, locate;
+        Button mail;
+        ImageView call;
+
+        public ServiceProviderHolder(@NonNull View itemView) {
+            super(itemView);
+            shop_Name = itemView.findViewById(R.id.ShopName);
+            shop_Address = itemView.findViewById(R.id.address);
+            shopOwner_name = itemView.findViewById(R.id.providerName);
+            call = itemView.findViewById(R.id.call);
+            mail = itemView.findViewById(R.id.mail);
+            locate = itemView.findViewById(R.id.locate);
+
+        }
+    }
+    private class LoadingViewHolder extends RecyclerView.ViewHolder {
+
+        ProgressBar progressBar;
+
+        public LoadingViewHolder(@NonNull View itemView) {
+            super(itemView);
+            progressBar = itemView.findViewById(R.id.progressBar);
+        }
+    }
+
+    private void showLoadingView(LoadingViewHolder viewHolder, int position) {
+        //ProgressBar would be displayed
+
+    }
+
+
+    private void populateItemRows(ServiceProviderHolder holder, int position) {
         // Toast.makeText(context, "lat:"+latitude+"lon:"+longitude, Toast.LENGTH_SHORT).show();
-
-        holder.shop_Name.setText(serviceProvidersClassList.get(position).getServiceprovider_shopname());
+        String str = serviceProvidersClassList.get(position).getServiceprovider_shopname();
+        String cap = str.substring(0, 1).toUpperCase() + str.substring(1);
+        holder.shop_Name.setText(cap + ", Contact: "+serviceProvidersClassList.get(position).getServiceprovider_phone_number());
         holder.shopOwner_name.setText(serviceProvidersClassList.get(position).getServiceprovider_name());
         holder.shop_Address.setText(serviceProvidersClassList.get(position).getServiceprovider_address());
         String mailid = serviceProvidersClassList.get(position).getServiceprovider_emailid();
-        // String latitude = serviceProvidersClassList.get(position).getServiceprovider_latitude();
-        // String longitude = serviceProvidersClassList.get(position).getServiceprovider_longitude();
+
+        holder.locate.setText(serviceProvidersClassList.get(position).getDistance());
+
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + serviceProvidersClassList.get(position).getServiceprovider_phone_number()));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (context.checkSelfPermission(Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
+                if (isPermissionGranted()) {
+                    call_action(serviceProvidersClassList.get(position).getServiceprovider_phone_number());
                 }
-                context.startActivity(callIntent);
             }
         });
         holder.mail.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +245,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                                         onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), latitude, longitude, user_name, user_phone);
                                     }*/
 
-                                    onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), serviceProvidersClassList.get(position).getCurrentlongitude(), serviceProvidersClassList.get(position).getCurrentlatitude(), user_name, user_phone);
+                                    onShareClick(v, serviceProvidersClassList.get(position).getServiceProviderIs(), serviceProvidersClassList.get(position).getServiceprovider_phone_number(), serviceProvidersClassList.get(position).getCurrentlatitude(), serviceProvidersClassList.get(position).getCurrentlongitude(), user_name, user_phone);
 
 
                                 } catch (JSONException e) {
@@ -208,67 +289,6 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
             }
         });
 
-       /* double latitude = ((ShowServiceProvidersActivity) context).lat();
-        double longitude = ((ShowServiceProvidersActivity) context).longi();*/
-//        Toast.makeText(context, "curr: "+serviceProvidersClassList.get(position).getCurrentlatitude()+" / "+serviceProvidersClassList.get(position).getCurrentlongitude(), Toast.LENGTH_SHORT).show();
-
-       /* Location startPoint = new Location("locationA");
-        startPoint.setLatitude(serviceProvidersClassList.get(position).getCurrentlatitude());
-        startPoint.setLongitude(serviceProvidersClassList.get(position).getCurrentlongitude());
-
-        Location endPoint = new Location("locationA");
-        endPoint.setLatitude(Double.parseDouble(serviceProvidersClassList.get(position).getServiceprovider_latitude()));
-        endPoint.setLongitude(Double.parseDouble(serviceProvidersClassList.get(position).getServiceprovider_longitude()));
-
-        double distance = startPoint.distanceTo(endPoint);
-        double kms = distance / 1000;
-        BigDecimal bd = new BigDecimal(kms).setScale(2, RoundingMode.HALF_UP);*/
-
-       Log.d("currentlatlong",serviceProvidersClassList.get(position).getCurrentlatitude()+","+serviceProvidersClassList.get(position).getCurrentlongitude());
-        Log.d("servicelatlong",serviceProvidersClassList.get(position).getServiceprovider_latitude()+","+serviceProvidersClassList.get(position).getServiceprovider_longitude());
-
-        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + serviceProvidersClassList.get(position).getCurrentlongitude() + "," + serviceProvidersClassList.get(position).getCurrentlatitude() + "&destinations=" + serviceProvidersClassList.get(position).getServiceprovider_latitude() + "," + serviceProvidersClassList.get(position).getServiceprovider_longitude() + "&key=AIzaSyAyuQjmdCe43w40mbR422_ix8QPzgDbgxs";
-        StringRequest strRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            JSONArray dist = jsonObject.getJSONArray("rows");
-                            JSONObject obj2 = (JSONObject) dist.get(0);
-                            JSONArray disting = (JSONArray) obj2.get("elements");
-                            JSONObject obj3 = (JSONObject) disting.get(0);
-                            JSONObject obj4 = (JSONObject) obj3.get("distance");
-                            JSONObject obj5 = (JSONObject) obj3.get("duration");
-                            String distance = obj4.getString("text");
-                            holder.locate.setText(distance);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-
-                        }
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("Main", "Error :" + error.getMessage());
-                Log.d("Main", "" + error.getMessage() + "," + error.toString());
-                Toast.makeText(context, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }) {
-
-            @Override
-            public Map<String, String> getParams() {
-
-                Map<String, String> data3 = new HashMap<String, String>();
-                return data3;
-
-            }
-        };
-        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
-        VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
-
         holder.locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,31 +297,10 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                 context.startActivity(intent);
             }
         });
+
     }
 
 
-    @Override
-    public int getItemCount() {
-        return serviceProvidersClassList.size();
-    }
-
-
-    public class ServiceProviderHolder extends RecyclerView.ViewHolder {
-        TextView shop_Name, shop_Address, shopOwner_name, locate;
-        Button mail;
-        ImageView call;
-
-        public ServiceProviderHolder(@NonNull View itemView) {
-            super(itemView);
-            shop_Name = itemView.findViewById(R.id.ShopName);
-            shop_Address = itemView.findViewById(R.id.address);
-            shopOwner_name = itemView.findViewById(R.id.providerName);
-            call = itemView.findViewById(R.id.call);
-            mail = itemView.findViewById(R.id.mail);
-            locate = itemView.findViewById(R.id.locate);
-
-        }
-    }
 
     public void onShareClick(View v, String servicename, String number, double lat, double lon, String username, String usermobile) {
         List<Intent> targetShareIntents = new ArrayList<Intent>();
@@ -319,7 +318,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                     if (packageName.equals("com.whatsapp")) {
                         intent.setAction(Intent.ACTION_SEND);
                         intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_TEXT, username + " Requesting for " + servicename + " Service\n"+R.string.contact+" : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
+                        intent.putExtra(Intent.EXTRA_TEXT, username + " Requesting for " + servicename + " Service\n"+context.getResources().getString(R.string.contact)+" : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
                         intent.putExtra("jid", "91" + number + "@s.whatsapp.net");
                     }
 
@@ -329,7 +328,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<ServiceProvide
                         intent.setData(Uri.parse("smsto:"));
                         intent.setType("vnd.android-dir/mms-sms");
                         intent.putExtra("address", number);
-                        intent.putExtra("sms_body", username + " Requesting " + servicename + " contact: " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
+                        intent.putExtra("sms_body", username + " Requesting for " + servicename + " Service\n"+context.getResources().getString(R.string.contact)+" : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
                     }
 
                     intent.setPackage(packageName);

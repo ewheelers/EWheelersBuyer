@@ -1,14 +1,8 @@
 package com.ewheelers.ewheelersbuyer;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
-import com.ewheelers.ewheelersbuyer.Adapters.MenuIconAdapter;
-import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +10,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BottomedNavigationActivity extends AppCompatActivity{
    /* RecyclerView recyclerView;

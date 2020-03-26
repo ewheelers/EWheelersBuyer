@@ -3,9 +3,10 @@ package com.ewheelers.ewheelersbuyer.ModelClass;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class ProductDetails implements Parcelable {
     public static final int OPTIONS=0;
@@ -19,6 +20,42 @@ public class ProductDetails implements Parcelable {
     private int typeoflayout;
     private String selproductid;
 
+
+    private String optionselectid;
+
+    private JSONObject optionalval_id;
+
+
+
+    private HashMap<String, String> map;
+
+
+    public void setMap(HashMap<String, String> map) {
+        this.map = map;
+    }
+
+    public HashMap<String, String> getMap() {
+        return map;
+    }
+
+    public JSONObject getOptionalval_id() {
+        return optionalval_id;
+    }
+
+    public void setOptionalval_id(JSONObject optionalval_id) {
+        this.optionalval_id = optionalval_id;
+    }
+
+    public String getOptionselectid() {
+        return optionselectid;
+    }
+
+    public void setOptionselectid(String optionselectid) {
+        this.optionselectid = optionselectid;
+    }
+
+
+
     private String buttonText;
     private int buttonBackground;
 
@@ -30,10 +67,21 @@ public class ProductDetails implements Parcelable {
     //for options & spinner data
     private String optionName;
     private String optionid;
+
+    public String getOptionid() {
+        return optionid;
+    }
+
+    public void setOptionid(String optionid) {
+        this.optionid = optionid;
+    }
+
     private String optioniscolor;
    // private ArrayList<String> optionslist;
 
     private ArrayList<OptionValues> optionValuesArrayList;
+
+
 
 
     //offers list

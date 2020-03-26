@@ -7,6 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,23 +34,24 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.CollectionProductsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.SlidingImage_Adapter;
+import com.ewheelers.ewheelersbuyer.BuildConfig;
+import com.ewheelers.ewheelersbuyer.BuyerGuideActivity;
 import com.ewheelers.ewheelersbuyer.ModelClass.CirclePageIndicator;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeCollectionProducts;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.ShowAlleBikesActivity;
+import com.ewheelers.ewheelersbuyer.ShowServiceProvidersActivity;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 import com.facebook.shimmer.ShimmerFrameLayout;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -73,6 +79,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private ArrayList<String> ImagesArray = new ArrayList<String>();
     private String tokenvalue, cartcount;
 
+    Switch simpleSwitch;
+    LinearLayout linearLayout_new, linearLayout_old;
+    TextView mechanictxt, puncturetxt, waterwashtxt,termsConditions;
+    ImageView openingshort;
+    Button how_works, share_app;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -89,6 +100,37 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 textView.setText(s);
             }
         });*/
+        termsConditions = root.findViewById(R.id.terms);
+        how_works = root.findViewById(R.id.howworks);
+        share_app = root.findViewById(R.id.shareapp);
+        openingshort = root.findViewById(R.id.openingshortly);
+        mechanictxt = root.findViewById(R.id.mechanic);
+        puncturetxt = root.findViewById(R.id.puncture);
+        waterwashtxt = root.findViewById(R.id.waterwash);
+        mechanictxt.setOnClickListener(this);
+        puncturetxt.setOnClickListener(this);
+        waterwashtxt.setOnClickListener(this);
+        openingshort.setOnClickListener(this);
+        how_works.setOnClickListener(this);
+        share_app.setOnClickListener(this);
+        termsConditions.setOnClickListener(this);
+        simpleSwitch = root.findViewById(R.id.simpleSwitch);
+        linearLayout_new = root.findViewById(R.id.new_ui);
+        linearLayout_old = root.findViewById(R.id.old_ui);
+        linearLayout_old.setVisibility(View.GONE);
+        linearLayout_new.setVisibility(View.VISIBLE);
+        simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    linearLayout_old.setVisibility(View.VISIBLE);
+                    linearLayout_new.setVisibility(View.GONE);
+                } else {
+                    linearLayout_old.setVisibility(View.GONE);
+                    linearLayout_new.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         shopsRecyclerView = root.findViewById(R.id.collection_shops);
         categoriesRecyclerView = root.findViewById(R.id.collection_categories);
@@ -108,11 +150,11 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         rentEbike.setOnClickListener(this);
 
         imageLoader = VolleySingleton.getInstance(getActivity()).getImageLoader();
-        imageLoader.get("http:/www.ewheelers.in/image/slide/24/3/1/MOBILE?t=1580018050", ImageLoader.getImageListener(bookTestDrive, R.drawable.cart, android.R.drawable.ic_dialog_alert));
-        bookTestDrive.setImageUrl("http://www.ewheelers.in//image//slide//24//3//1//MOBILE?t=1580018050", imageLoader);
+        imageLoader.get("https:/www.ewheelers.in/image/slide/24/3/1/MOBILE?t=1580018050", ImageLoader.getImageListener(bookTestDrive, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+        bookTestDrive.setImageUrl("https://www.ewheelers.in//image//slide//24//3//1//MOBILE?t=1580018050", imageLoader);
 
-        imageLoader.get("http://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", ImageLoader.getImageListener(rentEbike, R.drawable.cart, android.R.drawable.ic_dialog_alert));
-        rentEbike.setImageUrl("http://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", imageLoader);
+        imageLoader.get("https://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", ImageLoader.getImageListener(rentEbike, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+        rentEbike.setImageUrl("https://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", imageLoader);
 
         getCollectionProducts(root);
 
@@ -186,7 +228,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 if (collectionType.equals("2")) {
 
                                     String collection_id = jsonObjectProducts.getString("collection_id");
-                                  //  String collectionimage = jsonObjectProducts.getString("collection_image");
+                                    //  String collectionimage = jsonObjectProducts.getString("collection_image");
                                     String collection_name = jsonObjectProducts.getString("collection_name");
                                     categoriesTitle.setText(collection_name);
 
@@ -239,42 +281,41 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                 }
 
 
+                                if (collectionType.equals("1")) {
+                                    String collection_id = jsonObjectProducts.getString("collection_id");
+                                    //   String collectionimage = jsonObjectProducts.getString("collection_image");
+                                    String collection_name = jsonObjectProducts.getString("collection_name");
+                                    collectionTitle.setText(collection_name);
+                                    JSONArray jsonArrayProducts = jsonObjectProducts.getJSONArray("products");
+                                    for (int j = 0; j < jsonArrayProducts.length(); j++) {
+                                        JSONObject products = jsonArrayProducts.getJSONObject(j);
+                                        String productName = products.getString("product_name");
+                                        String productPrice = products.getString("selprod_price");
+                                        String productImageurl = products.getString("product_image_url");
+                                        String selproductid = products.getString("selprod_id");
+                                        String productid = products.getString("product_id");
+                                        String productcatname = products.getString("prodcat_name");
+                                        String isSell = products.getString("is_sell");
+                                        String isRent = products.getString("is_rent");
+                                        String rentPrice = products.getString("rent_price");
+                                        String rentaltype = products.getString("rental_type");
 
-                            if (collectionType.equals("1")) {
-                                String collection_id = jsonObjectProducts.getString("collection_id");
-                             //   String collectionimage = jsonObjectProducts.getString("collection_image");
-                                String collection_name = jsonObjectProducts.getString("collection_name");
-                                collectionTitle.setText(collection_name);
-                                JSONArray jsonArrayProducts = jsonObjectProducts.getJSONArray("products");
-                                for (int j = 0; j < jsonArrayProducts.length(); j++) {
-                                    JSONObject products = jsonArrayProducts.getJSONObject(j);
-                                    String productName = products.getString("product_name");
-                                    String productPrice = products.getString("selprod_price");
-                                    String productImageurl = products.getString("product_image_url");
-                                    String selproductid = products.getString("selprod_id");
-                                    String productid = products.getString("product_id");
-                                    String productcatname = products.getString("prodcat_name");
-                                    String isSell = products.getString("is_sell");
-                                    String isRent = products.getString("is_rent");
-                                    String rentPrice = products.getString("rent_price");
-                                    String rentaltype = products.getString("rental_type");
+                                        HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                        homeCollectionProducts.setProdcat_name(productcatname);
+                                        homeCollectionProducts.setProduct_name(productName);
+                                        homeCollectionProducts.setSelprod_price(productPrice);
+                                        homeCollectionProducts.setProduct_image_url(productImageurl);
+                                        homeCollectionProducts.setSelprod_id(selproductid);
+                                        homeCollectionProducts.setProduct_id(productid);
+                                        homeCollectionProducts.setIs_rent(isRent);
+                                        homeCollectionProducts.setType(0);
+                                        homeCollectionProducts.setCartItems(cartcount);
+                                        homeCollectionProductsList.add(homeCollectionProducts);
+                                    }
 
-                                    HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
-                                    homeCollectionProducts.setProdcat_name(productcatname);
-                                    homeCollectionProducts.setProduct_name(productName);
-                                    homeCollectionProducts.setSelprod_price(productPrice);
-                                    homeCollectionProducts.setProduct_image_url(productImageurl);
-                                    homeCollectionProducts.setSelprod_id(selproductid);
-                                    homeCollectionProducts.setProduct_id(productid);
-                                    homeCollectionProducts.setIs_rent(isRent);
-                                    homeCollectionProducts.setType(0);
-                                    homeCollectionProducts.setCartItems(cartcount);
-                                    homeCollectionProductsList.add(homeCollectionProducts);
                                 }
 
-                            }
-
-                               if (collectionType.equals("4")) {
+                                if (collectionType.equals("4")) {
                                     String collection_Name = jsonObjectProducts.getString("collection_name");
                                     brandsTitle.setText(collection_Name);
                                     JSONArray jsonArrayBrands = jsonObjectProducts.getJSONArray("brands");
@@ -360,6 +401,49 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.terms:
+                Intent i = new Intent(getActivity(), BuyerGuideActivity.class);
+                i.putExtra("opens", "terms");
+                startActivity(i);
+                break;
+            case R.id.howworks:
+                i = new Intent(getActivity(), BuyerGuideActivity.class);
+                i.putExtra("opens", "howworks");
+                startActivity(i);
+                break;
+            case R.id.shareapp:
+                try {
+                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My application name");
+                    String shareMessage = "\nLargest eBike Digital Store\n";
+                    shareMessage = shareMessage + "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "\n\n";
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+                    startActivity(Intent.createChooser(shareIntent, "choose one"));
+                } catch (Exception e) {
+                    //e.toString();
+                }
+                break;
+            case R.id.openingshortly:
+                i = new Intent(getActivity(), BuyerGuideActivity.class);
+                i.putExtra("opens", "openshort");
+                startActivity(i);
+                break;
+            case R.id.mechanic:
+                i = new Intent(getActivity(), ShowServiceProvidersActivity.class);
+                i.putExtra("providerIs", "Mechanic");
+                startActivity(i);
+                break;
+            case R.id.puncture:
+                i = new Intent(getActivity(), ShowServiceProvidersActivity.class);
+                i.putExtra("providerIs", "Puncture");
+                startActivity(i);
+                break;
+            case R.id.waterwash:
+                i = new Intent(getActivity(), ShowServiceProvidersActivity.class);
+                i.putExtra("providerIs", "Water wash");
+                startActivity(i);
+                break;
             case R.id.book_test_drive:
 
                 break;
@@ -371,6 +455,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+
     }
 
     private void init(List<HomeCollectionProducts> slideUrl, View v) {

@@ -2,12 +2,10 @@ package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.ewheelers.ewheelersbuyer.Adapters.SelectCityAdapter;
 import com.ewheelers.ewheelersbuyer.ModelClass.SelectCitiesModel;

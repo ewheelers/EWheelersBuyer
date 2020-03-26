@@ -1,8 +1,6 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CartListClass {
     private String imageurl;
@@ -15,8 +13,66 @@ public class CartListClass {
     private String shopname;
     private String keyvalue;
     private String optionvalue;
+    public static final int addon=0;
+    public static final int rent=1;
+
+    int type;
 
     private ArrayList<String> options;
+
+    public String rentalprice;
+    public String rentalsecurity;
+    public String total;
+    public String rentStartdate;
+    public String rentEnddate;
+
+    public String getRentalprice() {
+        return rentalprice;
+    }
+
+    public void setRentalprice(String rentalprice) {
+        this.rentalprice = rentalprice;
+    }
+
+    public String getRentalsecurity() {
+        return rentalsecurity;
+    }
+
+    public void setRentalsecurity(String rentalsecurity) {
+        this.rentalsecurity = rentalsecurity;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public String getRentStartdate() {
+        return rentStartdate;
+    }
+
+    public void setRentStartdate(String rentStartdate) {
+        this.rentStartdate = rentStartdate;
+    }
+
+    public String getRentEnddate() {
+        return rentEnddate;
+    }
+
+    public void setRentEnddate(String rentEnddate) {
+        this.rentEnddate = rentEnddate;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public ArrayList<String> getOptions() {
         return options;

@@ -8,6 +8,33 @@ import androidx.annotation.NonNull;
 public class OptionValues implements Parcelable {
     private String optionValuenames;
     private String optionUrlValue;
+    private String optionId;
+    private String optionvalueid;
+
+    public String getOptionselectid() {
+        return optionselectid;
+    }
+
+    public void setOptionselectid(String optionselectid) {
+        this.optionselectid = optionselectid;
+    }
+
+    private String optionselectid;
+    public String getOptionvalueid() {
+        return optionvalueid;
+    }
+
+    public void setOptionvalueid(String optionvalueid) {
+        this.optionvalueid = optionvalueid;
+    }
+
+    public String getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(String optionId) {
+        this.optionId = optionId;
+    }
 
     public String getOptionUrlValue() {
         return optionUrlValue;

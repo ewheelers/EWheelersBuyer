@@ -23,48 +23,43 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup,android:usesCleartextTraffic">
-        <activity android:name=".BuyerGuideActivity"></activity>
-        <activity android:name=".SellersListActivity"
+        <activity android:name="com.ewheelers.ewheelersbuyer.BuyerGuideActivity"></activity>
+        <activity android:name="com.ewheelers.ewheelersbuyer.SellersListActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:label="Available Sellers"/>
-        <activity android:name=".SelectCityActivity"
+        <activity android:name="com.ewheelers.ewheelersbuyer.SelectCityActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
-        <activity android:name=".SetupBillingAddressActivity"
+        <activity android:name="com.ewheelers.ewheelersbuyer.SetupBillingAddressActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:label="Choose Billing/Delivery Address"/>
-        <activity android:name=".ViewOptionsActivity"
+        <activity android:name="com.ewheelers.ewheelersbuyer.ViewOptionsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
-        <activity android:name=".UpdateProfileActivity"
+        <activity android:name="com.ewheelers.ewheelersbuyer.UpdateProfileActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:label="Update Profile"/>
-        <activity android:name=".ShowServiceProvidersActivity"/>
+        <activity android:name="com.ewheelers.ewheelersbuyer.ShowServiceProvidersActivity"/>
         <activity
-            android:name=".CartSummaryActivity"
+            android:name="com.ewheelers.ewheelersbuyer.CartSummaryActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".StartPaymentActivity"
+            android:name="com.ewheelers.ewheelersbuyer.StartPaymentActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".CartListingActivity"
+            android:name="com.ewheelers.ewheelersbuyer.CartListingActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".CartActivity"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait"
-            android:theme="@style/NoActionBar" />
-        <activity
-            android:name=".RecommendProductsActivity"
+            android:name="com.ewheelers.ewheelersbuyer.RecommendProductsActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar" />
@@ -80,47 +75,48 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".MapsActivity" />
+        <activity android:name="com.ewheelers.ewheelersbuyer.MapsActivity" />
         <activity
-            android:name=".DiscountActivity"
+            android:name="com.ewheelers.ewheelersbuyer.DiscountActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
-            android:name=".NavAppBarActivity"
+            android:name="com.ewheelers.ewheelersbuyer.NavAppBarActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".ShowAlleBikesActivity"
+            android:name="com.ewheelers.ewheelersbuyer.ShowAlleBikesActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ProductDescriptionActivity"
+            android:name="com.ewheelers.ewheelersbuyer.ProductDescriptionActivity"
             android:configChanges="orientation"
             android:label="Product Details"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ProductDetailActivity"
+            android:name="com.ewheelers.ewheelersbuyer.ProductDetailActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".BottomedNavigationActivity"
+            android:name="com.ewheelers.ewheelersbuyer.BottomedNavigationActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.ewheelers.ewheelersbuyer.LoginActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.ewheelers.ewheelersbuyer.MainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/NoActionBar">
@@ -131,7 +127,14 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".GPSTracker" />
+        <service android:name="com.ewheelers.ewheelersbuyer.GPSTracker" />
+        <service
+            android:name="com.ewheelers.ewheelersbuyer.Utilities.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

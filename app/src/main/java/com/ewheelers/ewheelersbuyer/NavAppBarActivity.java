@@ -11,7 +11,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,24 +21,14 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,12 +42,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ewheelers.ewheelersbuyer.Adapters.CollectionProductsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.MenuIconAdapter;
-import com.ewheelers.ewheelersbuyer.ModelClass.HomeCollectionProducts;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
-import com.ewheelers.ewheelersbuyer.ui.home.HomeFragment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -69,10 +55,14 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -86,8 +76,6 @@ import tourguide.tourguide.Overlay;
 import tourguide.tourguide.Pointer;
 import tourguide.tourguide.ToolTip;
 import tourguide.tourguide.TourGuide;
-
-import static com.ewheelers.ewheelersbuyer.SessionStorage.tokenvalue;
 
 public class NavAppBarActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     NavigationView navigationView;
@@ -117,10 +105,12 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
     NewGPSTracker newgps;
     Context mContext;
+    String tokenValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_app_bar);
+        tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
 
         getuser_location = findViewById(R.id.fetch_location);
 
@@ -134,6 +124,26 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         showmenuicon = findViewById(R.id.showmenu);
         mainCartCount = findViewById(R.id.maincartcount);
         tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this, SessionStorage.tokenvalue);
+
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("instancsmsg", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        String msg = getString(R.string.msg_token_fmt, token);
+                        Log.d("tokenFCM", msg);
+                        //Toast.makeText(NavAppBarActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
 
         mainCartCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -503,14 +513,14 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     }*/
 
     public List<HomeMenuIcons> homeMenuIcons() {
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "charge"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "mechanic"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_punctureflat, "puncture"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "Charge"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "Mechanic"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_tyre, "Puncture"));
         //homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
        // homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "battery"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_keyrepair, "key repair"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "water wash"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "Battery"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_key, "Key repair"));
+        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "Water wash"));
         return homeMenuIcons;
     }
 
@@ -523,10 +533,11 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             Toast.makeText(this, "under development", Toast.LENGTH_SHORT).show();
         }
         if(id == R.id.nav_logout){
-            SessionStorage.clearString(NavAppBarActivity.this,SessionStorage.tokenvalue);
+           /* SessionStorage.clearString(NavAppBarActivity.this,SessionStorage.tokenvalue);
             Intent i = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(i);
-            finish();
+            finish();*/
+            logoutviaApi();
         }
 
         if (id == R.id.share_app) {
@@ -547,6 +558,59 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+
+    }
+
+    private void logoutviaApi() {
+
+        String url_link = Apis.logout;
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String msg = jsonObject.getString("msg");
+                    if(status.equals("1")) {
+                        SessionStorage.clearString(NavAppBarActivity.this, SessionStorage.tokenvalue);
+                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(i);
+                        finish();
+                    }else {
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error: " + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenValue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+                return null;
+            }
+
+        };
+        // Add the realibility on the connection.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        queue.add(stringRequest);
 
     }
 

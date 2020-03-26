@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ewheelers.ewheelersbuyer.ModelClass.SelectCitiesModel;
 import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
 import com.ewheelers.ewheelersbuyer.R;
-import com.ewheelers.ewheelersbuyer.SelectCityActivity;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
 
 import java.util.List;

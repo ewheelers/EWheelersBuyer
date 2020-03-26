@@ -1,7 +1,6 @@
 package com.ewheelers.ewheelersbuyer.Fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,24 +20,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
-import com.ewheelers.ewheelersbuyer.BottomedNavigationActivity;
 import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
@@ -132,7 +126,6 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
 
                 //need this to prompts email client only
                 email.setType("message/rfc822");
-
                 startActivity(Intent.createChooser(email, "Choose an Email client :"));
                 break;
             case R.id.helpline_call:

@@ -1,13 +1,10 @@
 package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -40,10 +37,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
 
 public class UpdateProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,View.OnClickListener {
     ArrayList<String> countrieslist = new ArrayList<>();

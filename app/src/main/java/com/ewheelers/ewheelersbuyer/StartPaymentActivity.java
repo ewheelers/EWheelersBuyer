@@ -13,8 +13,6 @@ import com.payumoney.sdkui.ui.utils.PayUmoneyFlowManager;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.UUID;
 

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -7,11 +7,13 @@ android {
         applicationId "com.ewheelers.ewheelersbuyer"
         minSdkVersion 20
         targetSdkVersion 29
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.3"
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -69,4 +71,11 @@ dependencies {
     implementation 'com.payumoney.sdkui:plug-n-play:1.6.0'
     implementation 'com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1'
     implementation 'com.github.vihtarb:tooltip:0.1.9'
+    implementation 'com.google.firebase:firebase-messaging:20.1.2'
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'androidx.work:work-runtime:2.3.4'
+    implementation 'com.android.support:multidex:1.0.3'
+
+
+
 }

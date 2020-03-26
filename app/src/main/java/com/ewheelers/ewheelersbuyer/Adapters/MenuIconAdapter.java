@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ewheelers.ewheelersbuyer.Interface.ItemClickListener;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.ShowServiceProvidersActivity;

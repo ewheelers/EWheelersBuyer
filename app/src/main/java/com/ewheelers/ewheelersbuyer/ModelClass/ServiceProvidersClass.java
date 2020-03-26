@@ -11,6 +11,16 @@ public class ServiceProvidersClass {
     private String serviceprovider_latitude;
     private String serviceprovider_longitude;
 
+    String distance;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
     private double currentlatitude;
     private double currentlongitude;
 

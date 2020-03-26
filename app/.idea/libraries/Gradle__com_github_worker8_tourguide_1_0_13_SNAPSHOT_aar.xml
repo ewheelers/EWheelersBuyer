@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.worker8:tourguide:1.0.13-SNAPSHOT@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/aafcb9d8be52ffa93442bc9891828766/jetified-tourguide-1.0.13-SNAPSHOT/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/aafcb9d8be52ffa93442bc9891828766/jetified-tourguide-1.0.13-SNAPSHOT/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.worker8/tourguide/1.0.13-SNAPSHOT/82247e468831dc8e18a7a97d068e1c08c39614d7/tourguide-1.0.13-SNAPSHOT-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.worker8/tourguide/1.0.13-SNAPSHOT/c26d1778f4792ee2dd86fd4855ce6704ebde9e0f/tourguide-1.0.13-SNAPSHOT-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

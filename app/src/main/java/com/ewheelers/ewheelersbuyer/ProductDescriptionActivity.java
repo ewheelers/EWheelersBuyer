@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDescriptionActivity extends AppCompatActivity {
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    TabLayout tabLayout;
+    ViewPager viewPager;
     ImageView imageView;
     TextView proName, proPrice;
     String description;

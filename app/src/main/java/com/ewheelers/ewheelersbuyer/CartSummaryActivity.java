@@ -1,6 +1,7 @@
 package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,9 +9,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.TextWatcher;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +20,6 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,20 +27,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ewheelers.ewheelersbuyer.Adapters.CartListingAdapter;
+import com.ewheelers.ewheelersbuyer.Adapters.CouponsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.PricedetailAdapter;
-import com.ewheelers.ewheelersbuyer.ModelClass.CartListClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.PriceDetailsClass;
+import com.ewheelers.ewheelersbuyer.ModelClass.PromoCodesModel;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.channels.InterruptedByTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +55,10 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     PricedetailAdapter pricedetailAdapter;
     String net_amount;
     TextView changeAddress;
-
+    RecyclerView recyclerViewCoupons;
+    Button have_coupon;
+    List<PromoCodesModel> promoCodesModels = new ArrayList<>();
+    CouponsAdapter couponsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,15 +78,20 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         apply_layout = findViewById(R.id.apply_promo_layout);
         pay = findViewById(R.id.payment);
         changeAddress = findViewById(R.id.changeAddress);
+        have_coupon = findViewById(R.id.have_coupons);
+        recyclerViewCoupons = findViewById(R.id.couponlist);
         applyCode.setOnClickListener(this);
         removeButton.setOnClickListener(this);
         editTextPromo.addTextChangedListener(this);
         pay.setOnClickListener(this);
         changeAddress.setOnClickListener(this);
+        have_coupon.setOnClickListener(this);
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         walletDetails.setText("Wallet Balance " + "\u20B9 0.00 " + "can be Applied " + getResources().getString(R.string.details));
         //cartListing();
+
+
 
     }
 
@@ -107,6 +111,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     String wallet_balance = dataJsonObject.getString("displayUserWalletBalance");
                     walletBalance.setText("Wallet Balance " + wallet_balance);
                     String cartcount = dataJsonObject.getString("cartItemsCount");
+
                     net_amount = dataJsonObject.getString("orderNetAmount");
                     JSONArray jsonArrayPricedetails = dataJsonObject.getJSONArray("priceDetail");
                     for (int i = 0; i < jsonArrayPricedetails.length(); i++) {
@@ -190,6 +195,9 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.have_coupons:
+                showCoupons();
+                break;
             case R.id.apply_code:
                 ApplyPromocode();
                 break;
@@ -209,6 +217,65 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 startActivity(i);
                 break;
         }
+    }
+
+    private void showCoupons() {
+        promoCodesModels.clear();
+        String url_link = Apis.offerslisting;
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String msg = jsonObject.getString("msg");
+                    Toast.makeText(CartSummaryActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                    JSONArray jsonArray = jsonObjectData.getJSONArray("offers");
+                    for(int i=0;i<jsonArray.length();i++){
+                        JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                        String coupon = jsonObject1.getString("coupon_code");
+                        PromoCodesModel promoCodesModel = new PromoCodesModel();
+                        promoCodesModel.setPromoCode(coupon);
+                        promoCodesModels.add(promoCodesModel);
+                    }
+                    GridLayoutManager linearLayoutManager = new GridLayoutManager(CartSummaryActivity.this,2);
+                    recyclerViewCoupons.setLayoutManager(linearLayoutManager);
+                    couponsAdapter = new CouponsAdapter(CartSummaryActivity.this,promoCodesModels);
+                    recyclerViewCoupons.setAdapter(couponsAdapter);
+                    couponsAdapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error: " + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+                return null;
+            }
+
+        };
+        // Add the realibility on the connection.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        queue.add(stringRequest);
     }
 
     private void ApplyPromocode() {
@@ -340,5 +407,9 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 promoResult.setText("");
             }
         }
+    }
+
+    public void setCoupon(String promoCode) {
+        editTextPromo.setText(promoCode);
     }
 }
