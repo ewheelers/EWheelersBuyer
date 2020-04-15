@@ -3,6 +3,7 @@ package com.ewheelers.ewheelersbuyer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,9 +30,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,13 +42,18 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.ewheelersbuyer.Adapters.AllebikesAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.MenuIconAdapter;
+import com.ewheelers.ewheelersbuyer.ModelClass.AllebikesModelClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeMenuIcons;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
+import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.ewheelers.ewheelersbuyer.ui.alerts.DashboardFragment;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -57,12 +66,14 @@ import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -106,6 +117,11 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     NewGPSTracker newgps;
     Context mContext;
     String tokenValue;
+
+    public static BottomNavigationView navView;
+    SearchView searchView;
+    ListView list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +130,8 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
         getuser_location = findViewById(R.id.fetch_location);
 
+        searchView = findViewById(R.id.searchview);
+        list = findViewById(R.id.listview);
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_drawer);
         mHeaderView = navigationView.getHeaderView(0);
@@ -125,7 +143,26 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         mainCartCount = findViewById(R.id.maincartcount);
         tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this, SessionStorage.tokenvalue);
 
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Toast.makeText(NavAppBarActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
+                list.setVisibility(View.GONE);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText.length() > 1) {
+                    list.setVisibility(View.VISIBLE);
+                    setSuggestions(newText);
+                } else {
+                    list.setVisibility(View.GONE);
+                }
+                return false;
+            }
+        });
+       /* FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -141,9 +178,10 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                         // Log and toast
                         String msg = getString(R.string.msg_token_fmt, token);
                         Log.d("tokenFCM", msg);
+
                         //Toast.makeText(NavAppBarActivity.this, msg, Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
 
         mainCartCount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,14 +204,16 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 drawer.closeDrawer(GravityCompat.START);
             }
         });
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_alerts, R.id.navigation_wallet, R.id.navigation_help, R.id.navigation_profile)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(2);
 
 
      /*   mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -248,7 +288,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             ActivityCompat.requestPermissions(NavAppBarActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         } else {
-            Toast.makeText(mContext,"You need have granted permission",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "You need have granted permission", Toast.LENGTH_SHORT).show();
             newgps = new NewGPSTracker(mContext, NavAppBarActivity.this);
 
             // Check if GPS enabled
@@ -259,7 +299,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
                 // \n is for new line
 
-               // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
 
                 try {
                     geocoder = new Geocoder(this, Locale.ENGLISH);
@@ -295,7 +335,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                         //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
                         //donator_addre.setEnabled(false);
                         //city.setText(str1);
-                        Toast.makeText(getApplicationContext(), "Your Location is -" +str3, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
 
                     } else {
                         Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
@@ -312,6 +352,67 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         }
 
     }
+
+    private void setSuggestions(String querynewtext) {
+        String Login_url = Apis.searchbytags;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                            JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+                            JSONArray jsonArray = jsonObjectdata.getJSONArray("suggestions");
+                            ArrayList<String> strings = new ArrayList<>();
+                            for(int i=0;i<jsonArray.length();i++){
+                                JSONObject jsonObjectVal = jsonArray.getJSONObject(i);
+                                String value = jsonObjectVal.getString("value");
+                                strings.add(value);
+                            }
+                                list.setAdapter(new ArrayAdapter<String>(NavAppBarActivity.this, android.R.layout.simple_spinner_dropdown_item, strings));
+                                list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        String s = list.getItemAtPosition(position).toString();
+                                        searchView.setQuery(s, true);
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("keyword", querynewtext);
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -371,7 +472,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                                 //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
                                 //donator_addre.setEnabled(false);
                                 //city.setText(str1);
-                                Toast.makeText(getApplicationContext(), "Your Location is -" +str3, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
 
                             } else {
                                 Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
@@ -406,6 +507,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         return longitude;
     }
 
+
     private void setcityDialog() {
         final String[] multiChoiceItems = {"Hyderabad"};
         new AlertDialog.Builder(this)
@@ -415,8 +517,8 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         getuser_location.setText(multiChoiceItems[which]);
-                        new SessionStorage().clearString(NavAppBarActivity.this,SessionStorage.location);
-                        new SessionStorage().saveString(NavAppBarActivity.this,SessionStorage.location,multiChoiceItems[which]);
+                        new SessionStorage().clearString(NavAppBarActivity.this, SessionStorage.location);
+                        new SessionStorage().saveString(NavAppBarActivity.this, SessionStorage.location, multiChoiceItems[which]);
                     }
                 })
                 .show();
@@ -429,95 +531,13 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 || super.onSupportNavigateUp();
     }
 
-   /* public void getcurrentLocation() {
-        gps = new GPSTracker(this);
-
-        if (gps.canGetLocation()) {
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-
-            //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
-            try {
-                geocoder = new Geocoder(this, Locale.ENGLISH);
-                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                StringBuilder str1 = new StringBuilder();
-                StringBuilder str2 = new StringBuilder();
-                StringBuilder str3 = new StringBuilder();
-                StringBuilder str4 = new StringBuilder();
-                StringBuilder str5 = new StringBuilder();
-                StringBuilder str6 = new StringBuilder();
-
-                if (Geocoder.isPresent()) {
-
-                    Address returnAddress = addresses.get(0);
-
-                    String address = returnAddress.getAddressLine(0);
-                    String localityString = returnAddress.getSubLocality();
-                    String citys = returnAddress.getLocality();
-                    String region_code = returnAddress.getCountryName();
-                    String zipcode = returnAddress.getPostalCode();
-                    String statenam = returnAddress.getAdminArea();
-                    str1.append(address);
-                    str2.append(localityString);
-                    str3.append(citys);
-                    str4.append(region_code);
-                    str5.append(zipcode);
-                    str6.append(statenam);
-
-                    getuser_location.setText(str3);
-                    //  countrycode.setText(str4);
-                    //  pincodeno.setText(str5);
-                    //  statename.setText(str6);
-                    //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
-                    //donator_addre.setEnabled(false);
-                    //city.setText(str1);
-                } else {
-                    Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
-                }
-            } catch (Exception e) {
-                Log.e("tag", e.getMessage());
-            }
-        } else {
-            //gps.showSettingsAlert();
-            try {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                // Setting Dialog Title
-                alertDialog.setTitle("GPS is not enabled.");
-                // Setting Dialog Message
-                alertDialog.setMessage("Enable and Refresh App. Do you want to go to settings menu?");
-                // On pressing Settings button
-                alertDialog.setCancelable(false);
-                alertDialog.create();
-                alertDialog.setPositiveButton("Settings", new
-                        DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                //startActivity(intent);
-                                startActivityForResult(intent, 1);
-                            }
-                        });
-                // on pressing cancel button
-                alertDialog.setNegativeButton("Cancel", new
-                        DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-
-                alertDialog.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }*/
 
     public List<HomeMenuIcons> homeMenuIcons() {
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_chargeplug, "Charge"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "Mechanic"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_tyre, "Puncture"));
         //homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
-       // homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
+        // homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "Battery"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_key, "Key repair"));
         homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "Water wash"));
@@ -528,11 +548,23 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
+        if (id == R.id.nav_my_testdrives) {
+            Intent i = new Intent(this, MyTestDrivesActivity.class);
+            startActivity(i);
+        }
         if (id == R.id.nav_dealer) {
             // Handle the camera action
-            Toast.makeText(this, "under development", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "under development", Toast.LENGTH_SHORT).show();
+            Intent inten = new Intent(getApplicationContext(), SellersListActivity.class);
+            inten.putExtra("fromactivity", "navmenu");
+
+            startActivity(inten);
         }
-        if(id == R.id.nav_logout){
+        if (id == R.id.nav_my_orders) {
+            Intent i = new Intent(this, MyOrdersActivity.class);
+            startActivity(i);
+        }
+        if (id == R.id.nav_logout) {
            /* SessionStorage.clearString(NavAppBarActivity.this,SessionStorage.tokenvalue);
             Intent i = new Intent(getApplicationContext(),LoginActivity.class);
             startActivity(i);
@@ -572,12 +604,12 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    if(status.equals("1")) {
+                    if (status.equals("1")) {
                         SessionStorage.clearString(NavAppBarActivity.this, SessionStorage.tokenvalue);
                         Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(i);
                         finish();
-                    }else {
+                    } else {
                         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
                     }
 
@@ -665,7 +697,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         mGoogleApiClient.connect();
     }
 
-    public void getCartCountHome(){
+    public void getCartCountHome() {
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.home;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
@@ -676,14 +708,18 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    if(status.equals("1")) {
+                    if (status.equals("1")) {
                         JSONObject dataJsonObject = jsonObject.getJSONObject("data");
 
                         String cartcount = dataJsonObject.getString("cartItemsCount");
+                        String unreadnoti = dataJsonObject.getString("totalUnreadNotificationCount");
+
                         mainCartCount.setText(cartcount);
 
-                    }else {
-                        Toast.makeText(NavAppBarActivity.this, ""+msg, Toast.LENGTH_SHORT).show();
+                        navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(Integer.parseInt(unreadnoti));
+
+                    } else {
+                        Toast.makeText(NavAppBarActivity.this, "" + msg, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -707,6 +743,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 params.put("X-TOKEN", tokenvalue);
                 return params;
             }
+
             @Override
             public Map<String, String> getParams() {
                 return null;
@@ -722,6 +759,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         getCartCountHome();
         super.onResume();
     }
+
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
@@ -738,10 +776,22 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                doubleBackToExitPressedOnce = false;
                 finish();
             }
         }, 2000);
     }
 
+    public void setcount(String unread) {
+        navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(Integer.parseInt(unread));
+       /* if(unread.equals("0")){
+            BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_alerts);
+            badge.setVisible(false);
+        }else {
+            BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_alerts);
+            badge.setBadgeGravity(BadgeDrawable.BOTTOM_END);
+            badge.setNumber(Integer.parseInt(unread));
+            badge.setVisible(true);
+        }*/
+    }
 }

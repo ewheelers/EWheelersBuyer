@@ -83,10 +83,10 @@
                 <androidx.appcompat.widget.SearchView
                     android:layoutDirection="rtl"
                     android:layout_gravity="center_vertical"
-                    android:id="@+id/enterpincode"
+                    android:id="@+id/searchview"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:inputType="number"
+                    android:inputType="text"
                     app:queryHint="search here"
                     tools:targetApi="jelly_bean_mr1" />
 
@@ -115,49 +115,10 @@
 
         </LinearLayout>
 
-      <!--  <HorizontalScrollView
-            android:visibility="gone"
-            android:id="@+id/buttons"
+        <ListView
+            android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/search_bar"
-            android:layout_marginLeft="@dimen/padding_10"
-            android:layout_marginRight="@dimen/padding_10"
-            android:scrollbarSize="1dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    style="?attr/buttonBarPositiveButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="All eBikes"
-                    android:textAllCaps="false" />
-
-                <Button
-                    style="?attr/buttonBarPositiveButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="eBicycles"
-                    android:textAllCaps="false" />
-
-                <Button
-                    style="?attr/buttonBarPositiveButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="eScooters"
-                    android:textAllCaps="false" />
-
-                <Button
-                    style="?attr/buttonBarPositiveButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="38dp"
-                    android:text="eMotorcycles"
-                    android:textAllCaps="false" />
-            </LinearLayout>
-        </HorizontalScrollView>-->
+            android:layout_height="wrap_content"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/static_menus"

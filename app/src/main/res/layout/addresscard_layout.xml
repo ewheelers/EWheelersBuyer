@@ -32,6 +32,7 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Address label" />
+
             <TextView
                 android:id="@+id/select"
                 android:background="@drawable/button_bg_redtransperent"
@@ -46,10 +47,17 @@
             <ImageView
                 android:id="@+id/delete_address"
                 android:layout_width="0dp"
-                android:layout_weight="0.5"
+                android:layout_weight="0.25"
                 android:layout_gravity="center_vertical"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_action_delete"/>
+            <ImageView
+                android:id="@+id/update_address"
+                android:layout_width="0dp"
+                android:layout_weight="0.25"
+                android:layout_gravity="center_vertical"
+                android:layout_height="24dp"
+                android:src="@drawable/cb_ic_edit_black"/>
         </LinearLayout>
 
             <LinearLayout

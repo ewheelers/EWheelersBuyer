@@ -1,5 +1,5 @@
 package com.ewheelers.ewheelersbuyer.Interface;
 
 public interface ItemClickListener {
-    String menuname(String item);
+    void description(String pid,String code,String description);
 }

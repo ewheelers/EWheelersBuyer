@@ -1,8 +1,13 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CartListClass {
+    public static final int ADDONLAYOUT=0;
+    public static final int MAINPRODUCT=1;
+
+
     private String imageurl;
     private String productName;
     private String productOption;

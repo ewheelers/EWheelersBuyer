@@ -106,7 +106,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-        sendRegistrationToServer(token);
     }
     // [END on_new_token]
 
@@ -136,56 +135,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        // TODO: Implement this method to send token to your app server.
-        String Login_url = Apis.setuppushnotification;
 
-        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            String getStatus = jsonObject.getString("status");
-                            String message = jsonObject.getString("msg");
-                            if (getStatus.equals("1")) {
-                                Toast.makeText(MyFirebaseMessagingService.this, "message", Toast.LENGTH_SHORT).show();
-                                sendNotification(message);
-                            } else {
-                                Toast.makeText(MyFirebaseMessagingService.this, "message", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.d("Main", "Error :" + error.getMessage());
-                Log.d("Main", "" + error.getMessage() + "," + error.toString());
-            }
-        }) {
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("X-TOKEN",  new SessionStorage().getStrings(MyFirebaseMessagingService.this, SessionStorage.tokenvalue));
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getParams() {
-                Map<String, String> data3 = new HashMap<String, String>();
-                data3.put("deviceToken", token);
-
-                return data3;
-
-            }
-        };
-        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
-        VolleySingleton.getInstance(MyFirebaseMessagingService.this).addToRequestQueue(strRequest);
-    }
 
     /**
      * Create and show a simple notification containing the received FCM message.

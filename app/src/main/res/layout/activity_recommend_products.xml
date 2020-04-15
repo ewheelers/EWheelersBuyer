@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     tools:context=".RecommendProductsActivity">
+
     <TextView
         android:padding="5dp"
         android:id="@+id/recomend_text"
@@ -28,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <LinearLayout
+        <!--<LinearLayout
             android:weightSum="2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -73,14 +74,16 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Amount"/>
-        </LinearLayout>
-
+        </LinearLayout>-->
         <Button
+            android:background="@drawable/button_bg"
             android:layout_gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/place_order"
-            android:text="Place Order"/>
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/white"
+            android:id="@+id/addtoCart"
+            android:text="Continue"/>
 
     </LinearLayout>
 </RelativeLayout>

@@ -15,6 +15,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -75,6 +76,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static android.view.View.GONE;
 import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
 
 public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -100,7 +102,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ImageLoader imageLoader;
     TextView textView_product_details, shareicon;
     private InputMethodManager imm;
-    String imageurls, productdescription, selproductid, productname, productprice, productmodel, isRent, testDriveEnable, booknowEnable;
+    String imageurls, productdescription, selproductid, productname, productprice, productmodel, isRent, testDriveEnable, booknowEnable, selbooknowEnable;
     String rentPrice, rentSecurity;
     public static String selectProId = "";
     TextView brand, productName, cost, policytext, totalreview, totalrating, buywithtit, similarproductTitle;
@@ -143,6 +145,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     String optionvalue_id = "";
     String optionlistid = "";
 
+    LinearLayout compareView;
+    TextView comparetxt, viewcount, zoomImg;
+    ImageView imageViewClose;
+    int onclk;
+    String pro1, pro2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,8 +160,53 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
 
+        //Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
+
+        compareView = findViewById(R.id.view_copmare);
+        comparetxt = findViewById(R.id.compare);
+        viewcount = findViewById(R.id.view_txt);
+        imageViewClose = findViewById(R.id.closeimg);
+        zoomImg = findViewById(R.id.zoom);
+
+        imageViewClose.setOnClickListener(this);
+        comparetxt.setOnClickListener(this);
+        viewcount.setOnClickListener(this);
+        zoomImg.setOnClickListener(this);
+
+        String cview = new SessionStorage().getStrings(this, SessionStorage.compareview);
+        pro1 = new SessionStorage().getStrings(this, SessionStorage.productid);
+        pro2 = new SessionStorage().getStrings(this, SessionStorage.productid2);
+
+        //Toast.makeText(this, "pro1 - "+pro1+" pro2 -" +pro2, Toast.LENGTH_SHORT).show();
+
+
+        if (cview != null && cview.equals("1") && pro1 != null) {
+            compareView.setVisibility(View.VISIBLE);
+            if (pro1.equals(productId)) {
+                viewcount.setText("View 1");
+                comparetxt.setText("added");
+                comparetxt.setEnabled(false);
+            } else if (pro2 != null && pro2.equals(productId)) {
+                compareView.setVisibility(View.VISIBLE);
+                viewcount.setText("View 2");
+                comparetxt.setText("added");
+                comparetxt.setEnabled(false);
+            } else {
+                viewcount.setText("View 1");
+                comparetxt.setText("Compare");
+                comparetxt.setEnabled(true);
+                onclk = 2;
+            }
+        } else {
+            compareView.setVisibility(GONE);
+            comparetxt.setText("Compare");
+            comparetxt.setEnabled(true);
+        }
+
+
         layoutBottomSheet = findViewById(R.id.bottom_sheet);
         sheetBehavior = BottomSheetBehavior.from(layoutBottomSheet);
+
 
         layoutBottomSheetRent = findViewById(R.id.bottom_sheet_rent);
         bottomSheetBehaviorRent = BottomSheetBehavior.from(layoutBottomSheetRent);
@@ -532,6 +585,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                         productSpecs.add(productSpecifications);
                     }
 
+
+                    JSONObject jsonObjectAttributes = dataJsonObject.getJSONObject("attributes");
+
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
                     selproductid = jsonObjectdata.getString("selprod_id");
@@ -541,7 +597,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     productdescription = jsonObjectdata.getString("product_description");
                     isRent = jsonObjectdata.getString("is_rent");
                     testDriveEnable = jsonObjectdata.getString("selprod_test_drive_enable");
-                    booknowEnable = jsonObjectdata.getString("selprod_book_now_enable");
+                    selbooknowEnable = jsonObjectdata.getString("selprod_book_now_enable");
+                    booknowEnable = jsonObjectdata.getString("product_book");
                     rentPrice = jsonObjectdata.getString("rent_price");
                     rentSecurity = jsonObjectdata.getString("sprodata_rental_security");
                     String minrentduration = jsonObjectdata.getString("sprodata_minimum_rental_duration");
@@ -559,6 +616,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                         optionselect.add(productDetailSelect);
                     }
 
+
                     minRentduration.setText("Retail Security : \u20B9 " + rentSecurity + "\nMinimum Rental Duration : " + minrentduration + " Day(s)");
                     rentalPrice.setText("Rental Price: \u20B9 " + rentPrice + " + Rental Security \u20B9 " + rentSecurity);
                     totalPayment.setText("Total Payment : \u20B9 " + (Double.parseDouble(rentPrice) + Double.parseDouble(rentSecurity)));
@@ -568,16 +626,41 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     brand.setText("( " + productmodel + " ) " + productname);
                     cost.setText("\u20B9 " + productprice);
 
-                    buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
+                    String key = null;
+                    String value = null;
+                    JSONObject jsonObjectBuystatus = dataJsonObject.getJSONObject("productBuyStatusArr");
+                    Iterator iterator = jsonObjectBuystatus.keys();
+                    while (iterator.hasNext()) {
+                        key = (String) iterator.next();
+                        value = jsonObjectBuystatus.getString(key);
+                    }
 
                     if (booknowEnable.equals("1")) {
-                        linearLayoutrent.setVisibility(View.GONE);
-                        buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
+                        if (selbooknowEnable.equals(key)) {
+                            //Toast.makeText(ProductDetailActivity.this, "keyvalue: "+value, Toast.LENGTH_SHORT).show();
+                            if (value.equals("Both")) {
+                                linearLayoutrent.setVisibility(GONE);
+                                buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
+                                buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
+                            } else if (value.equals("Book Only")) {
+                                linearLayoutrent.setVisibility(GONE);
+                                buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
+                            } else if (value.equals("Buy Only")) {
+                                linearLayoutrent.setVisibility(GONE);
+                                buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
+                            }
+                        }
+                    } else {
+                        linearLayoutrent.setVisibility(GONE);
+                        addcart.setVisibility(View.VISIBLE);
+                        buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
                     }
+
                     if (testDriveEnable.equals("1")) {
-                        linearLayoutrent.setVisibility(View.GONE);
+                        linearLayoutrent.setVisibility(GONE);
                         buttondata.add(new ProductDetails(5, "Test Drive", R.color.colorGrey, selproductid));
                     }
+
                     if (isRent.equals("1")) {
                         linearLayoutrent.setVisibility(View.VISIBLE);
                         rentavailbility.setText("Get it on Rent for just\n" + "\u20B9 " + rentPrice);
@@ -673,7 +756,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ProductDetailActivity.this, RecyclerView.HORIZONTAL, false);
                     recyclerView.setLayoutManager(linearLayoutManager);
-                    productdetailsAdapter = new ProductdetailsAdapter(ProductDetailActivity.this, productDetailsList);
+                    productdetailsAdapter = new ProductdetailsAdapter(ProductDetailActivity.this, productDetailsList, 0, "notzoom");
                     recyclerView.setAdapter(productdetailsAdapter);
                     productdetailsAdapter.notifyDataSetChanged();
 
@@ -752,15 +835,54 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         jsonaddon = addons;
     }
 
-    public ArrayList<ProductDetails> productDetailSelectValues(){
+    public ArrayList<ProductDetails> productDetailSelectValues() {
         Log.i("seperatemethod", String.valueOf(optionselect));
         return optionselect;
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.zoom:
+                Intent iz = new Intent(getApplicationContext(), ZoomingActivity.class);
+                iz.putExtra("productid", productId);
+                startActivity(iz);
+                break;
+            case R.id.compare:
+                if (onclk == 2) {
+                    viewcount.setText("View 2");
+                    comparetxt.setText("added");
+                    comparetxt.setEnabled(false);
+                    //SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
+                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid2, productId);
+                } else {
+                    compareView.setVisibility(View.VISIBLE);
+                    viewcount.setText("View 1");
+                    comparetxt.setText("added");
+                    comparetxt.setEnabled(false);
+                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
+                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid, productId);
+                }
+                break;
+            case R.id.closeimg:
+                compareView.setVisibility(GONE);
+                comparetxt.setText("Compare");
+                comparetxt.setEnabled(true);
+                SessionStorage.clearString(ProductDetailActivity.this, SessionStorage.compareview);
+                SessionStorage.clearString(ProductDetailActivity.this, SessionStorage.productid);
+                SessionStorage.clearString(ProductDetailActivity.this, SessionStorage.productid2);
+
+                break;
+            case R.id.view_txt:
+                if (viewcount.getText().toString().equals("View 1")) {
+                    Toast.makeText(this, "Select View 2 to compare", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent i = new Intent(getApplicationContext(), CompareActivity.class);
+                    i.putExtra("prod1", new SessionStorage().getStrings(this, SessionStorage.productid));
+                    i.putExtra("prod2", new SessionStorage().getStrings(this, SessionStorage.productid2));
+                    startActivity(i);
+                }
+                break;
             case R.id.startdate_image:
                 showTruitonDatePickerDialogRent(v);
                 break;
@@ -783,7 +905,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 if (start_date_edt.getText().toString().isEmpty() || end_date_edt.getText().toString().isEmpty()) {
                     Toast.makeText(ProductDetailActivity.this, "Select dates", Toast.LENGTH_SHORT).show();
                 } else {
-                    addTocart(selproductid);
+                    addcart(selproductid);
                 }
                 break;
             case R.id.submitButton:
@@ -806,19 +928,21 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 bottomSheetBehaviorRent.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 break;
             case R.id.buyer_guide:
-                Intent i = new Intent(getApplicationContext(), BuyerGuideActivity.class);
-                i.putExtra("opens","buyerguide");
-                startActivity(i);
+                Intent in = new Intent(getApplicationContext(), BuyerGuideActivity.class);
+                in.putExtra("opens", "buyerguide");
+                startActivity(in);
                 break;
             case R.id.enterpincode:
                 Intent inten = new Intent(getApplicationContext(), SellersListActivity.class);
+                inten.putExtra("fromactivity", "details");
+                inten.putExtra("selproductid", selproductid);
                 inten.putExtra("shopname", shopname);
                 inten.putExtra("shopaddress", city + "," + statename + "," + countryname);
                 startActivity(inten);
                 break;
             case R.id.cart_count:
-                Intent in = new Intent(getApplicationContext(), CartListingActivity.class);
-                startActivity(in);
+                Intent inte = new Intent(getApplicationContext(), CartListingActivity.class);
+                startActivity(inte);
                 break;
             case R.id.add_cart:
                 //  addTocart(selproductid, "cart");
@@ -1006,12 +1130,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     public void TestDrive(View v) {
         String Login_url = Apis.testdrive;
-
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
+                        Log.e("testresponse:", response);
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");
@@ -1196,7 +1319,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    public void addTocart(String productid) {
+    public void addcart(String productid) {
         String Login_url = Apis.addtocart;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
@@ -1286,6 +1409,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                             message, Snackbar.LENGTH_LONG);
                                     mySnackbar.setAction("Opencart", new OpencartListner()).setTextColor(Color.YELLOW);
                                     mySnackbar.show();
+                                }else if(buttontext.equals("Booknow")){
+                                    Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+                                    startActivity(i);
                                 }
                             } else {
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_LONG);
@@ -1334,10 +1460,14 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                 data3.put("selprod_id", productid);
                 data3.put("quantity", editqty.getText().toString());
-                if (jsonaddon == null) {
-                    data3.put("addons", "");
-                } else {
-                    data3.put("addons", jsonaddon);
+                if(buttontext.equals("Booknow")){
+                    data3.put("type","book");
+                }else {
+                    if (jsonaddon == null) {
+                        data3.put("addons", "");
+                    } else {
+                        data3.put("addons", jsonaddon);
+                    }
                 }
                 return data3;
 
@@ -1366,7 +1496,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onResume() {
-           getProductDetails(productId);
+        getProductDetails(productId);
         super.onResume();
     }
 }

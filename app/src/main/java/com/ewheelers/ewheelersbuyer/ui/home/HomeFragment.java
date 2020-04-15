@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     List<HomeCollectionProducts> homeCollectionShopsList = new ArrayList<>();
     List<HomeCollectionProducts> homeCollectionCategoriesList = new ArrayList<>();
 
-    TextView showalle_Bikes;
+    TextView showalle_Bikes,showall_cat,showall_brands,showall_shops;
     TextView collectionTitle, brandsTitle, shopsTitle, categoriesTitle;
 
     private static ViewPager mPager;
@@ -85,8 +85,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     ImageView openingshort;
     Button how_works, share_app;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    String collection_id_ebikes,collection_id_cat,collection_id_brands,collection_id_shops;
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -144,8 +145,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         bookTestDrive = root.findViewById(R.id.book_test_drive);
         rentEbike = root.findViewById(R.id.rent_ebike);
         showalle_Bikes = root.findViewById(R.id.showallebikes);
+        showall_cat = root.findViewById(R.id.showallcategories);
+        showall_brands = root.findViewById(R.id.showallbrands);
+        showall_shops = root.findViewById(R.id.showallshops);
         // imageViewBanner = root.findViewById(R.id.banner);
         showalle_Bikes.setOnClickListener(this);
+        showall_cat.setOnClickListener(this);
+        showall_brands.setOnClickListener(this);
+        showall_shops.setOnClickListener(this);
         bookTestDrive.setOnClickListener(this);
         rentEbike.setOnClickListener(this);
 
@@ -227,108 +234,201 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
 
                                 if (collectionType.equals("2")) {
 
-                                    String collection_id = jsonObjectProducts.getString("collection_id");
+                                    collection_id_cat = jsonObjectProducts.getString("collection_id");
                                     //  String collectionimage = jsonObjectProducts.getString("collection_image");
                                     String collection_name = jsonObjectProducts.getString("collection_name");
+                                    String primaryrecord = jsonObjectProducts.getString("collection_primary_records");
+
                                     categoriesTitle.setText(collection_name);
 
                                     JSONArray jsonArrayCategories = jsonObjectProducts.getJSONArray("categories");
+                                    if(jsonArrayCategories.length()<=Integer.parseInt(primaryrecord)) {
+                                        for (int s = 0; s < jsonArrayCategories.length(); s++) {
+                                            JSONObject jsonObjectcat = jsonArrayCategories.getJSONObject(s);
+                                            String prodcat_id = jsonObjectcat.getString("prodcat_id");
+                                            String prodcat_name = jsonObjectcat.getString("prodcat_name");
+                                            String prodcat_description = jsonObjectcat.getString("prodcat_description");
+                                            String category_image_url = jsonObjectcat.getString("category_image_url");
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setProdcategory_name(prodcat_name);
+                                            homeCollectionProducts.setProdcategory_imageurl(category_image_url);
+                                            homeCollectionProducts.setProdcategory_id(prodcat_id);
+                                            homeCollectionProducts.setType(3);
+                                            homeCollectionCategoriesList.add(homeCollectionProducts);
 
-                                    for (int s = 0; s < jsonArrayCategories.length(); s++) {
-                                        JSONObject jsonObjectcat = jsonArrayCategories.getJSONObject(s);
-                                        String prodcat_id = jsonObjectcat.getString("prodcat_id");
-                                        String prodcat_name = jsonObjectcat.getString("prodcat_name");
-                                        String prodcat_description = jsonObjectcat.getString("prodcat_description");
-                                        String category_image_url = jsonObjectcat.getString("category_image_url");
-                                        HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
-                                        homeCollectionProducts.setProdcategory_name(prodcat_name);
-                                        homeCollectionProducts.setProdcategory_imageurl(category_image_url);
-                                        homeCollectionProducts.setProdcategory_id(prodcat_id);
-                                        homeCollectionProducts.setType(3);
-                                        homeCollectionCategoriesList.add(homeCollectionProducts);
+                                        }
+                                    }else {
+                                        for (int s = 0; s < Integer.parseInt(primaryrecord); s++) {
+                                            JSONObject jsonObjectcat = jsonArrayCategories.getJSONObject(s);
+                                            String prodcat_id = jsonObjectcat.getString("prodcat_id");
+                                            String prodcat_name = jsonObjectcat.getString("prodcat_name");
+                                            String prodcat_description = jsonObjectcat.getString("prodcat_description");
+                                            String category_image_url = jsonObjectcat.getString("category_image_url");
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setProdcategory_name(prodcat_name);
+                                            homeCollectionProducts.setProdcategory_imageurl(category_image_url);
+                                            homeCollectionProducts.setProdcategory_id(prodcat_id);
+                                            homeCollectionProducts.setType(3);
+                                            homeCollectionCategoriesList.add(homeCollectionProducts);
 
+                                        }
                                     }
 
                                 }
 
                                 if (collectionType.equals("3")) {
                                     String collectionName = jsonObjectProducts.getString("collection_name");
+                                    String primaryrecord = jsonObjectProducts.getString("collection_primary_records");
+                                    collection_id_shops = jsonObjectProducts.getString("collection_id");
                                     shopsTitle.setText(collectionName);
                                     JSONArray jsonArrayshops = jsonObjectProducts.getJSONArray("shops");
-                                    for (int k = 0; k < jsonArrayshops.length(); k++) {
-                                        JSONObject jsonObjectshop1 = jsonArrayshops.getJSONObject(k);
-                                        String shopbanner = jsonObjectshop1.getString("shop_banner");
-                                        String shop_id = jsonObjectshop1.getString("shop_id");
-                                        String shop_user_id = jsonObjectshop1.getString("shop_user_id");
-                                        String shop_name = jsonObjectshop1.getString("shop_name");
-                                        String country_name = jsonObjectshop1.getString("country_name");
-                                        String state_name = jsonObjectshop1.getString("state_name");
-                                        String rating = jsonObjectshop1.getString("rating");
-                                        String shop_logo = jsonObjectshop1.getString("shop_logo");
-                                        HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
-                                        homeCollectionProducts.setShopbanner(shopbanner);
-                                        homeCollectionProducts.setShopid(shop_id);
-                                        homeCollectionProducts.setShoplogo(shop_logo);
-                                        homeCollectionProducts.setShopname(shop_name);
-                                        homeCollectionProducts.setShopuserid(shop_user_id);
-                                        homeCollectionProducts.setCountryname(country_name);
-                                        homeCollectionProducts.setStatename(state_name);
-                                        homeCollectionProducts.setRating(rating);
-                                        homeCollectionProducts.setType(4);
-                                        homeCollectionShopsList.add(homeCollectionProducts);
-                                        //  Picasso.get().load(shopbanner).fit().into(imageViewBanner);
+                                    if(jsonArrayshops.length()<=Integer.parseInt(primaryrecord)) {
+                                        for (int k = 0; k < jsonArrayshops.length(); k++) {
+                                            JSONObject jsonObjectshop1 = jsonArrayshops.getJSONObject(k);
+                                            String shopbanner = jsonObjectshop1.getString("shop_banner");
+                                            String shop_id = jsonObjectshop1.getString("shop_id");
+                                            String shop_user_id = jsonObjectshop1.getString("shop_user_id");
+                                            String shop_name = jsonObjectshop1.getString("shop_name");
+                                            String country_name = jsonObjectshop1.getString("country_name");
+                                            String state_name = jsonObjectshop1.getString("state_name");
+                                            String rating = jsonObjectshop1.getString("rating");
+                                            String shop_logo = jsonObjectshop1.getString("shop_logo");
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setShopbanner(shopbanner);
+                                            homeCollectionProducts.setShopid(shop_id);
+                                            homeCollectionProducts.setShoplogo(shop_logo);
+                                            homeCollectionProducts.setShopname(shop_name);
+                                            homeCollectionProducts.setShopuserid(shop_user_id);
+                                            homeCollectionProducts.setCountryname(country_name);
+                                            homeCollectionProducts.setStatename(state_name);
+                                            homeCollectionProducts.setRating(rating);
+                                            homeCollectionProducts.setType(4);
+                                            homeCollectionShopsList.add(homeCollectionProducts);
+                                            //  Picasso.get().load(shopbanner).fit().into(imageViewBanner);
+                                        }
+                                    }else {
+                                        for (int k = 0; k < Integer.parseInt(primaryrecord); k++) {
+                                            JSONObject jsonObjectshop1 = jsonArrayshops.getJSONObject(k);
+                                            String shopbanner = jsonObjectshop1.getString("shop_banner");
+                                            String shop_id = jsonObjectshop1.getString("shop_id");
+                                            String shop_user_id = jsonObjectshop1.getString("shop_user_id");
+                                            String shop_name = jsonObjectshop1.getString("shop_name");
+                                            String country_name = jsonObjectshop1.getString("country_name");
+                                            String state_name = jsonObjectshop1.getString("state_name");
+                                            String rating = jsonObjectshop1.getString("rating");
+                                            String shop_logo = jsonObjectshop1.getString("shop_logo");
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setShopbanner(shopbanner);
+                                            homeCollectionProducts.setShopid(shop_id);
+                                            homeCollectionProducts.setShoplogo(shop_logo);
+                                            homeCollectionProducts.setShopname(shop_name);
+                                            homeCollectionProducts.setShopuserid(shop_user_id);
+                                            homeCollectionProducts.setCountryname(country_name);
+                                            homeCollectionProducts.setStatename(state_name);
+                                            homeCollectionProducts.setRating(rating);
+                                            homeCollectionProducts.setType(4);
+                                            homeCollectionShopsList.add(homeCollectionProducts);
+                                            //  Picasso.get().load(shopbanner).fit().into(imageViewBanner);
+                                        }
                                     }
                                 }
 
 
                                 if (collectionType.equals("1")) {
-                                    String collection_id = jsonObjectProducts.getString("collection_id");
+                                    collection_id_ebikes = jsonObjectProducts.getString("collection_id");
                                     //   String collectionimage = jsonObjectProducts.getString("collection_image");
                                     String collection_name = jsonObjectProducts.getString("collection_name");
+                                    String primaryrecord = jsonObjectProducts.getString("collection_primary_records");
                                     collectionTitle.setText(collection_name);
                                     JSONArray jsonArrayProducts = jsonObjectProducts.getJSONArray("products");
-                                    for (int j = 0; j < jsonArrayProducts.length(); j++) {
-                                        JSONObject products = jsonArrayProducts.getJSONObject(j);
-                                        String productName = products.getString("product_name");
-                                        String productPrice = products.getString("selprod_price");
-                                        String productImageurl = products.getString("product_image_url");
-                                        String selproductid = products.getString("selprod_id");
-                                        String productid = products.getString("product_id");
-                                        String productcatname = products.getString("prodcat_name");
-                                        String isSell = products.getString("is_sell");
-                                        String isRent = products.getString("is_rent");
-                                        String rentPrice = products.getString("rent_price");
-                                        String rentaltype = products.getString("rental_type");
+                                    if(jsonArrayProducts.length()<=Integer.parseInt(primaryrecord)) {
+                                        for (int j = 0; j < jsonArrayProducts.length(); j++) {
+                                            JSONObject products = jsonArrayProducts.getJSONObject(j);
+                                            String productName = products.getString("product_name");
+                                            String productPrice = products.getString("selprod_price");
+                                            String productImageurl = products.getString("product_image_url");
+                                            String selproductid = products.getString("selprod_id");
+                                            String productid = products.getString("product_id");
+                                            String productcatname = products.getString("prodcat_name");
+                                            String isSell = products.getString("is_sell");
+                                            String isRent = products.getString("is_rent");
+                                            String rentPrice = products.getString("rent_price");
+                                            String rentaltype = products.getString("rental_type");
 
-                                        HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
-                                        homeCollectionProducts.setProdcat_name(productcatname);
-                                        homeCollectionProducts.setProduct_name(productName);
-                                        homeCollectionProducts.setSelprod_price(productPrice);
-                                        homeCollectionProducts.setProduct_image_url(productImageurl);
-                                        homeCollectionProducts.setSelprod_id(selproductid);
-                                        homeCollectionProducts.setProduct_id(productid);
-                                        homeCollectionProducts.setIs_rent(isRent);
-                                        homeCollectionProducts.setType(0);
-                                        homeCollectionProducts.setCartItems(cartcount);
-                                        homeCollectionProductsList.add(homeCollectionProducts);
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setProdcat_name(productcatname);
+                                            homeCollectionProducts.setProduct_name(productName);
+                                            homeCollectionProducts.setSelprod_price(productPrice);
+                                            homeCollectionProducts.setProduct_image_url(productImageurl);
+                                            homeCollectionProducts.setSelprod_id(selproductid);
+                                            homeCollectionProducts.setProduct_id(productid);
+                                            homeCollectionProducts.setIs_rent(isRent);
+                                            homeCollectionProducts.setType(0);
+                                            homeCollectionProducts.setCartItems(cartcount);
+                                            homeCollectionProductsList.add(homeCollectionProducts);
+                                        }
                                     }
+                                    else {
+                                        for (int j = 0; j < Integer.parseInt(primaryrecord); j++) {
+                                            JSONObject products = jsonArrayProducts.getJSONObject(j);
+                                            String productName = products.getString("product_name");
+                                            String productPrice = products.getString("selprod_price");
+                                            String productImageurl = products.getString("product_image_url");
+                                            String selproductid = products.getString("selprod_id");
+                                            String productid = products.getString("product_id");
+                                            String productcatname = products.getString("prodcat_name");
+                                            String isSell = products.getString("is_sell");
+                                            String isRent = products.getString("is_rent");
+                                            String rentPrice = products.getString("rent_price");
+                                            String rentaltype = products.getString("rental_type");
 
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setProdcat_name(productcatname);
+                                            homeCollectionProducts.setProduct_name(productName);
+                                            homeCollectionProducts.setSelprod_price(productPrice);
+                                            homeCollectionProducts.setProduct_image_url(productImageurl);
+                                            homeCollectionProducts.setSelprod_id(selproductid);
+                                            homeCollectionProducts.setProduct_id(productid);
+                                            homeCollectionProducts.setIs_rent(isRent);
+                                            homeCollectionProducts.setType(0);
+                                            homeCollectionProducts.setCartItems(cartcount);
+                                            homeCollectionProductsList.add(homeCollectionProducts);
+                                        }
+                                    }
                                 }
 
                                 if (collectionType.equals("4")) {
+                                    collection_id_brands = jsonObjectProducts.getString("collection_id");
                                     String collection_Name = jsonObjectProducts.getString("collection_name");
+                                    String primaryrecord = jsonObjectProducts.getString("collection_primary_records");
                                     brandsTitle.setText(collection_Name);
                                     JSONArray jsonArrayBrands = jsonObjectProducts.getJSONArray("brands");
-                                    for (int j = 0; j < jsonArrayBrands.length(); j++) {
-                                        JSONObject products = jsonArrayBrands.getJSONObject(j);
-                                        String brandid = products.getString("brand_id");
-                                        String brandname = products.getString("brand_name");
-                                        String brandimage = products.getString("brand_image");
+                                    if(jsonArrayBrands.length()<=Integer.parseInt(primaryrecord)) {
+                                        for (int j = 0; j < jsonArrayBrands.length(); j++) {
+                                            JSONObject products = jsonArrayBrands.getJSONObject(j);
+                                            String brandid = products.getString("brand_id");
+                                            String brandname = products.getString("brand_name");
+                                            String brandimage = products.getString("brand_image");
 
-                                        HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
-                                        homeCollectionProducts.setBrandimageurl(brandimage);
-                                        homeCollectionProducts.setType(1);
-                                        homeCollectionbrandList.add(homeCollectionProducts);
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setBrandimageurl(brandimage);
+                                            homeCollectionProducts.setBrandid(brandid);
+                                            homeCollectionProducts.setType(1);
+                                            homeCollectionbrandList.add(homeCollectionProducts);
+                                        }
+                                    }else {
+                                        for (int j = 0; j < Integer.parseInt(primaryrecord); j++) {
+                                            JSONObject products = jsonArrayBrands.getJSONObject(j);
+                                            String brandid = products.getString("brand_id");
+                                            String brandname = products.getString("brand_name");
+                                            String brandimage = products.getString("brand_image");
+
+                                            HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
+                                            homeCollectionProducts.setBrandimageurl(brandimage);
+                                            homeCollectionProducts.setBrandid(brandid);
+                                            homeCollectionProducts.setType(1);
+                                            homeCollectionbrandList.add(homeCollectionProducts);
+                                        }
                                     }
 
                                 }
@@ -336,6 +436,9 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                             }
 
                         }
+
+                        Log.i("collectionids:","bikesid:"+collection_id_ebikes+" catid:"+collection_id_cat+" brandid:"+collection_id_brands+" shopid:"+collection_id_shops);
+
                         collectionProductsAdapter = new CollectionProductsAdapter(getActivity(), homeCollectionProductsList);
                         collectionbrandAdapter = new CollectionProductsAdapter(getActivity(), homeCollectionbrandList);
                         collectionshopsAdapter = new CollectionProductsAdapter(getActivity(), homeCollectionShopsList);
@@ -445,13 +548,42 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                 startActivity(i);
                 break;
             case R.id.book_test_drive:
-
+                Intent intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("onlytestdrives","1");
+                //intent.putExtra("instock",1);
+                intent.putExtra("type","Test Drives");
+                startActivity(intent);
                 break;
             case R.id.rent_ebike:
-
+                intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("onlytestdrives","0");
+                //intent.putExtra("instock",1);
+                intent.putExtra("type","Rental Bikes");
+                startActivity(intent);
                 break;
             case R.id.showallebikes:
-                Intent intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("allpopularbikes",collection_id_ebikes);
+                intent.putExtra("instock",1);
+                intent.putExtra("type","eBikes");
+                startActivity(intent);
+                break;
+            case R.id.showallcategories:
+                intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("allcategories",collection_id_cat);
+                intent.putExtra("type","Categories");
+                startActivity(intent);
+                break;
+            case R.id.showallbrands:
+                intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("allbrands",collection_id_brands);
+                intent.putExtra("type","Brands");
+                startActivity(intent);
+                break;
+            case R.id.showallshops:
+                intent = new Intent(getActivity(), ShowAlleBikesActivity.class);
+                intent.putExtra("allshops",collection_id_shops);
+                intent.putExtra("type","Dealers");
                 startActivity(intent);
                 break;
         }
@@ -459,9 +591,10 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void init(List<HomeCollectionProducts> slideUrl, View v) {
-        for (int i = 0; i < slideUrl.size(); i++)
-            ImagesArray.add(slideUrl.get(i).getSlideImageurl());
-
+        if(slideUrl!=null) {
+            for (int i = 0; i < slideUrl.size(); i++)
+                ImagesArray.add(slideUrl.get(i).getSlideImageurl());
+        }
         mPager = (ViewPager) v.findViewById(R.id.pager);
         mPager.setAdapter(new SlidingImage_Adapter(getActivity(), ImagesArray));
 

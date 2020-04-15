@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.ProdcutDescriptionFragment">
-<ScrollView
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/web_view"/>
+<!--<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
@@ -13,5 +17,5 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_10"
         android:textColor="@color/colorBlack"/>
-</ScrollView>
+</ScrollView>-->
 </FrameLayout>

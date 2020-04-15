@@ -56,7 +56,7 @@
             app:snap="false" />
 
         <Switch
-            android:visibility="gone"
+            android:visibility="visible"
             android:id="@+id/simpleSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -75,6 +75,7 @@
                 android:weightSum="3">
 
                 <TextView
+                    android:textSize="12sp"
                     android:id="@+id/mechanic"
                     android:layout_width="0dp"
                     android:layout_height="75dp"
@@ -90,6 +91,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textSize="12sp"
                     android:id="@+id/puncture"
                     android:layout_width="0dp"
                     android:layout_height="75dp"
@@ -106,6 +108,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:textSize="12sp"
                     android:id="@+id/waterwash"
                     android:layout_width="0dp"
                     android:layout_height="75dp"
@@ -182,6 +185,7 @@
             android:visibility="gone">
 
             <LinearLayout
+                android:paddingTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="2">
@@ -200,10 +204,9 @@
                     android:id="@+id/showallebikes"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:gravity="right"
                     android:layout_weight="0.4"
                     android:autoLink="all"
-                    android:paddingTop="5dp"
                     android:text="All eBikes"
                     android:textColor="@color/colorHeadings" />
 
@@ -217,14 +220,30 @@
                 android:dividerHeight="2dp"
                 android:paddingBottom="0dp" />
 
-            <TextView
-                android:id="@+id/categories_title"
+            <LinearLayout
+                android:paddingTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:weightSum="2">
+
+            <TextView
+                android:id="@+id/categories_title"
+                android:layout_width="0dp"
+                android:layout_weight="1.6"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorPrimary" />
+                <TextView
+                    android:id="@+id/showallcategories"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="0.4"
+                    android:autoLink="all"
+                    android:text="Show All"
+                    android:textColor="@color/colorHeadings" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/collection_categories"
@@ -272,7 +291,6 @@
 
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -303,32 +321,63 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/brands_title"
+            <LinearLayout
+                android:paddingTop="@dimen/padding_10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:weightSum="2">
+            <TextView
+                android:id="@+id/brands_title"
+                android:layout_width="0dp"
+                android:layout_weight="1.6"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorPrimary" />
+                <TextView
+                    android:id="@+id/showallbrands"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="0.4"
+                    android:autoLink="all"
+                    android:text="All Brands"
+                    android:textColor="@color/colorHeadings" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="@dimen/dimen_5dp"
                 android:id="@+id/collection_brands"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="#faf8f8"
-                android:dividerHeight="2dp"
-                android:paddingBottom="0dp" />
+                android:dividerHeight="2dp"/>
 
 
-            <TextView
-                android:id="@+id/shops_title"
+            <LinearLayout
+                android:paddingTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:weightSum="2">
+            <TextView
+                android:id="@+id/shops_title"
+                android:layout_width="0dp"
+                android:layout_weight="1.6"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/colorPrimary" />
+                <TextView
+                    android:visibility="visible"
+                    android:id="@+id/showallshops"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="0.4"
+                    android:autoLink="all"
+                    android:text="All Dealers"
+                    android:textColor="@color/colorHeadings" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/collection_shops"

@@ -4,11 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.help.HelpFragment">
-
-    <TextView
-        android:id="@+id/text_help"
+    <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:id="@+id/webview"/>
 
 </FrameLayout>

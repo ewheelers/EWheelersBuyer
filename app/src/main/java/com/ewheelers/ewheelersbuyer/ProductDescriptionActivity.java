@@ -66,8 +66,8 @@ public class ProductDescriptionActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ProductViewPagerAdapter adapter = new ProductViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ProductSpecificationsFragment(), "Specifications");
         adapter.addFragment(new ProdcutDescriptionFragment(), "Description");
+        adapter.addFragment(new ProductSpecificationsFragment(), "Specifications");
         viewPager.setAdapter(adapter);
     }
 

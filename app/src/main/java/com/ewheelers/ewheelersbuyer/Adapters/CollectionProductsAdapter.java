@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.ewheelers.ewheelersbuyer.ModelClass.HomeCollectionProducts;
 import com.ewheelers.ewheelersbuyer.ProductDetailActivity;
 import com.ewheelers.ewheelersbuyer.R;
+import com.ewheelers.ewheelersbuyer.ShowAlleBikesActivity;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
 import java.util.List;
@@ -85,16 +87,19 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     }
                 });
 
-              /*  if (homeCollectionProducts.get(position).getIs_rent().equals("1")) {
+                if (homeCollectionProducts.get(position).getIs_rent().equals("1")) {
                     holder.availRent.setText("Available for Rent");
                 } else {
                     holder.availRent.setText("");
-                }*/
+                }
 
                 holder.availRent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent i = new Intent(context, ProductDetailActivity.class);
+                        i.putExtra("rent", "rent");
+                        i.putExtra("productid", homeCollectionProducts.get(position).getSelprod_id());
+                        context.startActivity(i);
                     }
                 });
 
@@ -102,11 +107,20 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
             case HomeCollectionProducts.BRANDS:
                 String urlImage = homeCollectionProducts.get(position).getBrandimageurl();
                 if (urlImage != null) {
-                    imageLoader = VolleySingleton.getInstance(context)
-                            .getImageLoader();
+                    imageLoader = VolleySingleton.getInstance(context).getImageLoader();
                     imageLoader.get(homeCollectionProducts.get(position).getBrandimageurl(), ImageLoader.getImageListener(holder.brand_image, R.drawable.cart, android.R.drawable.ic_dialog_alert));
                     holder.brand_image.setImageUrl(homeCollectionProducts.get(position).getBrandimageurl(), imageLoader);
                 }
+
+                holder.cardView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                        intent.putExtra("brandid",homeCollectionProducts.get(position).getBrandid());
+                        context.startActivity(intent);
+                    }
+                });
+
                 break;
             case HomeCollectionProducts.PREVIEW:
                 String url = homeCollectionProducts.get(position).getBrandimageurl();
@@ -127,6 +141,16 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     imageLoader.get(urlshop, ImageLoader.getImageListener(holder.shopLogo, R.drawable.cart, android.R.drawable.ic_dialog_alert));
                     holder.shopLogo.setImageUrl(urlshop, imageLoader);
                 }
+                holder.shop_nowBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                        intent.putExtra("shopid",homeCollectionProducts.get(position).getShopid());
+                        intent.putExtra("shopname",homeCollectionProducts.get(position).getShopname());
+                        intent.putExtra("shopimage",homeCollectionProducts.get(position).getShoplogo());
+                        context.startActivity(intent);
+                    }
+                });
                 break;
             case HomeCollectionProducts.CATEGORY:
                 holder.category_name.setText(homeCollectionProducts.get(position).getProdcategory_name());
@@ -136,6 +160,14 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     imageLoader.get(urlcat, ImageLoader.getImageListener(holder.categoryImage, R.drawable.cart, android.R.drawable.ic_dialog_alert));
                     holder.categoryImage.setImageUrl(urlcat, imageLoader);
                 }
+                holder.catLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                        intent.putExtra("catid",homeCollectionProducts.get(position).getProdcategory_id());
+                        context.startActivity(intent);
+                    }
+                });
                 break;
 
         }
@@ -162,8 +194,8 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
         NetworkImageView product_image, brand_image, preview_image, shopLogo, categoryImage;
         TextView model_name, price, availRent, shop_name, shop_address, category_name;
         Button shop_nowBtn;
-        LinearLayout linearLayout;
-
+        LinearLayout linearLayout,catLayout,shopLayout;
+        LinearLayout cardView;
         public CollectionProductHolder(@NonNull View itemView) {
             super(itemView);
             price = itemView.findViewById(R.id.product_price);
@@ -179,6 +211,9 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
             shop_address = itemView.findViewById(R.id.addess);
             category_name = itemView.findViewById(R.id.category_name);
             categoryImage = itemView.findViewById(R.id.category_image);
+            cardView = itemView.findViewById(R.id.card_view);
+            catLayout = itemView.findViewById(R.id.cat_layout);
+            shopLayout = itemView.findViewById(R.id.shop_layout);
         }
     }
 }

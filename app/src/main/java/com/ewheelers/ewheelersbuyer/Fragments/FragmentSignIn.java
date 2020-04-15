@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.app.ActivityCompat;
@@ -27,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -34,10 +36,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
+import com.ewheelers.ewheelersbuyer.Notifications.SharedPrefManager;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
+import com.ewheelers.ewheelersbuyer.Utilities.MyFirebaseMessagingService;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.kinda.alert.KAlertDialog;
 
 import org.json.JSONException;
@@ -57,6 +66,8 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
     TextView textViewterms;
     KAlertDialog pDialog;
     ImageButton imageButtonmail, imageButtoncall;
+    String msg;
+    String fcmtoken;
 
     public FragmentSignIn() {
         // Required empty public constructor
@@ -94,6 +105,27 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
 
+       /* FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("instancsmsg", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        fcmtoken = task.getResult().getToken();
+
+                        // Log and toast
+                        msg = getString(R.string.msg_token_fmt, fcmtoken);
+                        Log.d("tokenFCM", msg);
+
+                        //Toast.makeText(NavAppBarActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
+*/
 
         return v;
     }
@@ -111,7 +143,15 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
                 if (username.getText().toString().isEmpty() || password.getText().toString().isEmpty()) {
                     Toast.makeText(getActivity(), "Leaved Empty Field", Toast.LENGTH_SHORT).show();
                 } else {
-                    signInBuyer(v);
+
+
+                    String firetoken = SharedPrefManager.getInstance(getActivity()).getDeviceToken();
+
+                    if (firetoken != null) {
+                        signInBuyer(v, firetoken);
+                    } else {
+                        Toast.makeText(getActivity(), "Device Id Not Found !!! Please Try Later", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.terms:
@@ -188,7 +228,7 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
     }
 
 
-    private void signInBuyer(final View v) {
+    private void signInBuyer(final View v, String firetoken) {
         pDialog.show();
         sign_in.setBackgroundColor(Color.GRAY);
         sign_in.setEnabled(false);
@@ -205,15 +245,19 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
                             String message = jsonObject.getString("msg");
 
                             if (getStatus == 1) {
-                                pDialog.dismiss();
+                                //pDialog.dismiss();
                                 JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
                                 String token = jsonObjectdata.getString("token");
                                 String userName = jsonObjectdata.getString("user_name");
                                 String userId = jsonObjectdata.getString("user_id");
+
+
+                                sendRegistrationToServer(token, firetoken);
+
                                 SessionStorage.saveString(getActivity(), SessionStorage.tokenvalue, token);
-                                Intent intent = new Intent(getActivity(), NavAppBarActivity.class);
+                                /*Intent intent = new Intent(getActivity(), NavAppBarActivity.class);
                                 startActivity(intent);
-                                getActivity().finish();
+                                getActivity().finish();*/
 
                             } else {
                                 pDialog.dismiss();
@@ -246,6 +290,61 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
                 data3.put("username", susername);
                 data3.put("password", spass);
                 data3.put("userType", String.valueOf(1));
+
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(getActivity()).addToRequestQueue(strRequest);
+    }
+
+    private void sendRegistrationToServer(String token, String msg) {
+        // TODO: Implement this method to send token to your app server.
+        String Login_url = Apis.setuppushnotification;
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                pDialog.dismiss();
+                                Intent intent = new Intent(getActivity(), NavAppBarActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                                Toast.makeText(getActivity(), "fcmtoken: " + message, Toast.LENGTH_SHORT).show();
+                                //sendNotification(message);
+                            } else {
+                                Toast.makeText(getActivity(), "tokenregfailed: " + message, Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", token);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("deviceToken", msg);
 
                 return data3;
 

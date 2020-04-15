@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -50,7 +51,8 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
     RecyclerView recyclerView;
     BillingAddressesAdapter billingAddressesAdapter;
     List<BillingAddress> billingAddressList = new ArrayList<>();
-
+    Button buttonadd_address;
+    public static LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
         address_line2 = findViewById(R.id.addressline2);
         postalcode = findViewById(R.id.postalCode);
         phone = findViewById(R.id.phone);
+        buttonadd_address = findViewById(R.id.addAddress_button);
+        linearLayout = findViewById(R.id.add_address);
 
         country = findViewById(R.id.country);
         state = findViewById(R.id.state);
@@ -76,10 +80,9 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
         state.setOnItemSelectedListener(this);
         cancel.setOnClickListener(this);
         savechanges.setOnClickListener(this);
+        buttonadd_address.setOnClickListener(this);
 
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
-        getCountries();
-
         getAddresses();
 
     }
@@ -174,8 +177,12 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.addAddress_button:
+                linearLayout.setVisibility(View.VISIBLE);
+                getCountries();
+                break;
             case R.id.cancel:
-
+                linearLayout.setVisibility(View.GONE);
                 break;
             case R.id.save:
                 String addressLabel = address_label.getText().toString();
@@ -188,10 +195,12 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
                     Toast.makeText(this, "Fill all details", Toast.LENGTH_SHORT).show();
                 } else if (state.getSelectedItem() == null) {
                     Toast.makeText(this, "Select State", Toast.LENGTH_SHORT).show();
-                } else if (city.getSelectedItem() == null) {
+                }
+               /* else if (city.getSelectedItem() == null) {
                     Toast.makeText(this, "Select city", Toast.LENGTH_SHORT).show();
-                } else {
-                    saveChanges();
+                }*/
+                else {
+                    saveChanges("new");
                 }
                 break;
         }
@@ -373,6 +382,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
     private void getCityNames(String countryid, String stateid) {
         citieslist.clear();
         String url_link = Apis.getcities + countryid + "/" + stateid;
+        Log.i("cityurl:",url_link);
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
@@ -385,30 +395,33 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
                     String cartItemsCount = jsonObjectData.getString("cartItemsCount");
 
                     JSONArray jsonArrayCountries = jsonObjectData.getJSONArray("cities");
-
+                    if(jsonArrayCountries!=null){
                     for (int i = 0; i < jsonArrayCountries.length(); i++) {
                         JSONObject jsonObjectcountry = jsonArrayCountries.getJSONObject(i);
                         String cityid = jsonObjectcountry.getString("id");
                         String cityname = jsonObjectcountry.getString("name");
 
                         citieslist.add(cityid + " - " + cityname);
+                    }
+                        city.setAdapter(new ArrayAdapter<String>(SetupBillingAddressActivity.this, android.R.layout.simple_spinner_dropdown_item, citieslist));
+                        city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                cityString = city.getSelectedItem().toString();
+                                // Toast.makeText(SetupBillingAddressActivity.this, splitString(cityString), Toast.LENGTH_SHORT).show();
 
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }else {
+                        Toast.makeText(SetupBillingAddressActivity.this, "No cities are added to show", Toast.LENGTH_SHORT).show();
                     }
 
-                    city.setAdapter(new ArrayAdapter<String>(SetupBillingAddressActivity.this, android.R.layout.simple_spinner_dropdown_item, citieslist));
-                    city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                            cityString = city.getSelectedItem().toString();
-                            // Toast.makeText(SetupBillingAddressActivity.this, splitString(cityString), Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> parent) {
-
-                        }
-                    });
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -442,7 +455,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
         queue.add(stringRequest);
     }
 
-    private void saveChanges() {
+    public void saveChanges(String update) {
         String Login_url = Apis.setupAddress;
 
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -452,6 +465,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
+                            Log.i("updtaeresponse",response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
@@ -500,7 +514,11 @@ public class SetupBillingAddressActivity extends AppCompatActivity implements Vi
                 data3.put("ua_city", splitStringAlpha(cityString));
                 data3.put("ua_zip", postalCode);
                 data3.put("ua_phone", mobile);
-                data3.put("ua_id", "");
+                if(update.equals("new")) {
+                    data3.put("ua_id", "");
+                }else {
+                    data3.put("ua_id", update);
+                }
                 data3.put("ua_city_id", "-1");
 
                 return data3;

@@ -2,17 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="5dp"
+    android:id="@+id/card_view"
     android:layout_gravity="center_horizontal"
     android:orientation="vertical">
-
-    <androidx.cardview.widget.CardView
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/brand_image"
+        android:layout_width="100dp"
+        android:layout_height="80dp"/>
+   <!-- <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="100dp"
         android:layout_height="80dp"
+        app:cardBackgroundColor="@android:drawable/screen_background_dark_transparent"
         android:layout_margin="3dp">
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/brand_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-    </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>-->
+
 </LinearLayout>

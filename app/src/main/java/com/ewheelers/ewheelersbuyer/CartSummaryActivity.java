@@ -59,10 +59,12 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     Button have_coupon;
     List<PromoCodesModel> promoCodesModels = new ArrayList<>();
     CouponsAdapter couponsAdapter;
+    Button cod_option;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_summary);
+        cod_option = findViewById(R.id.cod);
         netamount = findViewById(R.id.amount);
         sellerAddress = findViewById(R.id.seller_address);
         walletBalance = findViewById(R.id.walletBal);
@@ -86,13 +88,12 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         pay.setOnClickListener(this);
         changeAddress.setOnClickListener(this);
         have_coupon.setOnClickListener(this);
+        cod_option.setOnClickListener(this);
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         walletDetails.setText("Wallet Balance " + "\u20B9 0.00 " + "can be Applied " + getResources().getString(R.string.details));
         //cartListing();
-
-
-
+        cartListing();
     }
 
     public void cartListing() {
@@ -216,6 +217,9 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 Intent i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
                 startActivity(i);
                 break;
+           /* case R.id.cod:
+                paymentsummary();
+                break;*/
         }
     }
 
@@ -330,7 +334,6 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
 
-
     private void RemovePromoCode() {
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.removepromocode;
@@ -382,11 +385,11 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         queue.add(stringRequest);
     }
 
-    @Override
+   /* @Override
     public void onResume() {
         cartListing();
         super.onResume();
-    }
+    }*/
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {

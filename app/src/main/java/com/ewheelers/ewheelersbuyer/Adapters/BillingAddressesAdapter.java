@@ -1,6 +1,7 @@
 package com.ewheelers.ewheelersbuyer.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.ewheelers.ewheelersbuyer.ModelClass.BillingAddress;
+import com.ewheelers.ewheelersbuyer.MyTestDrivesActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
+import com.ewheelers.ewheelersbuyer.SetupBillingAddressActivity;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
@@ -36,6 +39,7 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
     Context context;
     List<BillingAddress> billingAddressList;
     BillingAddressesAdapter billingAddressesAdapter;
+    int index_row=-1;
 
     public BillingAddressesAdapter(Context context, List<BillingAddress> billingAddressList) {
         this.context = context;
@@ -60,6 +64,8 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
         holder.state.setText(billingAddressList.get(position).getState_name());
         holder.pincode.setText(billingAddressList.get(position).getUa_zip());
         holder.mobile.setText(billingAddressList.get(position).getUa_phone());
+        String uaid = billingAddressList.get(position).getUa_id();
+
         holder.deleteAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +127,33 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
             }
         });
 
+        holder.updateAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SetupBillingAddressActivity.linearLayout.setVisibility(View.VISIBLE);
+               /* if (context instanceof SetupBillingAddressActivity) {
+                    ((SetupBillingAddressActivity) context).saveChanges("update");
+                }*/
+            }
+        });
+
+        holder.chooseaddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                index_row=position;
+                notifyDataSetChanged();
+
+            }
+        });
+        if(index_row==position){
+            holder.chooseaddress.setBackground(context.getResources().getDrawable(R.drawable.button_bg));
+            holder.chooseaddress.setTextColor(Color.WHITE);
+        }
+        else
+        {
+            holder.chooseaddress.setBackground(context.getResources().getDrawable(R.drawable.button_bg_redtransperent));
+            holder.chooseaddress.setTextColor(Color.BLACK);
+        }
     }
 
     @Override
@@ -129,8 +162,8 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
     }
 
     public class BillHolder extends RecyclerView.ViewHolder {
-        TextView label,name,ad_line1,ad_line2,city,contry,state,pincode,mobile;
-        ImageView deleteAddress;
+        TextView label,name,ad_line1,ad_line2,city,contry,state,pincode,mobile,chooseaddress;
+        ImageView deleteAddress,updateAddress;
         public BillHolder(@NonNull View itemView) {
             super(itemView);
             label = itemView.findViewById(R.id.label);
@@ -142,6 +175,8 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
             pincode = itemView.findViewById(R.id.Address_pincode);
             mobile = itemView.findViewById(R.id.Address_phoneno);
             deleteAddress = itemView.findViewById(R.id.delete_address);
+            chooseaddress = itemView.findViewById(R.id.select);
+            updateAddress = itemView.findViewById(R.id.update_address);
         }
 
     }

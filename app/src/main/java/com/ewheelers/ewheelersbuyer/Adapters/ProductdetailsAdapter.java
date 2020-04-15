@@ -26,7 +26,9 @@ import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ProductDetailActivity;
 import com.ewheelers.ewheelersbuyer.R;
+import com.ewheelers.ewheelersbuyer.RecommendProductsActivity;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.ewheelers.ewheelersbuyer.ZoomingActivity;
 import com.tooltip.Tooltip;
 
 import org.json.JSONObject;
@@ -49,14 +51,24 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
     String defaultoption = "";
     String urls = "";
     boolean mSpinnerInitialized = true;
-
+    private int selectedItem = 0;
+    private String zoom;
     public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails) {
         this.context = context;
         this.productDetails = productDetails;
     }
 
-    public ProductdetailsAdapter() {
+    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails,int selectedItem) {
+        this.context = context;
+        this.productDetails = productDetails;
+        this.selectedItem = selectedItem;
+    }
 
+    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails,int selectedItem,String zoom) {
+        this.context = context;
+        this.productDetails = productDetails;
+        this.selectedItem = selectedItem;
+        this.zoom = zoom;
     }
 
     @NonNull
@@ -94,18 +106,43 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
         switch (itemType) {
             case ProductDetails.PREVIEWIMAGES:
-                final String url = productDetails.get(position).getProductimg_url();
-                if (url != null) {
-                    ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
-                    imageLoader.get(url, ImageLoader.getImageListener(holder.networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
-                    holder.networkImageView.setImageUrl(url, imageLoader);
+                //final String url = productDetails.get(position).getProductimg_url();
+                if(selectedItem==position){
+                    holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
+                }else {
+                    holder.cardView.setBackgroundColor(Color.WHITE);
+                }
+                if (productDetails.get(position).getProductimg_url() != null) {
 
-                    ((ProductDetailActivity) context).onClickcalled(url);
+                    if(zoom.equals("zoom")) {
+                        ((ZoomingActivity) context).onClickcalled(productDetails.get(selectedItem).getProductimg_url());
+                    }else {
+                        ((ProductDetailActivity) context).onClickcalled(productDetails.get(selectedItem).getProductimg_url());
+                    }
+
+                    ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+                    imageLoader.get(productDetails.get(position).getProductimg_url(), ImageLoader.getImageListener(holder.networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
+                    holder.networkImageView.setImageUrl(productDetails.get(position).getProductimg_url(), imageLoader);
 
                     holder.cardView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ((ProductDetailActivity) context).onClickcalled(url);
+                          //  ((ProductDetailActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
+                            if(zoom.equals("zoom")){
+                                int PreviousSelectedItem = selectedItem;
+                                selectedItem = position;
+                                holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
+                                ((ZoomingActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
+                                notifyItemChanged(PreviousSelectedItem);
+                                notifyDataSetChanged();
+                            }else {
+                                int PreviousSelectedItem = selectedItem;
+                                selectedItem = position;
+                                holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
+                                ((ProductDetailActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
+                                notifyItemChanged(PreviousSelectedItem);
+                                notifyDataSetChanged();
+                            }
                         }
                     });
                 } else {
@@ -144,8 +181,8 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         defaultoption = optionValuesData.get(pos).getOptionValuenames();*/
                         if (!mSpinnerInitialized) {
                             // Your code goes gere
-                           // Toast.makeText(context, "opt: " + items.get(pos).getOptionValuenames(), Toast.LENGTH_SHORT).show();
-                            if(!finalFirstselected.equals(items.get(pos).getOptionValuenames())) {
+                            //Toast.makeText(context, "opt: " + items.get(pos).getOptionValuenames(), Toast.LENGTH_SHORT).show();
+                            if(!finalFirstselected.equals(optionValuesData.get(pos).getOptionValuenames())) {
                                 ((ProductDetailActivity) context).getProductDetails(optionValuesData.get(pos).getOptionUrlValue());
                             }
                         }
@@ -303,15 +340,19 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                             context.startActivity(i);*/
                         }
                         if (holder.bottomBtn.getText().toString().equals("Book Now")) {
-                          /*  if (context instanceof ProductDetailActivity) {
-                                ((ProductDetailActivity) context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()), "book");
-                            }*/
+                            if (context instanceof ProductDetailActivity) {
+                                ((ProductDetailActivity) context).addTocart(String.valueOf(productDetails.get(position).getSelproductid()), "Booknow");
+                            }
 
                         }
                         if (holder.bottomBtn.getText().toString().equals("Rent")) {
                             ((ProductDetailActivity) context).getBottomLayoutforRent();
                         }
                         if (holder.bottomBtn.getText().toString().equals("BUY")) {
+                          /*  Intent i = new Intent(context, RecommendProductsActivity.class);
+                            i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
+                            i.putExtra("buttontext", String.valueOf(productDetails.get(position).getButtonText()));
+                            context.startActivity(i);*/
                             if (context instanceof ProductDetailActivity) {
                                 ((ProductDetailActivity) context).addTocart(productDetails.get(position).getSelproductid(), "BUY");
                             }

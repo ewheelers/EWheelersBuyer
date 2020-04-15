@@ -17,7 +17,19 @@
         android:layout_height="wrap_content"
         android:id="@+id/addresses_list"/>
 
+    <Button
+        android:layout_margin="@dimen/dimen_5dp"
+        android:id="@+id/addAddress_button"
+        android:background="@drawable/button_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dimen_5dp"
+        android:textColor="@color/white"
+        android:text="Add new address"/>
+
     <LinearLayout
+        android:id="@+id/add_address"
+        android:visibility="gone"
         android:layout_marginTop="@dimen/padding_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

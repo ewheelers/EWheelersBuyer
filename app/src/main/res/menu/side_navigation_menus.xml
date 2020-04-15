@@ -12,10 +12,18 @@
             android:id="@+id/nav_partner"
             android:icon="@drawable/ic_partner"
             android:title="Partner with us" />
-        <item
+        <!--<item
             android:id="@+id/nav_account"
             android:icon="@drawable/ic_person_outline_black_24dp"
-            android:title="My Account" />
+            android:title="My Account" />-->
+        <item
+            android:id="@+id/nav_my_orders"
+            android:icon="@drawable/ic_myorders"
+            android:title="My Orders" />
+        <item
+            android:id="@+id/nav_my_testdrives"
+            android:icon="@drawable/testdrive"
+            android:title="My Test Drives" />
         <item
             android:id="@+id/nav_orders"
             android:icon="@drawable/ic_ordertrack"

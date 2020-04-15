@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dimen_5dp"
+    android:background="@color/white"
+    android:layout_margin="@dimen/dimen_5dp"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/orderid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order id -"/>
+    <TextView
+        android:id="@+id/invoice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Invoice # -"/>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date -"/>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="0dp"
+            android:layout_weight="0.25"
+            android:layout_height="match_parent"
+            android:id="@+id/ordernetworkimg"/>
+        <LinearLayout
+            android:layout_marginLeft="@dimen/dimen_5dp"
+            android:layout_marginRight="@dimen/dimen_5dp"
+            android:layout_width="0dp"
+            android:layout_weight="0.75"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/ordername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="title"/>
+            <TextView
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:id="@+id/ordertitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="sub - title"/>
+            <TextView
+                android:id="@+id/orderbrand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="brand"/>
+            <TextView
+                android:id="@+id/orderoptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="options"/>
+            <TextView
+                android:id="@+id/ordersoldby"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="soldby"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/orderqty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Qty"/>
+        <TextView
+            android:id="@+id/ordesellingprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selling Price"/>
+        <TextView
+            android:id="@+id/ordershippingcharge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shipping charge"/>
+        <TextView
+            android:id="@+id/orderdiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Volume/Loyality Disount"/>
+        <TextView
+            android:id="@+id/ordertaxcharge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tax charges"/>
+        <TextView
+            android:id="@+id/orderrewarddiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reward point discount"/>
+        <TextView
+            android:id="@+id/ordertotalamount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount"/>
+    </LinearLayout>
+
+</LinearLayout>

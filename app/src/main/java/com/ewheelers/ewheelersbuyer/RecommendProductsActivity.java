@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,7 +16,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.ewheelersbuyer.Adapters.AddonsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.ProductdetailsAdapter;
+import com.ewheelers.ewheelersbuyer.ModelClass.AddonsClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 
@@ -22,24 +27,39 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RecommendProductsActivity extends AppCompatActivity  {
     RecyclerView recyclerView;
-    ArrayList<ProductDetails> buyDetailsList = new ArrayList<>();
+   // ArrayList<ProductDetails> buyDetailsList = new ArrayList<>();
+    List<AddonsClass> buyDetailsList = new ArrayList<>();
+
     ProductdetailsAdapter productdetailsAdapter;
     String buttonText;
-    String productid;
+    String productid,qty;
+    AddonsAdapter addonsAdapter;
+    Button buttonContinue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend_products);
         recyclerView = findViewById(R.id.recommended_products);
+        buttonContinue = findViewById(R.id.addtoCart);
         String buttonText = getIntent().getStringExtra("buttontext");
         productid = getIntent().getStringExtra("selproductid");
+        //qty = getIntent().getStringExtra("quantity");
         if(buttonText.equals("BUY")) {
             getRecommends(productid);
         }
+
+        buttonContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // new ProductDetailActivity().addTocart(productid,"BUY","1",getApplicationContext());
+            }
+        });
 
     }
 
@@ -67,18 +87,28 @@ public class RecommendProductsActivity extends AppCompatActivity  {
                         String productPrice = jsonObjectbuywith.getString("selprod_price");
                         String selectedProductId = jsonObjectbuywith.getString("selprod_product_id");
 
-                        ProductDetails productDetails = new ProductDetails();
+                        /*ProductDetails productDetails = new ProductDetails();
                         productDetails.setBuywithimageurl(productimgurl);
                         productDetails.setBuywithproductname(productName);
                         productDetails.setBuywithproductprice(productPrice);
                         productDetails.setButwithselectedProductId(selectedProductId);
-                        productDetails.setTypeoflayout(3);
-                        buyDetailsList.add(productDetails);
+                        productDetails.setTypeoflayout(3);*/
+                        AddonsClass productDetailsaddons = new AddonsClass();
+                        productDetailsaddons.setBuywithimageurl(productimgurl);
+                        productDetailsaddons.setBuywithproductname(productName);
+                        productDetailsaddons.setBuywithproductprice(productPrice);
+                        productDetailsaddons.setButwithselectedProductId(selectedProductId);
+                        buyDetailsList.add(productDetailsaddons);
                     }
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false);
+                       /* LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(),RecyclerView.VERTICAL,false);
                         recyclerView.setLayoutManager(linearLayoutManager);
                         productdetailsAdapter = new ProductdetailsAdapter(RecommendProductsActivity.this,buyDetailsList);
-                        recyclerView.setAdapter(productdetailsAdapter);
+                        recyclerView.setAdapter(productdetailsAdapter);*/
+                        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(RecommendProductsActivity.this, RecyclerView.VERTICAL, false);
+                        recyclerView.setLayoutManager(linearLayoutManager2);
+                        addonsAdapter = new AddonsAdapter(RecommendProductsActivity.this, buyDetailsList);
+                        recyclerView.setAdapter(addonsAdapter);
+                        addonsAdapter.notifyDataSetChanged();
                     }
 
 

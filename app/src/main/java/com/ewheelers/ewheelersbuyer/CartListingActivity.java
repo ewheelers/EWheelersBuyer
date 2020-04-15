@@ -70,7 +70,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     ArrayList<String> options;
 
     public void cartListing() {
-        cartListClassList.clear();
+       // cartListClassList.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.cartListing;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
@@ -119,7 +119,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             JSONObject jsonObjectoptionList = jsonArrayOptions.getJSONObject(j);
                             optionname = jsonObjectoptionList.getString("option_name");
                             optionvalue_name = jsonObjectoptionList.getString("optionvalue_name");
-                            options.add(optionname + ":" + optionvalue_name);
+                            options.add(optionname + " : " + optionvalue_name);
                         }
 
                         CartListClass cartListClass = new CartListClass();
@@ -129,15 +129,16 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         cartListClass.setProductPrice(price);
                         cartListClass.setProduct_qty(quantity);
                         cartListClass.setShopname(shopname);
-                       /* cartListClass.setRentalprice(rentalprice);
-                        cartListClass.setRentalsecurity(rentalsecurity);
-                        cartListClass.setRentStartdate(rentStartdate);
-                        cartListClass.setRentEnddate(rentEnddate);*/
-                       /* cartListClass.setProductOption(optionname);
-                        cartListClass.setOptionvalue(optionvalue_name);*/
-                        cartListClass.setOptions(options);
+                        if (options.isEmpty()) {
+                            cartListClass.setOptions(null);
+                            cartListClass.setType(0);
+                        } else {
+                            cartListClass.setOptions(options);
+                            cartListClass.setType(1);
+                        }
                         cartListClass.setKeyvalue(key);
                         cartListClassList.add(cartListClass);
+
                     }
 
                     if (cartListClassList.isEmpty()) {

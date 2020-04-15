@@ -1,53 +1,79 @@
 package com.ewheelers.ewheelersbuyer.ui.profile;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.ewheelersbuyer.MainActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.UpdateProfileActivity;
+import com.ewheelers.ewheelersbuyer.Utilities.VolleyMultipartRequest;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.app.Activity.RESULT_OK;
+import static com.ewheelers.ewheelersbuyer.Volley.Apis.uploadprofilepic;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private ProfileViewModel mViewModel;
     private TextView user_Name, user_Email, Name, Mobile, Email, Address,dob, PrivacyPolicy, Edit, Bank, Reffer, Faq;
-    private ImageView imageView;
     String tokenValue;
     CollapsingToolbarLayout collapsingToolbar;
+
+    private static final int REQUEST_PERMISSIONS = 100;
+    private static final int PICK_IMAGE_REQUEST =1 ;
+    private Bitmap bitmap;
+    private String filePath;
+    ImageView imageView;
+    Button buttonUpload;
+
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
     }
@@ -70,10 +96,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         Bank = root.findViewById(R.id.gotobank);
         Reffer = root.findViewById(R.id.referral);
         Faq = root.findViewById(R.id.faq);
-        imageView = root.findViewById(R.id.profileImage);
+        //imageView = root.findViewById(R.id.profileImage);
         dob = root.findViewById(R.id.dobDate);
+        //buttonUpload = root.findViewById(R.id.upload_img);
         PrivacyPolicy.setOnClickListener(this);
         Edit.setOnClickListener(this);
+        //buttonUpload.setOnClickListener(this);
         getProfile();
 
         return root;
@@ -188,8 +216,120 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 Intent i = new Intent(getActivity(), UpdateProfileActivity.class);
                 startActivity(i);
                 break;
+           /* case R.id.upload_img:
+                if ((ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) && (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                    if ((ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)) && (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE))) {
+
+                    } else {
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                                REQUEST_PERMISSIONS);
+                    }
+                } else {
+                    Log.e("Else", "Else");
+                    showFileChooser();
+                }
+                break;*/
         }
     }
+
+    private void showFileChooser() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri picUri = data.getData();
+            filePath = getPath(picUri);
+            if (filePath != null) {
+                try {
+                    Log.d("filePath", String.valueOf(filePath));
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), picUri);
+                    uploadBitmap(bitmap);
+                    imageView.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                Toast.makeText(
+                        getActivity(),"no image selected",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    public String getPath(Uri uri) {
+        Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":") + 1);
+        cursor.close();
+
+        cursor = getActivity().getContentResolver().query(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
+    }
+
+    public byte[] getFileDataFromDrawable(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    private void uploadBitmap(final Bitmap bitmap) {
+        String url = Apis.uploadprofilepic;
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        try {
+                            JSONObject obj = new JSONObject(new String(response.data));
+                            Toast.makeText(getActivity(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("GotError",""+error.getMessage());
+                    }
+                }) {
+
+
+            @Override
+            protected Map<String, VolleyMultipartRequest.DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("user_profile_image", new DataPart(imagename + ".jpg", getFileDataFromDrawable(bitmap)));
+                params.put("img_data",null);
+
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        Volley.newRequestQueue(getActivity()).add(volleyMultipartRequest);
+    }
+
     private void showPrivacyPolicies(String url) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         WebView webView = new WebView(getActivity());

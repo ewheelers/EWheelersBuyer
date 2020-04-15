@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ZoomingActivity">
+    <com.ewheelers.ewheelersbuyer.Utilities.TouchImageView
+        android:id="@+id/imageswitcher"
+        android:layout_above="@+id/gallery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:layout_alignParentTop="true" >
+    </com.ewheelers.ewheelersbuyer.Utilities.TouchImageView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gallery"
+        android:layout_width="fill_parent"
+        android:layout_height="96dp"
+        android:layout_alignParentBottom="true"
+        android:background="#55000000"
+        android:gravity="center_vertical"
+        android:spacing="16dp"
+        />
+
+</RelativeLayout>

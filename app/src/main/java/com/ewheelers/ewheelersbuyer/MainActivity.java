@@ -27,10 +27,12 @@ public class MainActivity extends AppCompatActivity {
                 String tokenvalue = new SessionStorage().getStrings(MainActivity.this, SessionStorage.tokenvalue);
                 if (tokenvalue != null) {
                     Intent i = new Intent(MainActivity.this, NavAppBarActivity.class);
+                    overridePendingTransition(R.anim.slide_from_bottom,R.anim.slide_up_in);
                     startActivity(i);
                     finish();
                 }else {
                     Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                    overridePendingTransition(R.anim.slide_from_bottom,R.anim.slide_up_in);
                     startActivity(i);
                     finish();
                 }

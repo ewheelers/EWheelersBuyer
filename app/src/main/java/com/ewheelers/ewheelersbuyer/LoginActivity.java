@@ -21,6 +21,8 @@ import com.ewheelers.ewheelersbuyer.Adapters.ViewPagerAdapter;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import static java.lang.System.exit;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     LinearLayout constraintLayout;
     TabLayout tabLayout;
@@ -115,4 +117,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        exit(0);
+        finish();
+    }
+
 }

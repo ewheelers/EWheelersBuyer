@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:padding="@dimen/dimen_5dp"
+    android:id="@+id/shop_layout"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:textStyle="bold"
+        android:padding="@dimen/padding_10"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/shopName"/>
+    <TextView
+        android:textAlignment="textStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/phoneno_shop"/>
+
+    <TextView
+        android:textAlignment="textStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addess"/>
+    <Button
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:layout_margin="@dimen/padding_10"
+        android:padding="@dimen/dimen_5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:text="Shop Now"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/shopNow"/>
+</LinearLayout>

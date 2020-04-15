@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,7 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
     private Context context;
     private List<AddonsClass> addonsClasses;
     private int quantity = 1;
-    JSONObject jsonObject1;
+    JSONObject jsonObject1 = new JSONObject();;
     String selbuywithprodid;
 
     public AddonsAdapter(Context context, List<AddonsClass> addonsClasses) {
@@ -82,19 +83,28 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
         holder.buyWithcheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for (int i = 0; i < addonsClasses.size(); i++) {
                     if (buttonView.isChecked()) {
                         try {
                             selbuywithprodid = addonsClasses.get(position).getButwithselectedProductId();
-                            jsonObject1 = new JSONObject();
-                            jsonObject1.put(selbuywithprodid,String.valueOf(quantity));
+                            jsonObject1.put(selbuywithprodid, holder.buywithinteger.getText().toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                    }else {
+                        jsonObject1.remove(addonsClasses.get(position).getButwithselectedProductId());
                     }
-                    Log.i("jsonObjectList", jsonObject1.toString());
-                    String addons = jsonObject1.toString();
-                    ((ProductDetailActivity) context).jsonaddons(addons);
+
                 }
+
+                //Log.i("jsonObjectList", jsonObject1.toString());
+                String addons = jsonObject1.toString();
+                ((ProductDetailActivity) context).jsonaddons(addons);
+               /* if (context instanceof ProductDetailActivity) {
+                    ((ProductDetailActivity) context).jsonaddons(addons);
+                }*/
+
+            }
 
         });
 

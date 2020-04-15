@@ -1,12 +1,12 @@
 package com.ewheelers.ewheelersbuyer.Volley;
 
 public class Apis {
-    public static String base = "https://www.ewheelers.in//app-api/2.0/";
-    public static String login = base + "guest-user/login"; // done
+    public static String base = "https://www.ewheelers.in/app-api/2.0/";
+    public static String login = base + "guest-user/login";
     public static String logout = base+ "guest-user/logout";
-    public static String register = base + "guest-user/register"; //done
-    public static String forgotpassword = base + "guest-user/forgot-password"; //done
-    public static String home = base + "home"; // done
+    public static String register = base + "guest-user/register";
+    public static String forgotpassword = base + "guest-user/forgot-password";
+    public static String home = base + "home";
     public static String productdetails = base + "products/view/";
     public static String addtocart = base + "cart/add";
     public static String cartListing = base + "cart/listing";
@@ -15,8 +15,7 @@ public class Apis {
     public static String applypromocode = base + "cart/apply-promo-code";
     public static String removepromocode = base + "cart/remove-promo-code";
     public static String shippingsummary = base + "checkout/shipping-summary";
-    public static String testdrive = base + "test-drive/setup"; //done
-    public static String bookproduct = base + "cart/add";
+    public static String testdrive = base + "test-drive/setup";
     public static String collectionView = base+"collections/search";
     public static String profileInfo = base+"account/profile-info";
     public static String UpdateProfileInfo = base+"account/update-profile-info";
@@ -27,8 +26,29 @@ public class Apis {
     public static String setupAddress = base+"addresses/set-up-address";
     public static String getaddresses = base+"account/search-addresses";
     public static String deleteaddress = base+"addresses/delete-record";
+    public static String setdefaultaddress = base+"addresses/set-default";
     public static String setupaddressselection = base+"checkout/set-up-address-selection"; //billing_address_id,shipping_address_id
-
+    public static String sellerslist = base+"products/sellers/";
+    public static String notificationslist = base+"account/notifications";
+    public static String markalertread = base+"account/mark-notification-read/";
+    public static String uploadprofilepic = base+"account/upload-profile-image";
+    public static String paymentsummary = base+"checkout/payment-summary";
+    public static String filteredproducts = base+"products/get-filtered-products";
+    public static String setupshippingmethod = base+"checkout/set-up-shipping-method";
     public static String setuppushnotification = base+"guest-user/set-user-push-notification-token";
-
+    public static String userewardpoints = base+"checkout/use-reward-points";
+    public static String removerewardpoints = base+"checkout/remove-reward-points";
+    public static String confirmorder = base+"checkout/confirm-order";
+    public static String orderslist = base+"buyer/order-search-listing";
+    public static String vieworderdetails = base+"buyer/view-order/";
+    public static String getrewardpoints = base+"buyer/reward-points-search";
+    public static String getcreditpoints = base+"account/credit-search";
+    public static String getallshops = base+"shops/search";
+    public static String viewshopbyid = base+"shops/view/";
+    public static String alltestdriverequests = base+"test-drive/search-requests";
+    public static String getdriveinfo = base+"test-drive/request-info/";
+    public static String cancelrequest = base+"test-drive/cancel";
+    public static String changerequeststatus = base+"/test-drive/change-request-status";
+    public static String walletpayment = base+"wallet-pay/charge/";
+    public static String searchbytags = base+"products/search-producttags-autocomplete";
 }

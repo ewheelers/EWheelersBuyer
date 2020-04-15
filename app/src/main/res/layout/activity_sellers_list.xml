@@ -6,7 +6,44 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SellersListActivity">
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="@dimen/dimen_5dp">
+
+    <TextView
+        android:id="@+id/headtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_gravity="center"
+        android:drawableLeft="@drawable/ic_chevron_left_black_24dp"
+        android:drawablePadding="@dimen/dimen_5dp"
+        android:textColor="@color/colorPrimary"/>
+    <LinearLayout
+        android:gravity="right"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.SearchView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layoutDirection="rtl"/>
+
+    </LinearLayout>
+</LinearLayout>
+
+    <ProgressBar
+        android:visibility="gone"
+        android:padding="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/progress"/>
 <androidx.recyclerview.widget.RecyclerView
+    android:padding="@dimen/dimen_5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/sellers_list"/>
