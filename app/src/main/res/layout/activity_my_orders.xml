@@ -3,21 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MyOrdersActivity">
-<TextView
-    android:id="@+id/goback"
-    android:textSize="18sp"
-    android:layout_gravity="center_vertical"
-    android:drawableLeft="@drawable/ic_chevron_left_black_24dp"
-    android:drawablePadding="@dimen/padding_10"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="My Orders"
-    android:textColor="@color/colorPrimary"
-    android:padding="@dimen/dimen_5dp"/>
-    <androidx.recyclerview.widget.RecyclerView
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recycler_orders"/>
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/dimen_5dp">
+
+        <TextView
+            android:id="@+id/goback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:drawableLeft="@drawable/ic_chevron_left_black_24dp"
+            android:drawablePadding="@dimen/padding_10"
+            android:padding="@dimen/dimen_5dp"
+            android:text="My Orders"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchview"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search here"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiprefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_orders"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    
 </LinearLayout>

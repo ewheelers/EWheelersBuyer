@@ -54,7 +54,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     RecyclerView pricelist;
     PricedetailAdapter pricedetailAdapter;
     String net_amount;
-    TextView changeAddress;
+    TextView changeAddress,customerChangeAddress,customerShippingAddress;
     RecyclerView recyclerViewCoupons;
     Button have_coupon;
     List<PromoCodesModel> promoCodesModels = new ArrayList<>();
@@ -64,6 +64,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart_summary);
+        customerShippingAddress = findViewById(R.id.customer_shipping_address);
         cod_option = findViewById(R.id.cod);
         netamount = findViewById(R.id.amount);
         sellerAddress = findViewById(R.id.seller_address);
@@ -80,6 +81,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         apply_layout = findViewById(R.id.apply_promo_layout);
         pay = findViewById(R.id.payment);
         changeAddress = findViewById(R.id.changeAddress);
+        customerChangeAddress = findViewById(R.id.shippingAddressChange);
         have_coupon = findViewById(R.id.have_coupons);
         recyclerViewCoupons = findViewById(R.id.couponlist);
         applyCode.setOnClickListener(this);
@@ -89,7 +91,8 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
         changeAddress.setOnClickListener(this);
         have_coupon.setOnClickListener(this);
         cod_option.setOnClickListener(this);
-
+        customerChangeAddress.setOnClickListener(this);
+        customerShippingAddress.setOnClickListener(this);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         walletDetails.setText("Wallet Balance " + "\u20B9 0.00 " + "can be Applied " + getResources().getString(R.string.details));
         //cartListing();
@@ -139,8 +142,24 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         String ua_address2 = jsonObjectBillAddress.getString("ua_address2");
                         String u_city = jsonObjectBillAddress.getString("ua_city");
                         String u_phone = jsonObjectBillAddress.getString("ua_phone");
+                        String u_autocomplete = jsonObjectBillAddress.getString("ua_auto_complete");
+                        customerAddress.setText(customername+"\n"+u_autocomplete+"\n"+u_address1+" Phone "+u_phone);
+                        //customerAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_city + u_phone);
+                    }
 
-                        customerAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_phone);
+                    JSONObject jsonObjectCartShipping = dataJsonObject.getJSONObject("cartSelectedShippingAddress");
+                    if(jsonObjectCartShipping.toString().equals("{}")){
+                        customerAddress.setText("Setup Shipping Address");
+                        customerAddress.setTextColor(Color.RED);
+                    }else {
+                        String customername = jsonObjectCartShipping.getString("ua_name");
+                        String u_address1 = jsonObjectCartShipping.getString("ua_address1");
+                        String ua_address2 = jsonObjectCartShipping.getString("ua_address2");
+                        String u_city = jsonObjectCartShipping.getString("ua_city");
+                        String u_phone = jsonObjectCartShipping.getString("ua_phone");
+                        String u_autocomplete = jsonObjectCartShipping.getString("ua_auto_complete");
+                        customerShippingAddress.setText(customername+"\n"+u_autocomplete+"\n"+u_address1+" Phone "+u_phone);
+                        //customerShippingAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_phone);
                     }
                     JSONArray jsonArrayProduct = dataJsonObject.getJSONArray("products");
                     for (int i = 0; i < jsonArrayProduct.length(); i++) {
@@ -196,6 +215,10 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.shippingAddressChange:
+                Intent i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
+                startActivity(i);
+                break;
             case R.id.have_coupons:
                 showCoupons();
                 break;
@@ -214,7 +237,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 startActivity(in);
                 break;
             case R.id.changeAddress:
-                Intent i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
+                i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
                 startActivity(i);
                 break;
            /* case R.id.cod:

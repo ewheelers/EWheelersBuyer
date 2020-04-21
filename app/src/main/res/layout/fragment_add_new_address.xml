@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Fragments.AddNewAddressFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/Black"
+        android:text="Add Billing/Delivery Address"
+        android:textSize="18sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+        <fragment
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_marker"/>
+    </RelativeLayout>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/add_address"
+        android:visibility="visible"
+        android:layout_marginTop="@dimen/padding_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Latitude*" />
+
+        <EditText
+            android:id="@+id/latitude"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Longitude*" />
+
+        <EditText
+            android:id="@+id/longitude"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Postalcode*"/>
+
+
+        <EditText
+            android:id="@+id/postalCode"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address*" />
+
+        <EditText
+            android:id="@+id/autocomplete"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address Label" />
+
+        <EditText
+            android:id="@+id/office_address"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint="E.g. My Office Address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name*" />
+
+        <EditText
+            android:id="@+id/name"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address Line1*" />
+
+        <EditText
+            android:id="@+id/addressline1"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address Line2" />
+
+        <EditText
+            android:id="@+id/addressline2"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Country*" />
+
+        <Spinner
+            android:id="@+id/country"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="State*"/>
+
+        <Spinner
+            android:id="@+id/state"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="City*"/>
+
+        <Spinner
+            android:id="@+id/city"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone*"/>
+
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:padding="@dimen/dimen_5dp"
+            android:hint=""
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_bg" />
+
+        <Button
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_marginLeft="@dimen/dimen_15dp"
+            android:textColor="@color/colorWhite"
+            android:background="@drawable/button_bg"
+            android:layout_width="250dp"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_height="wrap_content"
+            android:text="save changes"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/save"/>
+
+    </LinearLayout>
+</ScrollView>
+</LinearLayout>

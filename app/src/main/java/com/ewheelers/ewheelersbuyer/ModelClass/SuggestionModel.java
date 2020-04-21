@@ -1,10 +1,15 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
 public class SuggestionModel {
+    String keyName;
     String value;
 
     public SuggestionModel(String value) {
         this.value = value;
+    }
+
+    public SuggestionModel() {
+
     }
 
     public String getValue() {
@@ -13,5 +18,13 @@ public class SuggestionModel {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getKeyName() {
+        return keyName;
+    }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
     }
 }

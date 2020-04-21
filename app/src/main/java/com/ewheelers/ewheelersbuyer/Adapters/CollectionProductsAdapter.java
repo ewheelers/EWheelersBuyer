@@ -117,6 +117,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("brandid",homeCollectionProducts.get(position).getBrandid());
+                        intent.putExtra("brandname",homeCollectionProducts.get(position).getBrandname());
                         context.startActivity(intent);
                     }
                 });
@@ -148,6 +149,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                         intent.putExtra("shopid",homeCollectionProducts.get(position).getShopid());
                         intent.putExtra("shopname",homeCollectionProducts.get(position).getShopname());
                         intent.putExtra("shopimage",homeCollectionProducts.get(position).getShoplogo());
+                        intent.putExtra("shopaddress",homeCollectionProducts.get(position).getStatename()+","+homeCollectionProducts.get(position).getCountryname());
                         context.startActivity(intent);
                     }
                 });
@@ -165,6 +167,8 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("catid",homeCollectionProducts.get(position).getProdcategory_id());
+                        intent.putExtra("catname",homeCollectionProducts.get(position).getProdcategory_name());
+
                         context.startActivity(intent);
                     }
                 });

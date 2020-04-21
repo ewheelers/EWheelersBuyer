@@ -30,34 +30,26 @@
             android:gravity="right"
             android:orientation="horizontal">
 
-         <!--   <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/searchview"
-                android:padding="@dimen/dimen_5dp"
-                android:textSize="16sp"
-                android:layout_marginLeft="@dimen/dimen_5dp"
-                android:layout_marginRight="@dimen/dimen_5dp"
-                android:hint="I am Looking For..."
-                android:background="@drawable/border_bg"
-                android:drawableRight="@drawable/search"/>-->
-
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layoutDirection="rtl" />
+                android:layoutDirection="rtl"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search here" />
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <ListView
+    <!--<ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"/>-->
 
     <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/sortFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -65,6 +57,7 @@
         android:weightSum="2">
 
         <LinearLayout
+            android:id="@+id/sortItems"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -83,6 +76,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/dimen_5dp"
                 app:srcCompat="@drawable/ic_sort" />
+
+            <com.ewheelers.ewheelersbuyer.ModelClass.CirclePageIndicator
+                android:layout_width="@dimen/padding_10"
+                android:layout_height="@dimen/padding_10"
+                android:background="@color/colorPrimary" />
         </LinearLayout>
 
         <View
@@ -91,6 +89,7 @@
             android:background="@color/gray" />
 
         <LinearLayout
+            android:id="@+id/filterItems"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -113,6 +112,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/texttitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/dimen_5dp"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
+
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/banner"
         android:layout_width="match_parent"
@@ -129,18 +137,20 @@
         android:visibility="gone">
 
         <com.android.volley.toolbox.NetworkImageView
+            android:visibility="gone"
             android:id="@+id/shopimage"
             android:layout_width="42dp"
             android:layout_height="42dp"
             android:paddingRight="@dimen/padding_10" />
 
         <TextView
+            android:textAlignment="center"
             android:id="@+id/emptyView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/dimen_5dp"
             android:text="Oops..No items found :("
-            android:textColor="@color/Black" />
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
 
 

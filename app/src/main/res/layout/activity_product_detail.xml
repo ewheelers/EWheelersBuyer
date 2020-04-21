@@ -41,7 +41,18 @@
                     android:background="@drawable/search_background"
                     android:padding="2dp">
 
-                    <EditText
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/searchText"
+                        app:iconifiedByDefault="false"
+                        app:queryHint="Search here"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layoutDirection="rtl" />
+
+                   <!-- <EditText
+                        android:id="@+id/searchText"
+                        android:imeOptions="actionSearch"
+                        android:singleLine="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
@@ -49,9 +60,10 @@
                         android:gravity="center_horizontal"
                         android:hint="Search"
                         android:textColorHint="@color/colorBlack"
-                        android:textSize="15sp" />
+                        android:textSize="15sp" />-->
 
                     <ImageView
+                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -60,6 +72,7 @@
                         android:background="@drawable/search_bg"
                         android:padding="2dp"
                         app:srcCompat="@drawable/search" />
+
                 </RelativeLayout>
 
                 <TextView
@@ -280,7 +293,6 @@
                         android:textColor="@color/colorBlack"
                         android:textStyle="bold" />
 
-
                     <TextView
                         android:id="@+id/product_name"
                         android:layout_width="0dp"
@@ -293,35 +305,40 @@
                         android:visibility="gone" />
                 </LinearLayout>
 
+                <TextView
+                    android:paddingRight="@dimen/dimen_5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Change"
+                    android:layout_gravity="right"
+                    android:textColor="@color/blue"
+                    android:id="@+id/change_text"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/padding_10">
+                    android:padding="@dimen/dimen_5dp"
+                    android:layout_marginBottom="@dimen/dimen_5dp">
 
                     <TextView
                         android:id="@+id/choose_dealer"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:autoLink="all"
-                        android:text="Select Dealer"
-                        android:textColor="@color/colorPrimary"
-                        android:textStyle="normal" />
-                    <!--  <TextView
+                        android:text="Dealer"
+                        android:textColor="@color/Black"
+                        android:textStyle="bold" />
+                      <TextView
                           android:layout_marginLeft="@dimen/padding_10"
-                          android:singleLine="true"
-                          android:drawableRight="@drawable/ic_downarrow"
-                          android:background="@drawable/border_bg"
+                          android:singleLine="false"
                           android:id="@+id/dealers_list"
-                          android:layout_width="200dp"
+                          android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:padding="@dimen/padding_10"
                           android:textColor="@color/colorPrimary"
                           android:textStyle="normal"
-                          android:drawableEnd="@drawable/ic_downarrow"
-                          android:layout_marginStart="@dimen/padding_10" />-->
-                    <Spinner
+                          android:layout_marginStart="@dimen/padding_10" />
+                   <!-- <Spinner
                         android:id="@+id/dealers_list"
-                        style="@style/spinner_style" />
+                        style="@style/spinner_style" />-->
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

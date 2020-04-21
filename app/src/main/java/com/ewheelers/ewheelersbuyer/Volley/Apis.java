@@ -27,7 +27,7 @@ public class Apis {
     public static String getaddresses = base+"account/search-addresses";
     public static String deleteaddress = base+"addresses/delete-record";
     public static String setdefaultaddress = base+"addresses/set-default";
-    public static String setupaddressselection = base+"checkout/set-up-address-selection"; //billing_address_id,shipping_address_id
+    public static String setupaddressselection = base+"checkout/set-up-address-selection";
     public static String sellerslist = base+"products/sellers/";
     public static String notificationslist = base+"account/notifications";
     public static String markalertread = base+"account/mark-notification-read/";

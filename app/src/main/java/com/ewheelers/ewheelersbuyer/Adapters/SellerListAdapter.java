@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,16 +26,20 @@ import com.ewheelers.ewheelersbuyer.ModelClass.SellerListModel;
 import com.ewheelers.ewheelersbuyer.ProductDetailActivity;
 import com.ewheelers.ewheelersbuyer.R;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.SellHolder> {
+public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.SellHolder> implements Filterable {
     Context context;
     List<SellerListModel> sellerListModels;
+    List<SellerListModel> sellerFilter;
+
 
     public SellerListAdapter(Context context, List<SellerListModel> sellerListModels) {
         this.context = context;
         this.sellerListModels = sellerListModels;
+        sellerFilter = new ArrayList<>(sellerListModels);
     }
 
     @NonNull
@@ -122,6 +128,40 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
     public int getItemViewType(int position) {
         return sellerListModels.get(position).getTypeoflayout();
     }
+
+    @Override
+    public Filter getFilter() {
+
+        return exampleFilter;
+    }
+
+
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<SellerListModel> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(sellerFilter);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (SellerListModel item : sellerFilter) {
+                    if (item.getSellersname().toLowerCase().contains(filterPattern)||item.getSellersaddress().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            sellerListModels.clear();
+            sellerListModels.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
 
     public class SellHolder extends RecyclerView.ViewHolder {
         TextView sellerName, sellerAddress, sellerPrice, sellerCod, viewdetails;

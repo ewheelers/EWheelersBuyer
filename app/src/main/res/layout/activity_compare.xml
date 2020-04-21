@@ -22,7 +22,11 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:id="@+id/textone"/>
-        <ListView
+       <!-- <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listone"/>-->
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/listone"/>
@@ -49,7 +53,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/text2"/>
-        <ListView
+       <!-- <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listtwo"/>-->
+        <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/listtwo"/>

@@ -1,195 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
-
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:layout_marginLeft="@dimen/padding_10"
     android:layout_marginRight="@dimen/padding_10"
+    android:orientation="vertical"
+    android:id="@+id/linear_layout"
     tools:context=".SetupBillingAddressActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/addresses_list"/>
-
-    <Button
-        android:layout_margin="@dimen/dimen_5dp"
-        android:id="@+id/addAddress_button"
-        android:background="@drawable/button_bg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_5dp"
-        android:textColor="@color/white"
-        android:text="Add new address"/>
-
     <LinearLayout
-        android:id="@+id/add_address"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/Black"
-        android:text="Add Billing/Delivery Address"
-        android:textSize="18sp" />
-
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address Label" />
-
-    <EditText
-        android:id="@+id/office_address"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint="E.g. My Office Address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name" />
-
-    <EditText
-        android:id="@+id/name"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address Line1" />
-
-    <EditText
-        android:id="@+id/addressline1"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address Line2" />
-
-    <EditText
-        android:id="@+id/addressline2"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Country" />
-
-    <Spinner
-        android:id="@+id/country"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="State"/>
-
-    <Spinner
-        android:id="@+id/state"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="City"/>
-
-    <Spinner
-        android:id="@+id/city"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-   <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Postalcode"/>
-
-
-    <EditText
-        android:id="@+id/postalCode"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-
-    <TextView
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Phone"/>
-
-
-    <EditText
-        android:id="@+id/phone"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:hint=""
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border_bg" />
-
-    <LinearLayout
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <Button
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="cancel"
-            android:id="@+id/cancel"/>
-        <Button
-            android:layout_marginLeft="@dimen/dimen_15dp"
-            android:textColor="@color/colorWhite"
-            android:background="@drawable/button_bg"
-            android:layout_width="wrap_content"
-            android:padding="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:textColor="@color/Black"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Delivery Address" />
+
+            <CheckBox
+                android:id="@+id/sameaddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Same As Billing Address" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary" />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="save changes"
-            android:id="@+id/save"/>
-    </LinearLayout>
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:textAlignment="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Please Add Addresss Where You Want To Ship Your Product" />
+
+            <Button
+                android:id="@+id/addnewaddress"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/dimen_5dp"
+                android:layout_marginRight="@dimen/dimen_5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add New Address"/>
+        </LinearLayout>
+
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:tabGravity="center"
+        app:tabMode="fixed"
+        app:tabSelectedTextColor="@color/colorAccent"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:layout_below="@+id/tabs"
+        android:layout_above="@+id/contin"
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        <Button
+            android:layout_alignParentBottom="true"
+            android:id="@+id/contin"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Continue"/>
+
+    </RelativeLayout>
 </LinearLayout>
-</ScrollView>

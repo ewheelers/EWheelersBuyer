@@ -121,6 +121,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     public static BottomNavigationView navView;
     SearchView searchView;
     ListView list;
+    ArrayList<String> strings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +147,10 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(NavAppBarActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(NavAppBarActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getApplicationContext(),SearchResultActivity.class);
+                i.putExtra("keyword",query);
+                startActivity(i);
                 list.setVisibility(View.GONE);
                 return false;
             }
@@ -354,6 +358,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void setSuggestions(String querynewtext) {
+        strings.clear();
         String Login_url = Apis.searchbytags;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
@@ -367,7 +372,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                             if (getStatus.equals("1")) {
                             JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
                             JSONArray jsonArray = jsonObjectdata.getJSONArray("suggestions");
-                            ArrayList<String> strings = new ArrayList<>();
                             for(int i=0;i<jsonArray.length();i++){
                                 JSONObject jsonObjectVal = jsonArray.getJSONObject(i);
                                 String value = jsonObjectVal.getString("value");
@@ -557,7 +561,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             // Toast.makeText(this, "under development", Toast.LENGTH_SHORT).show();
             Intent inten = new Intent(getApplicationContext(), SellersListActivity.class);
             inten.putExtra("fromactivity", "navmenu");
-
             startActivity(inten);
         }
         if (id == R.id.nav_my_orders) {

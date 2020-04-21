@@ -135,7 +135,7 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
             holder.canceltxt.setVisibility(View.GONE);
             //holder.accepttxt.setTextColor(Color.GRAY);
         } else if (status.equals("4")) {
-            holder.viewdrive.setVisibility(View.VISIBLE);
+            holder.viewdrive.setVisibility(View.GONE);
             holder.canceldrive.setVisibility(View.GONE);
             holder.confirmdrive.setVisibility(View.GONE);
 

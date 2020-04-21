@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -21,15 +23,19 @@ import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.ShowAlleBikesActivity;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.BikeHolder> {
+public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.BikeHolder> implements Filterable {
     Context context;
     List<AllebikesModelClass> allebikesModelClasses;
+    List<AllebikesModelClass> classeFilter;
 
     public AllebikesAdapter(Context context, List<AllebikesModelClass> allebikesModelClasses) {
         this.context = context;
         this.allebikesModelClasses = allebikesModelClasses;
+        classeFilter = new ArrayList<>(allebikesModelClasses);
+
     }
 
     @NonNull
@@ -123,6 +129,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("catid",allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("catname",allebikesModelClasses.get(position).getProductName());
                         context.startActivity(intent);
                     }
                 });
@@ -135,6 +142,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("brandid",allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("brandname",allebikesModelClasses.get(position).getProductName());
                         context.startActivity(intent);
                     }
                 });
@@ -163,6 +171,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                             Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                             intent.putExtra("shopid",allebikesModelClasses.get(position).getProductid());
                             intent.putExtra("shopname",allebikesModelClasses.get(position).getProductName());
+                            intent.putExtra("shopaddress",allebikesModelClasses.get(position).getPrice());
                             context.startActivity(intent);
                         }
                     });
@@ -180,6 +189,42 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
     public int getItemViewType(int position) {
         return allebikesModelClasses.get(position).getTypeLayout();
     }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<AllebikesModelClass> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(classeFilter);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (AllebikesModelClass item : classeFilter) {
+                    if(item.getTypeLayout()==4){
+                        if (item.getProductName().toLowerCase().contains(filterPattern)||item.getPrice().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }else {
+                        if (item.getProductName().toLowerCase().contains(filterPattern)) {
+                            filteredList.add(item);
+                        }
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            allebikesModelClasses.clear();
+            allebikesModelClasses.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class BikeHolder extends RecyclerView.ViewHolder {
         NetworkImageView networkImageView, categoryImage, brandImage,shopNetworkImg;

@@ -1,15 +1,19 @@
 package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -34,30 +38,67 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyOrdersActivity extends AppCompatActivity {
+public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     RecyclerView recyclerView;
     MyOrdersAdapter myOrdersAdapter;
     List<MyOrdersModel> myOrdersModelList = new ArrayList<>();
     String tokenValue;
     TextView goBack;
-
+    SearchView searchView;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_orders);
         recyclerView = findViewById(R.id.recycler_orders);
         goBack = findViewById(R.id.goback);
+        searchView = findViewById(R.id.searchview);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
+
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
+
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         mSwipeRefreshLayout.setRefreshing(true);
+
+                                         getOrderslist("");
+                                     }
+                                 }
+        );
+
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onBackPressed();
+                onBackPressed();
             }
         });
-        getOrderslist();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(query!=null){
+                    getOrderslist(query);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // myOrdersAdapter.getFilter().filter(newText);
+                if (newText.length() > 1) {
+                    getOrderslist(newText);
+                }else {
+                    getOrderslist("");
+                }
+                return false;
+            }
+        });
     }
 
-    public void getOrderslist() {
+    public void getOrderslist(String keyword) {
+        mSwipeRefreshLayout.setRefreshing(false);
+
         myOrdersModelList.clear();
         String url_link = Apis.orderslist;
         final RequestQueue queue = Volley.newRequestQueue(this);
@@ -100,13 +141,12 @@ public class MyOrdersActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(linearLayoutManager);
                     myOrdersAdapter = new MyOrdersAdapter(MyOrdersActivity.this, myOrdersModelList);
                     recyclerView.setAdapter(myOrdersAdapter);
-
-                    recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyOrdersActivity.this, R.anim.layoutanimationleft));
+                    /*recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyOrdersActivity.this, R.anim.layoutanimationleft));
                     recyclerView.getAdapter().notifyDataSetChanged();
-                    recyclerView.scheduleLayoutAnimation();
+                    recyclerView.scheduleLayoutAnimation();*/
 
-                    //myOrdersAdapter.notifyDataSetChanged();
-
+                    myOrdersAdapter.notifyDataSetChanged();
+                    mSwipeRefreshLayout.setRefreshing(false);
 
 
                 } catch (JSONException e) {
@@ -117,6 +157,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -133,7 +174,8 @@ public class MyOrdersActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getParams() {
                 Map<String, String> data3 = new HashMap<String, String>();
-                return null;
+                data3.put("keyword",keyword);
+                return data3;
             }
 
         };
@@ -141,10 +183,16 @@ public class MyOrdersActivity extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
     }
-   @Override
-    public void onBackPressed(){
-       Intent i = new Intent(MyOrdersActivity.this,NavAppBarActivity.class);
-       startActivity(i);
-       finish();
-   }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(MyOrdersActivity.this, NavAppBarActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
+    public void onRefresh() {
+        getOrderslist("");
+    }
 }

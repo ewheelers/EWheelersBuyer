@@ -1,6 +1,7 @@
 package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,7 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
     MyTestDrivesAdapter myTestDrivesAdapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
     TextView goBack;
+    androidx.appcompat.widget.SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,15 +53,37 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
         recyclerView = findViewById(R.id.testdrive_list);
         goBack = findViewById(R.id.goback);
-
+        searchView = findViewById(R.id.searchview);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(query!=null) {
+                    getAllTestdrives(query);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // myOrdersAdapter.getFilter().filter(newText);
+                if (newText.length() > 1) {
+                    getAllTestdrives(newText);
+                }else {
+                    getAllTestdrives("");
+                }
+                return false;
+            }
+        });
+
         mSwipeRefreshLayout.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         mSwipeRefreshLayout.setRefreshing(true);
 
-                                        getAllTestdrives();
+                                        getAllTestdrives("");
                                     }
                                 }
         );
@@ -67,15 +91,23 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MyTestDrivesActivity.this,NavAppBarActivity.class);
+                /*Intent i = new Intent(MyTestDrivesActivity.this,NavAppBarActivity.class);
                 startActivity(i);
-                finish();
+                finish();*/
+                onBackPressed();
             }
         });
     }
 
-    private void getAllTestdrives() {
-        mSwipeRefreshLayout.setRefreshing(true);
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(MyTestDrivesActivity.this, NavAppBarActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+    private void getAllTestdrives(String keyword) {
+        mSwipeRefreshLayout.setRefreshing(false);
         myTestDriveModelList.clear();
         String url_link = Apis.alltestdriverequests;
         final RequestQueue queue = Volley.newRequestQueue(this);
@@ -116,10 +148,10 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                         recyclerView.setAdapter(myTestDrivesAdapter);
                        //myTestDrivesAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
-
-                        recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyTestDrivesActivity.this, R.anim.layoutanimationleft));
+                        myTestDrivesAdapter.notifyDataSetChanged();
+                       /* recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyTestDrivesActivity.this, R.anim.layoutanimationleft));
                         recyclerView.getAdapter().notifyDataSetChanged();
-                        recyclerView.scheduleLayoutAnimation();
+                        recyclerView.scheduleLayoutAnimation();*/
 
                     }
 
@@ -149,6 +181,7 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
             public Map<String, String> getParams() {
                 Map<String, String> hashMap = new HashMap<>();
                 hashMap.put("status", "-1");
+                hashMap.put("keyword", keyword);
                 return hashMap;
             }
 
@@ -160,7 +193,7 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
 
     @Override
     public void onRefresh() {
-        getAllTestdrives();
+        getAllTestdrives("");
 
     }
 }

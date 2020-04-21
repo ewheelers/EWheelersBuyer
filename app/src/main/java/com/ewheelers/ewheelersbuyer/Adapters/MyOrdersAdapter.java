@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,21 +18,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.ewheelers.ewheelersbuyer.ModelClass.MyOrdersModel;
+import com.ewheelers.ewheelersbuyer.ModelClass.SellerListModel;
 import com.ewheelers.ewheelersbuyer.MyOrdersDetails;
 import com.ewheelers.ewheelersbuyer.NavAppBarActivity;
 import com.ewheelers.ewheelersbuyer.R;
 import com.ewheelers.ewheelersbuyer.SessionStorage;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.OrdersHolder> {
     Context context;
     List<MyOrdersModel> myOrdersModels;
+    //List<MyOrdersModel> ordersFilter;
+
     int index_row=-1;
     public MyOrdersAdapter(Context context, List<MyOrdersModel> myOrdersModels) {
         this.context = context;
         this.myOrdersModels = myOrdersModels;
+       // ordersFilter = new ArrayList<>(myOrdersModels);
     }
 
     @NonNull
@@ -90,6 +97,38 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
     public int getItemCount() {
         return myOrdersModels.size();
     }
+
+//    @Override
+   /* public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<MyOrdersModel> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(ordersFilter);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (MyOrdersModel item : ordersFilter) {
+                    if (item.getOp_product_name().toLowerCase().contains(filterPattern)||item.getOp_selprod_title().toLowerCase().contains(filterPattern)||item.getOp_selprod_options().toLowerCase().contains(filterPattern)||item.getOrderstatus_name().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            myOrdersModels.clear();
+            myOrdersModels.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };*/
+
 
     public class OrdersHolder extends RecyclerView.ViewHolder {
         TextView orderid, orderdate, orderprodname, ordertitle, orderoptions, orderstatus, orderamount;

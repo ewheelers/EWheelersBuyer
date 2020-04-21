@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-
      /*   webView = findViewById(R.id.webView1);
         WebSettings webSetting = webView.getSettings();
         webSetting.setJavaScriptEnabled(true);

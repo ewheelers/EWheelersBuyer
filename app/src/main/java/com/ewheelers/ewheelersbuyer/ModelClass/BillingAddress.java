@@ -1,6 +1,11 @@
 package com.ewheelers.ewheelersbuyer.ModelClass;
 
 public class BillingAddress {
+    public static final int bill=0;
+    public static final int ship=1;
+
+    int typelayout;
+
      String ua_id;String ua_userid;String ua_identifier;String ua_name;
      String ua_address1;
      String ua_address2;
@@ -18,6 +23,23 @@ public class BillingAddress {
      String state_name;
      String city_name;
      String isShippingAddress;
+     String autocomplete;
+
+    public String getAutocomplete() {
+        return autocomplete;
+    }
+
+    public void setAutocomplete(String autocomplete) {
+        this.autocomplete = autocomplete;
+    }
+
+    public int getTypelayout() {
+        return typelayout;
+    }
+
+    public void setTypelayout(int typelayout) {
+        this.typelayout = typelayout;
+    }
 
     public String getUa_id() {
         return ua_id;

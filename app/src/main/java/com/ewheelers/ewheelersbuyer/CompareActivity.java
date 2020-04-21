@@ -1,6 +1,7 @@
 package com.ewheelers.ewheelersbuyer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -19,6 +20,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.ewheelersbuyer.Adapters.CompareAdapter;
+import com.ewheelers.ewheelersbuyer.ModelClass.Comparemodelclass;
+import com.ewheelers.ewheelersbuyer.ModelClass.SuggestionModel;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 
@@ -37,8 +41,13 @@ public class CompareActivity extends AppCompatActivity {
     String tokenvalue;
     NetworkImageView netimg1, netimg2;
     TextView txt1, txt2;
-    ListView listView1,listView2;
+    // ListView listView1,listView2;
     String subkey;
+    RecyclerView listView1, listView2;
+    List<Comparemodelclass> comparemodelclasses = new ArrayList<>();
+    List<Comparemodelclass> comparemodelclasses2 = new ArrayList<>();
+    CompareAdapter compareAdapter,compareAdapter2;
+    String valueOfheading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,28 +91,32 @@ public class CompareActivity extends AppCompatActivity {
                     JSONObject jsonObjectsubattarray = jsonObjectatt.getJSONObject("attributesArray");
                     Iterator iter = jsonObjectsubattarray.keys();
                     ArrayList<String> strings = new ArrayList<>();
-                    ArrayList<String> substrings = new ArrayList<>();
                     HashMap<String, String> map = new HashMap<String, String>();
-
+                    String val = null;
                     while (iter.hasNext()) {
                         String key = (String) iter.next();
-                        String value = jsonObjectsubattarray.getString(key);
-                        map.put(key, value);
-                        strings.add(key+"\n\n"+value+"\n");
-                        //substrings.add(value);
-                       // JSONObject value = jsonObjectsubattarray.getJSONObject(key);
-                        /*Iterator subiterator = value.keys();
+                        //String value = jsonObjectsubattarray.getString(key);
+                        Comparemodelclass comparemodelclass = new Comparemodelclass();
+                        comparemodelclass.setHeading(key);
+                        comparemodelclass.setTypeofLay(0);
+                        comparemodelclasses.add(comparemodelclass);
+                        JSONObject value = jsonObjectsubattarray.getJSONObject(key);
+                        Iterator subiterator = value.keys();
                         while (subiterator.hasNext()) {
                             subkey = (String) subiterator.next();
                             String subvalue = value.getString(subkey);
-                            substrings.add(subkey+":"+subvalue);
-                            Log.i("sublist",substrings.toString());
-                        }*/
-
+                            valueOfheading = subkey + ":" + subvalue;
+                            comparemodelclass = new Comparemodelclass();
+                            comparemodelclass.setValues(valueOfheading);
+                            comparemodelclass.setTypeofLay(1);
+                            comparemodelclasses.add(comparemodelclass);
+                        }
                     }
 
-                    ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(CompareActivity.this, android.R.layout.simple_list_item_1, strings);
-                    listView1.setAdapter(itemsAdapter);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
+                    listView1.setLayoutManager(linearLayoutManager);
+                    compareAdapter = new CompareAdapter(CompareActivity.this, comparemodelclasses);
+                    listView1.setAdapter(compareAdapter);
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
@@ -181,28 +194,33 @@ public class CompareActivity extends AppCompatActivity {
                     JSONObject jsonObjectsubattarray = jsonObjectatt.getJSONObject("attributesArray");
                     Iterator iter = jsonObjectsubattarray.keys();
                     ArrayList<String> strings = new ArrayList<>();
-                    ArrayList<String> substrings = new ArrayList<>();
                     HashMap<String, String> map = new HashMap<String, String>();
-
+                    String val = null;
                     while (iter.hasNext()) {
                         String key = (String) iter.next();
-                        String value = jsonObjectsubattarray.getString(key);
-                        map.put(key, value);
-                        strings.add(key+"\n\n"+value+"\n");
-                        //substrings.add(value);
-                        // JSONObject value = jsonObjectsubattarray.getJSONObject(key);
-                        /*Iterator subiterator = value.keys();
+                        //String value = jsonObjectsubattarray.getString(key);
+                        Comparemodelclass comparemodelclass = new Comparemodelclass();
+                        comparemodelclass.setHeading(key);
+                        comparemodelclass.setTypeofLay(0);
+                        comparemodelclasses2.add(comparemodelclass);
+                        JSONObject value = jsonObjectsubattarray.getJSONObject(key);
+                        Iterator subiterator = value.keys();
                         while (subiterator.hasNext()) {
                             subkey = (String) subiterator.next();
                             String subvalue = value.getString(subkey);
-                            substrings.add(subkey+":"+subvalue);
-                            Log.i("sublist",substrings.toString());
-                        }*/
-
+                            valueOfheading = subkey + ":" + subvalue;
+                            comparemodelclass = new Comparemodelclass();
+                            comparemodelclass.setValues(valueOfheading);
+                            comparemodelclass.setTypeofLay(1);
+                            comparemodelclasses2.add(comparemodelclass);
+                        }
                     }
 
-                    ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(CompareActivity.this, android.R.layout.simple_list_item_1, strings);
-                    listView2.setAdapter(itemsAdapter);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false);
+                    listView2.setLayoutManager(linearLayoutManager);
+                    compareAdapter2 = new CompareAdapter(CompareActivity.this, comparemodelclasses2);
+                    listView2.setAdapter(compareAdapter2);
+
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
@@ -222,7 +240,7 @@ public class CompareActivity extends AppCompatActivity {
                     JSONObject jsonObjectProductdetail = jsonArrayCollections.getJSONObject(0);
                     String producturl = jsonObjectProductdetail.getString("product_image_url");
 
-                   // txt2.setText("Name\n\n" + productname + "\n\nPrice\n\n\u20B9 " + productprice + "\n\nModel\n\n" + productmodel);
+                    // txt2.setText("Name\n\n" + productname + "\n\nPrice\n\n\u20B9 " + productprice + "\n\nModel\n\n" + productmodel);
                     ImageLoader imageLoader = VolleySingleton.getInstance(CompareActivity.this)
                             .getImageLoader();
                     imageLoader.get(producturl, ImageLoader.getImageListener(netimg2, R.drawable.cart, android.R.drawable.ic_dialog_alert));

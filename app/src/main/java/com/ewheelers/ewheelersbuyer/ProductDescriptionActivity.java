@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ewheelers.ewheelersbuyer.Fragments.ProdcutDescriptionFragment;
+import com.ewheelers.ewheelersbuyer.Fragments.ProductAttributesFragment;
 import com.ewheelers.ewheelersbuyer.Fragments.ProductSpecificationsFragment;
+import com.ewheelers.ewheelersbuyer.ModelClass.Comparemodelclass;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductSpecifications;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.NetworkPolicy;
@@ -29,6 +31,8 @@ public class ProductDescriptionActivity extends AppCompatActivity {
     TextView proName, proPrice;
     String description;
     List<ProductSpecifications> productSpecifications;
+    List<Comparemodelclass> productAttributes;
+    String att_title;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +48,13 @@ public class ProductDescriptionActivity extends AppCompatActivity {
         String ProName = getIntent().getStringExtra("title");
         String ProPrice = getIntent().getStringExtra("price");
         String Model = getIntent().getStringExtra("model");
+        att_title = getIntent().getStringExtra("attributetitle");
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
 
         productSpecifications = (List<ProductSpecifications>) getIntent().getSerializableExtra("Specifications");
+        productAttributes = (List<Comparemodelclass>) getIntent().getSerializableExtra("attributes");
 
         Log.i("intentstrings",ImageView+ProName+ProPrice);
 
@@ -66,6 +72,7 @@ public class ProductDescriptionActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ProductViewPagerAdapter adapter = new ProductViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new ProductAttributesFragment(), att_title);
         adapter.addFragment(new ProdcutDescriptionFragment(), "Description");
         adapter.addFragment(new ProductSpecificationsFragment(), "Specifications");
         viewPager.setAdapter(adapter);
@@ -105,5 +112,8 @@ public class ProductDescriptionActivity extends AppCompatActivity {
     }
     public List<ProductSpecifications> sendSpecification() {
         return productSpecifications;
+    }
+    public List<Comparemodelclass> sendAttributes() {
+        return productAttributes;
     }
 }

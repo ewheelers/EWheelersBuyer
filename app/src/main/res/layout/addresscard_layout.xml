@@ -19,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,6 +54,7 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_action_delete"/>
             <ImageView
+                android:visibility="visible"
                 android:id="@+id/update_address"
                 android:layout_width="0dp"
                 android:layout_weight="0.25"
@@ -90,7 +93,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="0.5"
                     android:layout_height="wrap_content"
-                    android:text="Address line" />
+                    android:text="Address " />
                 <TextView
                     android:id="@+id/Address_line"
                     android:layout_width="0dp"
@@ -200,7 +203,20 @@
 
             </LinearLayout>
 
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/setDefault"
+                android:background="@drawable/button_bg_transperent"
+                android:layout_gravity="right"
+                android:padding="@dimen/dimen_5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Default"/>
+
         </LinearLayout>
+
+
+
     </androidx.cardview.widget.CardView>
 
 

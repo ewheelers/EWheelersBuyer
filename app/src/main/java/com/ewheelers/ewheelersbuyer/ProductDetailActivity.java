@@ -3,6 +3,7 @@ package com.ewheelers.ewheelersbuyer;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -52,6 +53,7 @@ import com.ewheelers.ewheelersbuyer.Adapters.AddonsAdapter;
 import com.ewheelers.ewheelersbuyer.Adapters.ProductdetailsAdapter;
 import com.ewheelers.ewheelersbuyer.Fragments.PolicyFragment;
 import com.ewheelers.ewheelersbuyer.ModelClass.AddonsClass;
+import com.ewheelers.ewheelersbuyer.ModelClass.Comparemodelclass;
 import com.ewheelers.ewheelersbuyer.ModelClass.OptionValues;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductSpecifications;
@@ -99,6 +101,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     List<ProductSpecifications> productSpecs = new ArrayList<>();
     ArrayList<OptionValues> spinnerlist = new ArrayList<>();
     List<ProductDetails> buttondata = new ArrayList<>();
+    List<Comparemodelclass> comparemodelclasses = new ArrayList<>();
+
     ImageLoader imageLoader;
     TextView textView_product_details, shareicon;
     private InputMethodManager imm;
@@ -106,7 +110,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     String rentPrice, rentSecurity;
     public static String selectProId = "";
     TextView brand, productName, cost, policytext, totalreview, totalrating, buywithtit, similarproductTitle;
-    String optionname1;
+    String optionname1, attTitle;
 
     TextView rentavailbility, findstore, rentalPrice;
 
@@ -118,8 +122,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     Button plus, minus;
     TextView editqty;
     int quantity = 1;
-    //TextView dealers_List;
-    Spinner dealers_List;
+    TextView dealers_List;
+    //Spinner dealers_List;
     Button addcart;
     RelativeLayout snackbarLayout;
 
@@ -150,7 +154,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ImageView imageViewClose;
     int onclk;
     String pro1, pro2;
-
+    SearchView editTextSearch;
+    TextView changeTxt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,14 +165,36 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
 
-        //Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
 
         compareView = findViewById(R.id.view_copmare);
         comparetxt = findViewById(R.id.compare);
         viewcount = findViewById(R.id.view_txt);
         imageViewClose = findViewById(R.id.closeimg);
         zoomImg = findViewById(R.id.zoom);
+        editTextSearch = findViewById(R.id.searchText);
+        changeTxt = findViewById(R.id.change_text);
+        changeTxt.setOnClickListener(this);
 
+        editTextSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent i = new Intent(getApplicationContext(),SearchResultActivity.class);
+                i.putExtra("keyword",query);
+                startActivity(i);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.length()>1){
+                    Intent i = new Intent(getApplicationContext(),SearchResultActivity.class);
+                    i.putExtra("keyword",newText);
+                    startActivity(i);
+                }
+                return false;
+            }
+        });
         imageViewClose.setOnClickListener(this);
         comparetxt.setOnClickListener(this);
         viewcount.setOnClickListener(this);
@@ -328,7 +355,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         findstore.setOnClickListener(this);
         buyerGuide.setOnClickListener(this);
 
-        dealers_List.setOnItemSelectedListener(this);
+        //dealers_List.setOnItemSelectedListener(this);
         ProductdetailsAdapter productdetailsAdapter = new ProductdetailsAdapter(ProductDetailActivity.this, getOfferData());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false);
         offersrecyclerview.setLayoutManager(linearLayoutManager);
@@ -587,6 +614,30 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
 
                     JSONObject jsonObjectAttributes = dataJsonObject.getJSONObject("attributes");
+                    attTitle = jsonObjectAttributes.getString("title");
+                    JSONObject jsonObjectsubattarray = jsonObjectAttributes.getJSONObject("attributesArray");
+                    Iterator itera = jsonObjectsubattarray.keys();
+//                    ArrayList<String> strings = new ArrayList<>();
+                    //HashMap<String, String> map = new HashMap<String, String>();
+                    while (itera.hasNext()) {
+                        String key = (String) itera.next();
+                        //String value = jsonObjectsubattarray.getString(key);
+                        Comparemodelclass comparemodelclass = new Comparemodelclass();
+                        comparemodelclass.setHeading(key);
+                        comparemodelclass.setTypeofLay(0);
+                        comparemodelclasses.add(comparemodelclass);
+                        JSONObject value = jsonObjectsubattarray.getJSONObject(key);
+                        Iterator subiterator = value.keys();
+                        while (subiterator.hasNext()) {
+                            String subkey = (String) subiterator.next();
+                            String subvalue = value.getString(subkey);
+                            String valueOfheading = subkey + ":" + subvalue;
+                            comparemodelclass = new Comparemodelclass();
+                            comparemodelclass.setValues(valueOfheading);
+                            comparemodelclass.setTypeofLay(1);
+                            comparemodelclasses.add(comparemodelclass);
+                        }
+                    }
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
@@ -636,8 +687,22 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     }
 
                     if (booknowEnable.equals("1")) {
+                        if (selbooknowEnable.equals("1")) {
+                            linearLayoutrent.setVisibility(GONE);
+                            buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
+                        }
+                        if (selbooknowEnable.equals("2")) {
+                            linearLayoutrent.setVisibility(GONE);
+                            buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
+                        }
+                        if (selbooknowEnable.equals("0")) {
+                            linearLayoutrent.setVisibility(GONE);
+                            buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
+                            buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
+                        }
+
+                       /* Toast.makeText(ProductDetailActivity.this, "keyvalue: "+value, Toast.LENGTH_SHORT).show();
                         if (selbooknowEnable.equals(key)) {
-                            //Toast.makeText(ProductDetailActivity.this, "keyvalue: "+value, Toast.LENGTH_SHORT).show();
                             if (value.equals("Both")) {
                                 linearLayoutrent.setVisibility(GONE);
                                 buttondata.add(new ProductDetails(5, "Book Now", R.color.colorPrimary, selproductid));
@@ -649,7 +714,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 linearLayoutrent.setVisibility(GONE);
                                 buttondata.add(new ProductDetails(5, "BUY", R.color.colorPrimary, selproductid));
                             }
-                        }
+                        }*/
                     } else {
                         linearLayoutrent.setVisibility(GONE);
                         addcart.setVisibility(View.VISIBLE);
@@ -677,10 +742,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     statename = jsonObjectpolicies.getString("shop_state_name");
                     city = jsonObjectpolicies.getString("shop_city");
 
-                    //dealers_List.setText(shopname);
-                    ArrayList<String> strings = new ArrayList<>();
+                    dealers_List.setText(shopname+" "+city);
+                    /*ArrayList<String> strings = new ArrayList<>();
                     strings.add(shopname + " " + city);
-                    dealers_List.setAdapter(new ArrayAdapter<String>(ProductDetailActivity.this, android.R.layout.simple_spinner_dropdown_item, strings));
+                    dealers_List.setAdapter(new ArrayAdapter<String>(ProductDetailActivity.this, android.R.layout.simple_spinner_dropdown_item, strings));*/
 
 
                     butn_payPolicy.setBackgroundColor(Color.parseColor("#9C3C34"));
@@ -940,6 +1005,14 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 inten.putExtra("shopaddress", city + "," + statename + "," + countryname);
                 startActivity(inten);
                 break;
+            case R.id.change_text:
+                inten = new Intent(getApplicationContext(), SellersListActivity.class);
+                inten.putExtra("fromactivity", "details");
+                inten.putExtra("selproductid", selproductid);
+                inten.putExtra("shopname", shopname);
+                inten.putExtra("shopaddress", city + "," + statename + "," + countryname);
+                startActivity(inten);
+                break;
             case R.id.cart_count:
                 Intent inte = new Intent(getApplicationContext(), CartListingActivity.class);
                 startActivity(inte);
@@ -967,10 +1040,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 Intent intent = new Intent(ProductDetailActivity.this, ProductDescriptionActivity.class);
                 intent.putExtra("description", productdescription);
                 intent.putExtra("Specifications", (Serializable) productSpecs);
+                intent.putExtra("attributes", (Serializable) comparemodelclasses);
                 intent.putExtra("image", imageurls);
                 intent.putExtra("title", productname);
                 intent.putExtra("price", productprice);
                 intent.putExtra("model", productmodel);
+                intent.putExtra("attributetitle", attTitle);
                 startActivity(intent);
                 break;
             case R.id.share:
@@ -1127,7 +1202,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-
     public void TestDrive(View v) {
         String Login_url = Apis.testdrive;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -1154,6 +1228,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     @Override
                                     public void onClick(View v) {
                                         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                                        Intent i = new Intent(ProductDetailActivity.this,MyTestDrivesActivity.class);
+                                        startActivity(i);
+                                        finish();
                                         alertDialog.dismiss();
                                     }
                                 });
@@ -1409,7 +1486,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                             message, Snackbar.LENGTH_LONG);
                                     mySnackbar.setAction("Opencart", new OpencartListner()).setTextColor(Color.YELLOW);
                                     mySnackbar.show();
-                                }else if(buttontext.equals("Booknow")){
+                                } else if (buttontext.equals("Booknow")) {
                                     Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
                                     startActivity(i);
                                 }
@@ -1460,9 +1537,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                 data3.put("selprod_id", productid);
                 data3.put("quantity", editqty.getText().toString());
-                if(buttontext.equals("Booknow")){
-                    data3.put("type","book");
-                }else {
+                if (buttontext.equals("Booknow")) {
+                    data3.put("type", "book");
+                } else {
                     if (jsonaddon == null) {
                         data3.put("addons", "");
                     } else {
@@ -1499,4 +1576,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         getProductDetails(productId);
         super.onResume();
     }
+
+   /* @Override
+    public void onBackPressed(){
+        Intent i = new Intent(getApplicationContext(),NavAppBarActivity.class);
+        startActivity(i);
+        finish();
+    }*/
 }

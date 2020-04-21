@@ -4,11 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -19,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.ewheelersbuyer.Adapters.ServiceProvidersAdapter;
 import com.ewheelers.ewheelersbuyer.ModelClass.ServiceProvidersClass;
+import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
 import com.kinda.alert.KAlertDialog;
 
@@ -26,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,12 +52,16 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
     double latitude, longitude;
     String distance = "";
     boolean isLoading = false;
+    String tokenValue;
+    NewGPSTracker newgps;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_service_providers);
         recyclerView = findViewById(R.id.serviceProviders_list);
 
+        tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
 
         pDialog = new KAlertDialog(this, KAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
@@ -64,7 +77,8 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
 
         assert provider_is != null;
         if (provider_is.equals("Charge")) {
-            url = "";
+            url = "https://www.ewheelers.in/app-api/2.0/addresses/search-charging-stations";
+            getChargeStations(url);
         }
         if (provider_is.equals("Mechanic")) {
             url = "https://script.google.com/macros/s/AKfycbwNuWGvcBCdH_qzJ33MQqUW7O0LeavHiM5tggWp_1ezeaorzoU/exec?action=getItems";
@@ -96,6 +110,94 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
             getItems(url);
         }
 
+
+    }
+
+    private void getChargeStations(String url) {
+        serviceProvidersClassesList.clear();
+        StringRequest strRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+                                JSONArray jsonArray = jsonObjectdata.getJSONArray("result");
+                                for(int i=0;i<jsonArray.length();i++){
+                                    JSONObject jsonObjectVal = jsonArray.getJSONObject(i);
+                                    String identifier = jsonObjectVal.getString("ua_identifier");
+                                    String uaname = jsonObjectVal.getString("ua_name");
+                                    String ua_address1 = jsonObjectVal.getString("ua_address1");
+                                    String ua_address2 = jsonObjectVal.getString("ua_address2");
+                                    String uacity = jsonObjectVal.getString("ua_city");
+                                    String uaphone = jsonObjectVal.getString("ua_phone");
+                                    String uapincode = jsonObjectVal.getString("ua_zip");
+                                    String uaautocomplete = jsonObjectVal.getString("ua_auto_complete");
+                                    String ualatitude = jsonObjectVal.getString("ua_latitude");
+                                    String ualongitude = jsonObjectVal.getString("ua_longitude");
+                                    String uadistance = jsonObjectVal.getString("distance_in_km");
+                                    ServiceProvidersClass serviceProvidersClass = new ServiceProvidersClass();
+                                    serviceProvidersClass.setServiceprovider_name(uaname);
+                                    serviceProvidersClass.setServiceprovider_shopname(identifier);
+                                    serviceProvidersClass.setServiceprovider_phone_number(uaphone);
+                                    serviceProvidersClass.setServiceprovider_address(uaautocomplete);
+                                    serviceProvidersClass.setServiceprovider_latitude(ualatitude);
+                                    serviceProvidersClass.setServiceprovider_longitude(ualongitude);
+                                    Float litersOfPetrol=Float.parseFloat(uadistance);
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    df.setMaximumFractionDigits(2);
+                                    String dis = df.format(litersOfPetrol);
+                                    serviceProvidersClass.setDistance(dis+"KM");
+                                    serviceProvidersClass.setServiceProviderIs(provider_is);
+                                    serviceProvidersClass.setCurrentlatitude(latitude);
+                                    serviceProvidersClass.setCurrentlongitude(longitude);
+                                    serviceProvidersClassesList.add(serviceProvidersClass);
+                                   // getDistance(latitude,longitude,ualatitude,ualongitude,serviceProvidersClass);
+
+                                }
+                                if(serviceProvidersClassesList.isEmpty()){
+                                    Toast.makeText(ShowServiceProvidersActivity.this, "Not Available nearest stations", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    serviceProvidersAdapter = new ServiceProvidersAdapter(ShowServiceProvidersActivity.this, serviceProvidersClassesList);
+                                    recyclerView.setAdapter(serviceProvidersAdapter);
+                                    serviceProvidersAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenValue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("latitude", String.valueOf(latitude));
+                data3.put("longitude", String.valueOf(longitude));
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
 
     }
 
@@ -243,5 +345,21 @@ public class ShowServiceProvidersActivity extends AppCompatActivity {
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(strRequest);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.serviceprovidermenu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.mapview:
+                Intent i = new Intent(getApplicationContext(),MapsActivity.class);
+                startActivity(i);
+                return (true);
+        }
+        return (super.onOptionsItemSelected(item));
+    }
 }

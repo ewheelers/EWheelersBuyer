@@ -49,7 +49,7 @@
     android:layout_marginTop="5dp"
     android:layout_width="match_parent"
     android:layout_height="38dp"
-    app:tabMode="fixed"
+    app:tabMode="scrollable"
     app:tabGravity="fill"/>
 <androidx.viewpager.widget.ViewPager
     android:id="@+id/view_pager"

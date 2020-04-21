@@ -6,11 +6,6 @@
 <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Heading"
     android:textStyle="bold"
     android:id="@+id/heading"/>
-<ListView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/sublist"/>
 </LinearLayout>

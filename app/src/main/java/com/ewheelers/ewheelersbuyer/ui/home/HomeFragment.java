@@ -413,6 +413,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                             HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
                                             homeCollectionProducts.setBrandimageurl(brandimage);
                                             homeCollectionProducts.setBrandid(brandid);
+                                            homeCollectionProducts.setBrandname(brandname);
                                             homeCollectionProducts.setType(1);
                                             homeCollectionbrandList.add(homeCollectionProducts);
                                         }
@@ -426,6 +427,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
                                             HomeCollectionProducts homeCollectionProducts = new HomeCollectionProducts();
                                             homeCollectionProducts.setBrandimageurl(brandimage);
                                             homeCollectionProducts.setBrandid(brandid);
+                                            homeCollectionProducts.setBrandname(brandname);
                                             homeCollectionProducts.setType(1);
                                             homeCollectionbrandList.add(homeCollectionProducts);
                                         }

@@ -22,6 +22,7 @@ public class AllebikesModelClass {
     String shopphone;
     String shoppincode;
 
+
     public AllebikesModelClass(String networkImage, String productName, String price) {
         this.networkImage = networkImage;
         this.productName = productName;

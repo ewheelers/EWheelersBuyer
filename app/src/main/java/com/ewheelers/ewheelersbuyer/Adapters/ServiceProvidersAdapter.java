@@ -176,6 +176,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         holder.locate.setText(serviceProvidersClassList.get(position).getDistance());
 
+
         holder.call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -42,6 +44,7 @@ import com.ewheelers.ewheelersbuyer.ModelClass.AllebikesModelClass;
 import com.ewheelers.ewheelersbuyer.ModelClass.ProductDetails;
 import com.ewheelers.ewheelersbuyer.Volley.Apis;
 import com.ewheelers.ewheelersbuyer.Volley.VolleySingleton;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,25 +58,29 @@ import java.util.Map;
 
 import static com.ewheelers.ewheelersbuyer.Dialogs.ShowAlerts.showfailedDialog;
 
-public class ShowAlleBikesActivity extends AppCompatActivity {
+public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnClickListener {
     RecyclerView recyclerView;
     AllebikesAdapter allebikesAdapter;
     List<AllebikesModelClass> allebikelist = new ArrayList<>();
-    TextView textView;
+    TextView textView, title;
     String token;
     String collectionidbikes, collectionidcat, collectionidbrands, collectionidshops;
     String collectionid, tokenvalue, allproducts;
-    String brandid, categoryid, shopid, shopname, shoplogo, typebtn;
+    String brandid, brandName, categoryid, categoryName, shopid, shopname, shoplogo, shopaddress, typebtn;
     int stock;
     TextView textView_empty;
     NetworkImageView networkImageView, bannerImage;
-    LinearLayout linearLayoutEmpty;
+    LinearLayout linearLayoutEmpty, sort_items, filter_items;
 
     SearchView searchView;
     ListView list;
     List<AllebikesModelClass> allebikesModelClassesList = new ArrayList<>();
 
     String onlyTestDrive;
+    BottomSheetDialog mBottomSheetDialog;
+    TextView relevant, saleP, rentP, bookP, testP, priceLtoH, priceHtoL;
+
+    LinearLayout sortFilterLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,51 +89,60 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
         token = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
 
+        title = findViewById(R.id.texttitle);
         textView = findViewById(R.id.titleTxt);
         recyclerView = findViewById(R.id.all_ebikeslist);
         textView_empty = findViewById(R.id.emptyView);
         linearLayoutEmpty = findViewById(R.id.empty_layout);
         networkImageView = findViewById(R.id.shopimage);
 
+        sortFilterLayout = findViewById(R.id.sortFilter);
+
+        sort_items = findViewById(R.id.sortItems);
+        filter_items = findViewById(R.id.filterItems);
+
+        sort_items.setOnClickListener(this);
         bannerImage = findViewById(R.id.banner);
 
         searchView = findViewById(R.id.searchview);
         list = findViewById(R.id.listview);
 
+        mBottomSheetDialog = new BottomSheetDialog(this);
+        View sheetView = getLayoutInflater().inflate(R.layout.sort_layout, null);
+        relevant = sheetView.findViewById(R.id.relevance);
+        saleP = sheetView.findViewById(R.id.sale);
+        rentP = sheetView.findViewById(R.id.rent);
+        bookP = sheetView.findViewById(R.id.booking);
+        testP = sheetView.findViewById(R.id.testdrive);
+        priceLtoH = sheetView.findViewById(R.id.price_lowtohigh);
+        priceHtoL = sheetView.findViewById(R.id.price_hightolow);
+        mBottomSheetDialog.setContentView(sheetView);
+        relevant.setTextColor(Color.parseColor("#9C3C34"));
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Toast.makeText(ShowAlleBikesActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(ShowAlleBikesActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.length() > 1) {
-                    list.setVisibility(View.VISIBLE);
-                    setSuggestions();
-                    String[] strings = {"abc", "cda"};
-                    list.setAdapter(new ArrayAdapter<String>(ShowAlleBikesActivity.this, android.R.layout.simple_spinner_dropdown_item, strings));
-                    list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            String s = list.getItemAtPosition(position).toString();
-                            searchView.setQuery(s, true);
-                        }
-                    });
-                } else {
-                    list.setVisibility(View.GONE);
-                }
+                allebikesAdapter.getFilter().filter(newText);
+
                 return false;
             }
         });
 
         //from CollectionProductsAdapter
         brandid = getIntent().getStringExtra("brandid");
+        brandName = getIntent().getStringExtra("brandname");
         categoryid = getIntent().getStringExtra("catid");
+        categoryName = getIntent().getStringExtra("catname");
         shopid = getIntent().getStringExtra("shopid");
         shopname = getIntent().getStringExtra("shopname");
         shoplogo = getIntent().getStringExtra("shopimage");
+        shopaddress = getIntent().getStringExtra("shopaddress");
         // stock = getIntent().getIntExtra("instock",0);
         typebtn = getIntent().getStringExtra("type");
         textView.setText(typebtn);
@@ -134,15 +150,19 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
         Log.i("ids:", "brandis-" + brandid + " categoryid-" + categoryid + " shopid-" + shopid);
 
         if (brandid != null) {
-            getfilterProducts(brandid);
+            getfilterProducts(brandid, "", "", "");
+            title.setVisibility(View.VISIBLE);
+            title.setText(brandName);
         }
 
         if (categoryid != null) {
-            getcategoryProducts(categoryid);
+            getcategoryProducts(categoryid, "", "", "");
+            title.setVisibility(View.VISIBLE);
+            title.setText(categoryName);
         }
 
         if (shopid != null) {
-            getShopProducts(shopid);
+            getShopProducts(shopid, "", "", "");
         }
 
         collectionidbikes = getIntent().getStringExtra("allpopularbikes");
@@ -150,34 +170,221 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
         collectionidbrands = getIntent().getStringExtra("allbrands");
         collectionidshops = getIntent().getStringExtra("allshops");
         onlyTestDrive = getIntent().getStringExtra("onlytestdrives");
-        // Toast.makeText(this, "coolectid" + collectionidbikes + collectionidcat + collectionidbrands + collectionidshops, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "coolectid" + collectionidbikes + collectionidcat + collectionidbrands + collectionidshops, Toast.LENGTH_SHORT).show();
 
 
-        if (onlyTestDrive!=null) {
-            if(onlyTestDrive.equals("0")){
-                getOnlyRentProducts("2","");
-            }else {
-                getOnlyRentProducts("1","test_drive");
-
+        if (onlyTestDrive != null) {
+            saleP.setVisibility(View.GONE);
+            rentP.setVisibility(View.GONE);
+            testP.setVisibility(View.GONE);
+            bookP.setVisibility(View.GONE);
+            if (onlyTestDrive.equals("0")) {
+                getOnlyRentProducts("2", "", "");
+            } else {
+                getOnlyRentProducts("1", "test_drive", "");
             }
-        } else {
-
         }
 
+        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // Do something
+            }
+        });
+        relevant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "", "", "");
+                } else if (onlyTestDrive != null) {
+                    if (onlyTestDrive.equals("0")) {
+                        getOnlyRentProducts("2", "", "");
+                    } else {
+                        getOnlyRentProducts("1", "test_drive", "");
+                    }
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "", "", "");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "", "", "");
+                } else {
+                    getAllebikes("");
+                }
+                relevant.setTextColor(Color.parseColor("#9C3C34"));
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.BLACK);
+                testP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+
+        saleP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "[1]", "", "");
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "[1]", "", "");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "[1]", "", "");
+                } else {
+                    getOnlyRentProducts("1", "", "");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.parseColor("#9C3C34"));
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.BLACK);
+                testP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        rentP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "[2]", "", "");
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "[2]", "", "");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "[2]", "", "");
+                } else {
+                    getOnlyRentProducts("2", "", "");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.parseColor("#9C3C34"));
+                testP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        bookP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "[1]", "", "book");
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "[1]", "book", "");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "[1]", "book", "");
+                } else {
+                    getOnlyRentProducts("1", "book", "");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.parseColor("#9C3C34"));
+                rentP.setTextColor(Color.BLACK);
+                testP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        testP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "[1]", "", "test_drive");
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "[1]", "test_drive", "");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "[1]", "test_drive", "");
+                } else {
+                    getOnlyRentProducts("1", "test_drive", "");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.BLACK);
+                testP.setTextColor(Color.parseColor("#9C3C34"));
+                priceLtoH.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+
+        priceLtoH.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "", "price_asc", "");
+                } else if (onlyTestDrive != null) {
+                    if (onlyTestDrive.equals("0")) {
+                        getOnlyRentProducts("2", "", "price_asc");
+                    } else {
+                        getOnlyRentProducts("1", "test_drive", "price_asc");
+                    }
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "", "", "price_asc");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "", "", "price_asc");
+                } else {
+                    getAllebikes("price_asc");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.parseColor("#9C3C34"));
+                testP.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        priceHtoL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (categoryid != null) {
+                    getcategoryProducts(categoryid, "", "price_desc", "");
+                } else if (onlyTestDrive != null) {
+                    if (onlyTestDrive.equals("0")) {
+                        getOnlyRentProducts("2", "", "price_desc");
+                    } else {
+                        getOnlyRentProducts("1", "test_drive", "price_desc");
+                    }
+                } else if (brandid != null) {
+                    getfilterProducts(brandid, "", "", "price_desc");
+                } else if (shopid != null) {
+                    getShopProducts(shopid, "", "", "price_desc");
+                } else {
+                    getAllebikes("price_desc");
+                }
+                relevant.setTextColor(Color.BLACK);
+                saleP.setTextColor(Color.BLACK);
+                bookP.setTextColor(Color.BLACK);
+                rentP.setTextColor(Color.BLACK);
+                priceHtoL.setTextColor(Color.parseColor("#9C3C34"));
+                testP.setTextColor(Color.BLACK);
+                priceLtoH.setTextColor(Color.BLACK);
+                mBottomSheetDialog.dismiss();
+            }
+        });
 
         if (collectionidbikes != null) {
-
-            collectionid = collectionidbikes;
+            //collectionid = collectionidbikes;
+            getAllebikes("");
         }
-        if (collectionidcat != null) {
 
-            collectionid = collectionidcat;
+        if (collectionidcat != null) {
+            sortFilterLayout.setVisibility(View.GONE);
+            //collectionid = collectionidcat;
+            getCollectionProducts(collectionidcat);
+
         }
         if (collectionidbrands != null) {
+            sortFilterLayout.setVisibility(View.GONE);
+            //collectionid = collectionidbrands;
+            getCollectionProducts(collectionidbrands);
 
-            collectionid = collectionidbrands;
         }
         if (collectionidshops != null) {
+            sortFilterLayout.setVisibility(View.GONE);
             getAllShops();
             //collectionid = collectionidshops;
         }
@@ -187,10 +394,10 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        getCollectionProducts(collectionid);
+//        getCollectionProducts(collectionid);
     }
 
-    private void getOnlyRentProducts(String rent,String testdrive) {
+    private void getAllebikes(String priceStr) {
         allebikelist.clear();
         String Login_url = Apis.filteredproducts;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -208,7 +415,89 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
                                     String productPrice = jsonObjectProducts.getString("theprice");
-                                    String productName = jsonObjectProducts.getString("product_name");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
+                                    String selproductid = jsonObjectProducts.getString("selprod_id");
+                                    String productImageurl = jsonObjectProducts.getString("product_image_url");
+                                    String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
+                                    String issell = jsonObjectProducts.getString("is_sell");
+                                    String isrent = jsonObjectProducts.getString("is_rent");
+                                    String instock = jsonObjectProducts.getString("in_stock");
+
+                                    AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setPrice(productPrice);
+                                    allebikesModelClass.setProductName(productName);
+                                    allebikesModelClass.setProductid(selproductid);
+                                    allebikesModelClass.setNetworkImage(productImageurl);
+                                    allebikesModelClass.setTestdriveenable(testdriveenable);
+                                    allebikesModelClass.setIssell(issell);
+                                    allebikesModelClass.setIsrent(isrent);
+                                    allebikesModelClass.setInstock(instock);
+                                    allebikesModelClass.setTypeLayout(0);
+
+                                    allebikelist.add(allebikesModelClass);
+                                }
+                                if (allebikelist.isEmpty()) {
+                                    linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                } else {
+                                    allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
+                                    recyclerView.setAdapter(allebikesAdapter);
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    allebikesAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("sortBy", priceStr);
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+
+    }
+
+    private void getOnlyRentProducts(String rent, String testdrive, String sorting) {
+        allebikelist.clear();
+        String Login_url = Apis.filteredproducts;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("products");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
+                                    String productPrice = jsonObjectProducts.getString("theprice");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
                                     String selproductid = jsonObjectProducts.getString("selprod_id");
                                     String productImageurl = jsonObjectProducts.getString("product_image_url");
                                     String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
@@ -263,12 +552,15 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                 ArrayList<String> strings = new ArrayList<>();
                 strings.add(rent);
                 Map<String, String> data3 = new HashMap<String, String>();
-                if(testdrive.isEmpty()){
+                if (testdrive.isEmpty()) {
                     data3.put("producttype", strings.toString());
-                }else {
+                    data3.put("sortBy", sorting);
+                } else {
                     data3.put("producttype", strings.toString());
                     data3.put("tdrive", testdrive);
+                    data3.put("sortBy", sorting);
                 }
+
                 return data3;
             }
         };
@@ -347,9 +639,9 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    private void getShopProducts(String shopid) {
+    private void getShopProducts(String shopid, String protype, String testing, String sorting) {
         allebikelist.clear();
-        String Login_url = Apis.viewshopbyid + shopid;
+        String Login_url = Apis.filteredproducts;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
@@ -362,7 +654,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                             if (getStatus.equals("1")) {
                                 JSONObject jsonObjectData = jsonObject.getJSONObject("data");
 
-                                JSONObject jsonObjectShop = jsonObjectData.getJSONObject("shop");
+                               /* JSONObject jsonObjectShop = jsonObjectData.getJSONObject("shop");
                                 String shopname = jsonObjectShop.getString("shop_name");
                                 String shoplogo = jsonObjectShop.getString("shop_logo");
                                 String shopbanner = jsonObjectShop.getString("shop_banner");
@@ -370,12 +662,13 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 ImageLoader imageLoader = VolleySingleton.getInstance(ShowAlleBikesActivity.this)
                                         .getImageLoader();
                                 imageLoader.get(shopbanner, ImageLoader.getImageListener(bannerImage, R.drawable.cart, android.R.drawable.ic_dialog_alert));
-                                bannerImage.setImageUrl(shopbanner, imageLoader);
+                                bannerImage.setImageUrl(shopbanner, imageLoader);*/
                                 JSONArray jsonArray = jsonObjectData.getJSONArray("products");
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
                                     String productPrice = jsonObjectProducts.getString("theprice");
-                                    String productName = jsonObjectProducts.getString("product_name");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
                                     String selproductid = jsonObjectProducts.getString("selprod_id");
                                     String productImageurl = jsonObjectProducts.getString("product_image_url");
                                     String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
@@ -397,14 +690,15 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 }
                                 if (allebikelist.isEmpty()) {
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                    textView_empty.setText("Rental Bikes not Available");
                                 } else {
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
-                                    textView_empty.setText(shopname);
-                                    if (shoplogo != null) {
+                                    textView_empty.setText(shopname + "\n" + shopaddress);
+                                   /* if (shoplogo != null) {
                                         imageLoader = VolleySingleton.getInstance(ShowAlleBikesActivity.this).getImageLoader();
                                         imageLoader.get(shoplogo, ImageLoader.getImageListener(networkImageView, R.drawable.cart, android.R.drawable.ic_dialog_alert));
                                         networkImageView.setImageUrl(shoplogo, imageLoader);
-                                    }
+                                    }*/
                                     allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                     recyclerView.setAdapter(allebikesAdapter);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
@@ -434,7 +728,18 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                // data3.put("shop_id", shopid);
+                if (testing.isEmpty()) {
+                    data3.put("shop_id", shopid);
+                    data3.put("producttype", protype);
+                    data3.put("sortBy", sorting);
+                } else {
+                    data3.put("shop_id", shopid);
+                    data3.put("producttype", protype);
+                    data3.put("tdrive", testing);
+                    data3.put("sortBy", sorting);
+                    data3.put("book", testing);
+                }
+
                 return data3;
             }
         };
@@ -443,7 +748,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
 
     }
 
-    private void getcategoryProducts(String categoryid) {
+    private void getcategoryProducts(String categoryid, String prodType, String soryby, String tdrive) {
         allebikelist.clear();
         String Login_url = Apis.filteredproducts;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -461,7 +766,8 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
                                     String productPrice = jsonObjectProducts.getString("theprice");
-                                    String productName = jsonObjectProducts.getString("product_name");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
                                     String selproductid = jsonObjectProducts.getString("selprod_id");
                                     String productImageurl = jsonObjectProducts.getString("product_image_url");
                                     String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
@@ -485,6 +791,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 if (allebikelist.isEmpty()) {
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
                                 } else {
+                                    linearLayoutEmpty.setVisibility(View.GONE);
                                     allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                     recyclerView.setAdapter(allebikesAdapter);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
@@ -517,6 +824,13 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                 strings.add(categoryid);
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("prodcat", strings.toString());
+                data3.put("sortBy", soryby);
+                data3.put("producttype", prodType);
+                if (tdrive.equals("book")) {
+                    data3.put("book", tdrive);
+                } else {
+                    data3.put("tdrive", tdrive);
+                }
                 return data3;
             }
         };
@@ -525,7 +839,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
 
     }
 
-    private void getfilterProducts(String brandid) {
+    private void getfilterProducts(String brandid, String proType, String testing, String sorting) {
         allebikelist.clear();
         String Login_url = Apis.filteredproducts;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -543,7 +857,8 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
                                     String productPrice = jsonObjectProducts.getString("theprice");
-                                    String productName = jsonObjectProducts.getString("product_name");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
                                     String selproductid = jsonObjectProducts.getString("selprod_id");
                                     String productImageurl = jsonObjectProducts.getString("product_image_url");
                                     String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
@@ -567,6 +882,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 if (allebikelist.isEmpty()) {
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
                                 } else {
+                                    linearLayoutEmpty.setVisibility(View.GONE);
                                     allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                     recyclerView.setAdapter(allebikesAdapter);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
@@ -600,6 +916,13 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                 strings.add(brandid);
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("brand", strings.toString());
+                data3.put("producttype", proType);
+                data3.put("sortBy", sorting);
+                if (testing.equals("book")) {
+                    data3.put("book", testing);
+                } else {
+                    data3.put("tdrive", testing);
+                }
                 return data3;
             }
         };
@@ -607,7 +930,6 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
 
     }
-
 
     public void getCollectionProducts(String collectionid) {
         allebikelist.clear();
@@ -625,6 +947,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                 JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                                 JSONObject jsonObjectCollection = jsonObjectData.getJSONObject("collection");
                                 String collectionid = jsonObjectCollection.getString("collection_id");
+
                                 String collectionlayouttype = jsonObjectCollection.getString("collection_layout_type");
                                 if (collectionid.equals("1")) { //popular bikes
                                     JSONArray jsonArray = jsonObjectData.getJSONArray("collectionItems");
@@ -632,6 +955,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                         JSONObject jsonCollection = jsonArray.getJSONObject(i);
                                         String productPrice = jsonCollection.getString("theprice");
                                         String productName = jsonCollection.getString("product_name");
+                                        //String productName = jsonCollection.getString("selprod_title");
                                         String selproductid = jsonCollection.getString("selprod_id");
                                         String productImageurl = jsonCollection.getString("product_image_url");
                                         String testdriveenable = jsonCollection.getString("selprod_test_drive_enable");
@@ -655,6 +979,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                     if (allebikelist.isEmpty()) {
                                         linearLayoutEmpty.setVisibility(View.VISIBLE);
                                     } else {
+                                        linearLayoutEmpty.setVisibility(View.GONE);
                                         allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                         recyclerView.setAdapter(allebikesAdapter);
                                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
@@ -682,6 +1007,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                     if (allebikelist.isEmpty()) {
                                         linearLayoutEmpty.setVisibility(View.VISIBLE);
                                     } else {
+                                        linearLayoutEmpty.setVisibility(View.GONE);
                                         allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                         recyclerView.setAdapter(allebikesAdapter);
                                         GridLayoutManager linearLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
@@ -712,6 +1038,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                     if (allebikelist.isEmpty()) {
                                         linearLayoutEmpty.setVisibility(View.VISIBLE);
                                     } else {
+                                        linearLayoutEmpty.setVisibility(View.GONE);
                                         allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                         recyclerView.setAdapter(allebikesAdapter);
                                         GridLayoutManager linearLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
@@ -742,6 +1069,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
                                     if (allebikelist.isEmpty()) {
                                         linearLayoutEmpty.setVisibility(View.VISIBLE);
                                     } else {
+                                        linearLayoutEmpty.setVisibility(View.GONE);
                                         allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                         recyclerView.setAdapter(allebikesAdapter);
                                         GridLayoutManager gridLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
@@ -783,8 +1111,16 @@ public class ShowAlleBikesActivity extends AppCompatActivity {
     }
 
 
-    private void setSuggestions() {
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sortItems:
+                mBottomSheetDialog.show();
 
+                break;
+            case R.id.filterItems:
+
+                break;
+        }
     }
-
 }
