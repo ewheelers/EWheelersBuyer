@@ -4,10 +4,135 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_grey"
     android:orientation="vertical"
     tools:context=".ShowServiceProvidersActivity">
-<androidx.recyclerview.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/serviceProviders_list"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="@dimen/padding_10">
+
+        <ImageView
+            android:id="@+id/lefticon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/titile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.75"
+            android:paddingLeft="@dimen/padding_10"
+            android:paddingRight="@dimen/padding_10"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+        <LinearLayout
+            android:id="@+id/mapview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/map" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Map View"
+                android:textColor="@color/colorPrimary" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/chipgroup"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.ChipGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleLine="true">
+            <!-- Chips can be declared here, or added dynamically. -->
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:id="@+id/chargeandgo"
+                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
+                app:chipBackgroundColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimary"
+                android:text="Charge &amp; Go" />
+            <com.google.android.material.chip.Chip
+                android:textColor="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimary"
+                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
+                app:chipBackgroundColor="@color/white"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Park &amp; Charge" />
+            <com.google.android.material.chip.Chip
+                android:textColor="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimary"
+                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
+                app:chipBackgroundColor="@color/white"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shop &amp; Charge" />
+            <com.google.android.material.chip.Chip
+                android:textColor="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimary"
+                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
+                app:chipBackgroundColor="@color/white"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eat &amp; Charge" />
+            <com.google.android.material.chip.Chip
+                android:textColor="@color/colorPrimary"
+                app:rippleColor="@color/colorPrimary"
+                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
+                app:chipBackgroundColor="@color/white"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Community Charge" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginLeft="@dimen/padding_10"
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:layout_marginRight="@dimen/padding_10"
+        android:background="@color/white"
+        app:iconifiedByDefault="false"
+        app:queryHint="Enter pincode" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/serviceProviders_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

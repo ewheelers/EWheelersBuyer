@@ -7,29 +7,29 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.ewheelers.ewheelersbuyer.ui.home.HomeFragment"
+        android:name="com.ewheelers.eWheelersBuyers.ui.home.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_alerts"
-        android:name="com.ewheelers.ewheelersbuyer.ui.alerts.DashboardFragment"
+        android:name="com.ewheelers.eWheelersBuyers.ui.alerts.DashboardFragment"
         android:label="Alerts"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_wallet"
-        android:name="com.ewheelers.ewheelersbuyer.ui.wallet.NotificationsFragment"
+        android:name="com.ewheelers.eWheelersBuyers.ui.wallet.NotificationsFragment"
         android:label="Wallet"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/navigation_help"
-        android:name="com.ewheelers.ewheelersbuyer.ui.help.HelpFragment"
+        android:name="com.ewheelers.eWheelersBuyers.ui.help.HelpFragment"
         android:label="Help"
         tools:layout="@layout/fragment_notifications" />
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.ewheelers.ewheelersbuyer.ui.profile.ProfileFragment"
+        android:name="com.ewheelers.eWheelersBuyers.ui.profile.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

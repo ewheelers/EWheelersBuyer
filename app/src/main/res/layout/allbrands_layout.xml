@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="5dp"
-    android:id="@+id/brands_layout"
     android:layout_margin="@dimen/dimen_5dp"
+    android:background="@color/white"
+    android:elevation="@dimen/padding_10"
     android:layout_gravity="center_horizontal"
     android:orientation="horizontal">
     <androidx.cardview.widget.CardView
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/card_view"
-        android:layout_width="100dp"
-        android:layout_height="80dp"
-        android:layout_margin="3dp">
+        android:layout_width="96dp"
+        android:layout_height="96dp">
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/brand_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_width="96dp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="96dp"
+            android:padding="3dp"/>
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
@@ -24,6 +27,7 @@
         android:padding="@dimen/padding_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
         <TextView
             android:textStyle="bold"
@@ -32,10 +36,24 @@
             android:layout_height="wrap_content"
             android:text="Title"/>
         <TextView
+            android:visibility="visible"
             android:id="@+id/brand_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"/>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/brand_viewmore"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/brands_layout"
+        android:layout_gravity="center_vertical"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        app:srcCompat="@drawable/ic_rightarrow"/>
 
 </LinearLayout>

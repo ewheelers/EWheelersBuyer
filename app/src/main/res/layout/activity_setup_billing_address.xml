@@ -10,62 +10,6 @@
     android:id="@+id/linear_layout"
     tools:context=".SetupBillingAddressActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical">
-
-            <TextView
-                android:textColor="@color/Black"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Delivery Address" />
-
-            <CheckBox
-                android:id="@+id/sameaddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Same As Billing Address" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:textAlignment="center"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Please Add Addresss Where You Want To Ship Your Product" />
-
-            <Button
-                android:id="@+id/addnewaddress"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/dimen_5dp"
-                android:layout_marginRight="@dimen/dimen_5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add New Address"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -87,13 +31,77 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
         <Button
-            android:layout_alignParentBottom="true"
             android:id="@+id/contin"
+            android:layout_above="@id/defaultadress"
             android:layout_centerHorizontal="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Continue"/>
 
+
+        <LinearLayout
+            android:id="@+id/defaultadress"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textColor="@color/Black"
+                    android:textSize="18sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Delivery Address" />
+
+                <CheckBox
+                    android:id="@+id/sameaddress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Same As Billing Address" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textAlignment="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Please Add Addresss Where You Want To Ship Your Product" />
+
+                <Button
+                    android:id="@+id/addnewaddress"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/dimen_5dp"
+                    android:layout_marginRight="@dimen/dimen_5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add New Address"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
     </RelativeLayout>
+
+
 </LinearLayout>

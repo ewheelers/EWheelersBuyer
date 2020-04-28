@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:634360580579:android:ff31876aeab6ded58438d6",
+        "mobilesdk_app_id": "1:634360580579:android:5434192d74a25aa98438d6",
         "android_client_info": {
-          "package_name": "com.ewheelers.ewheelersbuyer"
+          "package_name": "com.ewheelers.eWheelersBuyers"
         }
       },
       "oauth_client": [

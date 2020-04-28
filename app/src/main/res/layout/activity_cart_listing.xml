@@ -1,46 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_grey"
     tools:context=".CartListingActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/cart_listing"/>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiprefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cart_listing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:orientation="vertical"
+        android:id="@+id/total_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/total_amount">
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <TextView
-            android:padding="@dimen/dimen_5dp"
-            android:layout_gravity="start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sub Total"
-            android:textStyle="bold"
-            android:textColor="@color/colorWhite"/>
-        <TextView
-            android:id="@+id/subtotal"
-            android:padding="@dimen/dimen_5dp"
-            android:gravity="end"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="00.00"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorWhite"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Sub Total"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/subtotal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="@dimen/dimen_5dp"
+                android:text="00.00"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -48,23 +55,24 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:padding="@dimen/dimen_5dp"
-                android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="@dimen/dimen_5dp"
                 android:text="Tax"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tax"
-                android:padding="@dimen/dimen_5dp"
-                android:gravity="end"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="@dimen/dimen_5dp"
                 android:text="00.00"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -72,43 +80,44 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:padding="@dimen/dimen_5dp"
-                android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:padding="@dimen/dimen_5dp"
                 android:text="Payable Now"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/netpay"
-                android:padding="@dimen/dimen_5dp"
-                android:gravity="end"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="end"
+                android:padding="@dimen/dimen_5dp"
                 android:text="00.00"
+                android:textColor="@color/colorWhite"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/colorWhite"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
 
         <Button
             android:id="@+id/place_order"
-            android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Place Order"/>
+            android:layout_gravity="center"
+            android:text="Place Order" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/emptyview"
-        android:visibility="gone"
-        android:drawablePadding="@dimen/padding_10"
-        android:drawableBottom="@drawable/cart"
-        android:textSize="16sp"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cart is Empty"/>
+        android:layout_centerInParent="true"
+        android:drawableBottom="@drawable/cart"
+        android:drawablePadding="@dimen/padding_10"
+        android:text="Cart is Empty"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

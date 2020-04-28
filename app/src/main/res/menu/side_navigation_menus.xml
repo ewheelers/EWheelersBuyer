@@ -24,10 +24,6 @@
             android:id="@+id/nav_my_testdrives"
             android:icon="@drawable/testdrive"
             android:title="My Test Drives" />
-        <item
-            android:id="@+id/nav_orders"
-            android:icon="@drawable/ic_ordertrack"
-            android:title="Track Order" />
 
         <item
             android:id="@+id/nav_blog"

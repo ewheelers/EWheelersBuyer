@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:background="@color/light_grey"
     tools:context=".NavAppBarActivity">
 
     <LinearLayout
@@ -13,10 +13,14 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:elevation="@dimen/padding_10"
+            android:paddingStart="@dimen/dimen_5dp"
+            android:paddingEnd="@dimen/dimen_5dp"
+            android:background="@color/white"
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="@dimen/padding_10"
             android:layout_marginLeft="@dimen/padding_10"
             android:layout_marginRight="@dimen/padding_10"
             android:weightSum="2">
@@ -121,10 +125,12 @@
             android:layout_height="wrap_content"/>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:elevation="@dimen/padding_10"
+            android:background="@color/white"
             android:id="@+id/static_menus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/buttons"
+            android:layout_marginTop="@dimen/padding_10"
             android:layout_marginLeft="@dimen/padding_10"
             android:layout_marginRight="@dimen/padding_10" />
 

@@ -3,6 +3,7 @@
     android:layout_width="150dp"
     android:padding="@dimen/dimen_5dp"
     android:id="@+id/shop_layout"
+    android:background="@color/white"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 <com.android.volley.toolbox.NetworkImageView

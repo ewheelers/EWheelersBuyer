@@ -3,9 +3,286 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textStyle="bold"
-    android:id="@+id/heading"/>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_marginTop="1dp"
+        android:id="@+id/head_tit"
+        android:weightSum="4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:padding="@dimen/dimen_5dp"
+            android:background="@drawable/actionbarwhitebg"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image1"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:padding="@dimen/dimen_5dp"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:id="@+id/prod_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:background="@drawable/actionbarwhitebg"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image2"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:padding="@dimen/dimen_5dp"
+                android:background="@color/white"
+                android:elevation="@dimen/dimen_12dp"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="bold" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_brand_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="2"
+                android:id="@+id/prod_price_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_weight="1"
+            android:padding="@dimen/dimen_5dp"
+            android:layout_width="0dp"
+            android:background="@drawable/actionbarwhitebg"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image3"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:padding="@dimen/dimen_5dp"
+                android:background="@color/white"
+                android:elevation="@dimen/dimen_12dp"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="bold" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_brand_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="2"
+                android:id="@+id/prod_price_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:padding="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:background="@drawable/actionbarwhitebg"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/image4"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:padding="@dimen/dimen_5dp"
+                android:background="@color/white"
+                android:elevation="@dimen/dimen_12dp"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_title_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="bold" />
+            <TextView
+                android:maxLines="1"
+                android:id="@+id/prod_brand_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/Black"
+                android:textStyle="normal" />
+            <TextView
+                android:maxLines="2"
+                android:id="@+id/prod_price_4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dimen_5dp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:weightSum="4"
+        android:orientation="horizontal"
+        android:id="@+id/sellerlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/seller"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/seller1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/seller2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/seller3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:weightSum="4"
+        android:orientation="horizontal"
+        android:id="@+id/sellerinfolayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/sellerinfo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/sellerinfo1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/sellerinfo2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+        <TextView
+            android:layout_weight="1"
+            android:background="@drawable/actionbarwhitebg"
+            android:id="@+id/sellerinfo3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/dimen_5dp"
+            android:textColor="@color/Black"
+            android:textStyle="normal" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dimen_5dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
 </LinearLayout>

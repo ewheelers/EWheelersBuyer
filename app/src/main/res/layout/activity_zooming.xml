@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ZoomingActivity">
-    <com.ewheelers.ewheelersbuyer.Utilities.TouchImageView
+    <com.ewheelers.eWheelersBuyers.Utilities.TouchImageView
         android:id="@+id/imageswitcher"
         android:layout_above="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitCenter"
         android:layout_alignParentTop="true" >
-    </com.ewheelers.ewheelersbuyer.Utilities.TouchImageView>
+    </com.ewheelers.eWheelersBuyers.Utilities.TouchImageView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gallery"

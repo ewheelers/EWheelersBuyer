@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:background="@color/colorWhite"
+    android:layout_margin="@dimen/dimen_5dp">
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.75"
+        android:orientation="vertical">
+        <TextView
+            android:textStyle="bold"
+            android:padding="@dimen/padding_10"
+            android:id="@+id/ShopName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:paddingRight="@dimen/padding_10"
+            android:paddingLeft="@dimen/padding_10"
+            android:id="@+id/providerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:padding="@dimen/padding_10"
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.25"
+        android:orientation="vertical">
+
+        <TextView
+            android:drawablePadding="@dimen/padding_10"
+            android:layout_marginTop="@dimen/padding_10"
+            android:drawableTop="@drawable/ic_navigation"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:id="@+id/locate"
+            android:textAlignment="center"
+            android:singleLine="true"
+            android:textColor="@color/colorBlack"
+            android:layout_height="wrap_content"
+            android:text=""/>
+    </LinearLayout>
+
+</LinearLayout>

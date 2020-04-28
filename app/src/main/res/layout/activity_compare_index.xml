@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_grey"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_5dp"
+    tools:context=".CompareIndexActivity">
+
+    <TextView
+        android:id="@+id/compareText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/dimen_5dp"
+        android:paddingRight="@dimen/dimen_5dp"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="@color/Black"
+        android:textStyle="bold" />
+
+    <TextView
+        android:textColor="@color/Black"
+        android:id="@+id/compareCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:textAlignment="center" />
+
+
+  <!--  <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/listtwo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+<!--
+    </HorizontalScrollView>
+-->
+
+</LinearLayout>

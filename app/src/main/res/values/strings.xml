@@ -13,5 +13,12 @@
 
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="all_ebikes"><u>All eBikes</u></string>
+    <string name="show_all"><u>Show All</u></string>
+    <string name="all_brands"><u>All Brands</u></string>
+    <string name="all_dealers"><u>All Dealers</u></string>
+    <string name="find_more_products_from_this_brand"><u>(More Products From This Brand)</u></string>
+    <string name="todo">TODO</string>
+    <string name="share">share</string>
 
 </resources>
