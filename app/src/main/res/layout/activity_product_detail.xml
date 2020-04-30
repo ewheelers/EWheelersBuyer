@@ -653,6 +653,7 @@
                     android:background="@color/colorGrey" />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/buywithtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -661,6 +662,7 @@
                     android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="gone"
                     android:id="@+id/buywith_listview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -924,6 +926,7 @@
             android:visibility="gone" />
 
         <RelativeLayout
+            android:visibility="gone"
             android:id="@+id/clrelay"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"

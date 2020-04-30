@@ -1,6 +1,10 @@
 package com.ewheelers.eWheelersBuyers.ModelClass;
 
+import org.json.JSONArray;
+
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeCollectionProducts implements Serializable {
     public static final int PRODUCTS=0;
@@ -9,8 +13,9 @@ public class HomeCollectionProducts implements Serializable {
     public static final int CATEGORY=3;
     public static final int SHOPS=4;
 
+    private JSONArray jsonArray;
 
-    int type;
+    private int type;
        //products
     private String cartItems;
     private String is_in_any_wishlist;
@@ -63,6 +68,15 @@ public class HomeCollectionProducts implements Serializable {
     private String prodcategory_name;
     private String prodcategory_description;
     private String prodcategory_imageurl;
+
+
+    public JSONArray getJsonArray() {
+        return jsonArray;
+    }
+
+    public void setJsonArray(JSONArray jsonArray) {
+        this.jsonArray = jsonArray;
+    }
 
     public String getProdcategory_id() {
         return prodcategory_id;

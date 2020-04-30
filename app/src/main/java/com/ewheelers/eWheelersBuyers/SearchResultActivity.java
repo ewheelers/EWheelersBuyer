@@ -182,8 +182,11 @@ public class SearchResultActivity extends AppCompatActivity {
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
-
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setProductbook(prodbook);
+                                    allebikesModelClass.setBooknow(book);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);

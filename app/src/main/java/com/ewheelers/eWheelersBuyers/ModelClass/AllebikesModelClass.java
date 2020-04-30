@@ -18,11 +18,28 @@ public class AllebikesModelClass {
     String issell;
     String isrent;
     String instock;
+    String booknow;
+    String productbook;
 
     String shopphone;
     String shoppincode;
     String autocomplete;
 
+    public String getProductbook() {
+        return productbook;
+    }
+
+    public void setProductbook(String productbook) {
+        this.productbook = productbook;
+    }
+
+    public String getBooknow() {
+        return booknow;
+    }
+
+    public void setBooknow(String booknow) {
+        this.booknow = booknow;
+    }
 
     public String getAutocomplete() {
         return autocomplete;

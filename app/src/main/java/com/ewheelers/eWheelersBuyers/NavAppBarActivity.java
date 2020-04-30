@@ -201,11 +201,11 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         });
         navView = findViewById(R.id.nav_view);
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+      /*  AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_alerts, R.id.navigation_wallet, R.id.navigation_help, R.id.navigation_profile)
-                .build();
+                .build();*/
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        // NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         // navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(2);
@@ -809,4 +809,5 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             badge.setVisible(true);
         }*/
     }
+
 }

@@ -84,22 +84,39 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                 imageLoader.get(allebikesModelClasses.get(position).getNetworkImage(), ImageLoader.getImageListener(holder.networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
                 holder.networkImageView.setImageUrl(allebikesModelClasses.get(position).getNetworkImage(), imageLoader);
                 String testdriveenable = allebikesModelClasses.get(position).getTestdriveenable();
-                String issell = allebikesModelClasses.get(position).getIssell();
+                String isbook = allebikesModelClasses.get(position).getBooknow();
                 String isrent = allebikesModelClasses.get(position).getIsrent();
                 String instock = allebikesModelClasses.get(position).getInstock();
-                if(instock.equals("0")){
+                if (allebikesModelClasses.get(position).getInstock().equals("0")) {
                     holder.soldlayout.setVisibility(View.VISIBLE);
                     holder.test.setVisibility(View.GONE);
                     holder.buybike.setVisibility(View.GONE);
                     holder.rent.setVisibility(View.GONE);
-                }else {
-                    if (testdriveenable.equals("1")) {
+                } else {
+                    if (allebikesModelClasses.get(position).getTestdriveenable().equals("1")) {
                         holder.test.setVisibility(View.VISIBLE);
                     }
-                    if (issell.equals("1")) {
+
+                    if (allebikesModelClasses.get(position).getProductbook().equals("1")) {
+                        if (allebikesModelClasses.get(position).getBooknow().equals("1")) {
+                            holder.buybike.setVisibility(View.VISIBLE);
+                            holder.book.setVisibility(View.GONE);
+                        }
+                        if (allebikesModelClasses.get(position).getBooknow().equals("2")) {
+                            holder.book.setVisibility(View.VISIBLE);
+                            holder.buybike.setVisibility(View.GONE);
+                        }
+                        if (allebikesModelClasses.get(position).getBooknow().equals("0")) {
+                            holder.book.setVisibility(View.VISIBLE);
+                            holder.buybike.setVisibility(View.VISIBLE);
+                        }
+
+                    } else {
                         holder.buybike.setVisibility(View.VISIBLE);
+                        holder.book.setVisibility(View.GONE);
                     }
-                    if (isrent.equals("1")) {
+
+                    if (allebikesModelClasses.get(position).getIsrent().equals("1")) {
                         holder.rent.setVisibility(View.VISIBLE);
                     }
                 }
@@ -121,7 +138,17 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                         context.startActivity(i);
                     }
                 });
-
+                holder.book.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      /* if(context instanceof ProductDetailActivity){
+                           ((ProductDetailActivity)context).addTocart(allebikesModelClasses.get(position).getProductid(),"Booknow");
+                       }*/
+                        Intent i = new Intent(context, ProductDetailActivity.class);
+                        i.putExtra("productid", allebikesModelClasses.get(position).getProductid());
+                        context.startActivity(i);
+                    }
+                });
                 holder.buybike.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -158,8 +185,8 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
-                        intent.putExtra("catid",allebikesModelClasses.get(position).getProductid());
-                        intent.putExtra("catname",allebikesModelClasses.get(position).getProductName());
+                        intent.putExtra("catid", allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("catname", allebikesModelClasses.get(position).getProductName());
                         context.startActivity(intent);
                     }
                 });
@@ -172,16 +199,16 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
 
                 if (allebikesModelClasses.get(position).getPrice().length() > 80) {
                     String brand_Shortdesc = allebikesModelClasses.get(position).getPrice().substring(0, 80) + "...";
-                    holder.branddescription.setText(Html.fromHtml(brand_Shortdesc +"<font color='blue'> <u>View More</u></font>"));
+                    holder.branddescription.setText(Html.fromHtml(brand_Shortdesc + "<font color='blue'> <u>View More</u></font>"));
                     holder.branddescription.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             holder.brandviewmore.setVisibility(View.VISIBLE);
-                            holder.brandviewmore.setText(Html.fromHtml(allebikesModelClasses.get(position).getPrice() +"<font color='red'> <u>View Less</u></font>"));
+                            holder.brandviewmore.setText(Html.fromHtml(allebikesModelClasses.get(position).getPrice() + "<font color='red'> <u>View Less</u></font>"));
                             holder.branddescription.setVisibility(View.GONE);
                         }
                     });
-                }else {
+                } else {
                     holder.branddescription.setText(allebikesModelClasses.get(position).getPrice());
                 }
 
@@ -197,8 +224,8 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
-                        intent.putExtra("brandid",allebikesModelClasses.get(position).getProductid());
-                        intent.putExtra("brandname",allebikesModelClasses.get(position).getProductName());
+                        intent.putExtra("brandid", allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("brandname", allebikesModelClasses.get(position).getProductName());
                         context.startActivity(intent);
                     }
                 });
@@ -211,36 +238,36 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
-                        intent.putExtra("shopid",allebikesModelClasses.get(position).getProductid());
-                        intent.putExtra("shopname",allebikesModelClasses.get(position).getProductName());
+                        intent.putExtra("shopid", allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("shopname", allebikesModelClasses.get(position).getProductName());
                         context.startActivity(intent);
                     }
                 });
                 break;
-                case AllebikesModelClass.ALLDEALERS:
-                    holder.shopname.setText(allebikesModelClasses.get(position).getProductName());
-                    holder.shopaddress.setText(allebikesModelClasses.get(position).getPrice());
-                    holder.shopphoneno.setText("Phone - "+allebikesModelClasses.get(position).getShopphone());
-                    holder.shopphoneno.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (isPermissionGranted()) {
-                                call_action(allebikesModelClasses.get(position).getShopphone());
-                            }
+            case AllebikesModelClass.ALLDEALERS:
+                holder.shopname.setText(allebikesModelClasses.get(position).getProductName());
+                holder.shopaddress.setText(allebikesModelClasses.get(position).getPrice());
+                holder.shopphoneno.setText("Phone - " + allebikesModelClasses.get(position).getShopphone());
+                holder.shopphoneno.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (isPermissionGranted()) {
+                            call_action(allebikesModelClasses.get(position).getShopphone());
                         }
-                    });
-                    holder.shopNowbtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, ShowAlleBikesActivity.class);
-                            intent.putExtra("shopid",allebikesModelClasses.get(position).getProductid());
-                            intent.putExtra("shopname",allebikesModelClasses.get(position).getProductName());
-                            intent.putExtra("shopaddress",allebikesModelClasses.get(position).getPrice());
-                            intent.putExtra("shopphone",allebikesModelClasses.get(position).getShopphone());
-                            context.startActivity(intent);
-                        }
-                    });
-                    break;
+                    }
+                });
+                holder.shopNowbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                        intent.putExtra("shopid", allebikesModelClasses.get(position).getProductid());
+                        intent.putExtra("shopname", allebikesModelClasses.get(position).getProductName());
+                        intent.putExtra("shopaddress", allebikesModelClasses.get(position).getPrice());
+                        intent.putExtra("shopphone", allebikesModelClasses.get(position).getShopphone());
+                        context.startActivity(intent);
+                    }
+                });
+                break;
 
         }
     }
@@ -288,6 +315,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
     public Filter getFilter() {
         return exampleFilter;
     }
+
     private Filter exampleFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
@@ -297,11 +325,11 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for (AllebikesModelClass item : classeFilter) {
-                    if(item.getTypeLayout()==4){
-                        if (item.getProductName().toLowerCase().contains(filterPattern)||item.getPrice().toLowerCase().contains(filterPattern)) {
+                    if (item.getTypeLayout() == 4) {
+                        if (item.getProductName().toLowerCase().contains(filterPattern) || item.getPrice().toLowerCase().contains(filterPattern)) {
                             filteredList.add(item);
                         }
-                    }else {
+                    } else {
                         if (item.getProductName().toLowerCase().contains(filterPattern)) {
                             filteredList.add(item);
                         }
@@ -312,6 +340,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
             results.values = filteredList;
             return results;
         }
+
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             allebikesModelClasses.clear();
@@ -321,14 +350,15 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
     };
 
     public class BikeHolder extends RecyclerView.ViewHolder {
-        NetworkImageView networkImageView, categoryImage, brandImage,shopNetworkImg;
-        TextView bikename, bikePrice, catname, brandtitle, branddescription,shopname,shopaddress,shopphoneno,shoppincode;
-        CardView buybike,test,rent;
+        NetworkImageView networkImageView, categoryImage, brandImage, shopNetworkImg;
+        TextView bikename, bikePrice, catname, brandtitle, branddescription, shopname, shopaddress, shopphoneno, shoppincode;
+        CardView buybike, test, rent, book;
         RelativeLayout soldlayout;
         LinearLayout categoryLayout;
         ImageView brandsLayout;
-        TextView zoomimg,brandviewmore;
+        TextView zoomimg, brandviewmore;
         Button shopNowbtn;
+
         public BikeHolder(@NonNull View itemView) {
             super(itemView);
             zoomimg = itemView.findViewById(R.id.zoom);
@@ -338,6 +368,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
             bikePrice = itemView.findViewById(R.id.bikePrice);
             test = itemView.findViewById(R.id.testBike);
             rent = itemView.findViewById(R.id.rentBike);
+            book = itemView.findViewById(R.id.bookBike);
             catname = itemView.findViewById(R.id.category_name);
             categoryImage = itemView.findViewById(R.id.category_image);
             brandImage = itemView.findViewById(R.id.brand_image);
@@ -352,7 +383,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
             shopaddress = itemView.findViewById(R.id.addess);
             shopNowbtn = itemView.findViewById(R.id.shopNow);
             shopphoneno = itemView.findViewById(R.id.phoneno_shop);
-           // shoppincode = itemView.findViewById(R.id.);
+            // shoppincode = itemView.findViewById(R.id.);
         }
     }
 }

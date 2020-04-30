@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -17,10 +18,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -34,10 +41,13 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.eWheelersBuyers.Adapters.AllebikesAdapter;
+import com.ewheelers.eWheelersBuyers.Adapters.FiltersAdapter;
 import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
+import com.ewheelers.eWheelersBuyers.ModelClass.FilterListClass;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +61,7 @@ import java.util.Map;
 
 import static android.view.View.GONE;
 
-public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnClickListener{
+public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnClickListener {
     RecyclerView recyclerView;
     AllebikesAdapter allebikesAdapter;
     List<AllebikesModelClass> allebikelist = new ArrayList<>();
@@ -59,7 +69,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     String token;
     String collectionidbikes, collectionidcat, collectionidbrands, collectionidshops;
     String collectionid, tokenvalue, allproducts;
-    String brandid, brandName, categoryid, categoryName, shopid, shopname, shoplogo, shopaddress, typebtn,shopphone,shopbanner;
+    String brandid, brandName, categoryid, categoryName, shopid, shopname, shoplogo, shopaddress, typebtn, shopphone, shopbanner;
     int stock;
     TextView textView_empty;
     NetworkImageView networkImageView, bannerImage;
@@ -76,6 +86,11 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     LinearLayout sortFilterLayout;
     ProgressBar progressBar;
     TextView phonenoshop;
+    Dialog dialog;
+    ImageView imageView;
+    Button button;
+    RadioButton chip1, chip2, chip3;
+    RecyclerView recyclrecat,recyclerbrand;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +110,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
         sort_items = findViewById(R.id.sortItems);
         filter_items = findViewById(R.id.filterItems);
-
+        filter_items.setOnClickListener(this);
         sort_items.setOnClickListener(this);
         phonenoshop.setOnClickListener(this);
         bannerImage = findViewById(R.id.banner);
@@ -114,6 +129,29 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         priceHtoL = sheetView.findViewById(R.id.price_hightolow);
         mBottomSheetDialog.setContentView(sheetView);
         relevant.setTextColor(Color.parseColor("#9C3C34"));
+
+        dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        View dialogView = getLayoutInflater().inflate(R.layout.filter_layout, null);
+        imageView = dialogView.findViewById(R.id.closeIcon);
+        button = dialogView.findViewById(R.id.apply);
+        chip1 = dialogView.findViewById(R.id.bycategory);
+        chip2 = dialogView.findViewById(R.id.bybrand);
+        chip3 = dialogView.findViewById(R.id.byprice);
+        recyclrecat = dialogView.findViewById(R.id.categories_list);
+        recyclerbrand = dialogView.findViewById(R.id.brands_list);
+        dialog.setContentView(dialogView);
+
+        chip1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ShowAlleBikesActivity.this, chip1.getText().toString(), Toast.LENGTH_SHORT).show();
+                getFiltersList(chip1.getText().toString());
+            }
+        });
+
+
+        imageView.setOnClickListener(this);
+        button.setOnClickListener(this);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -154,7 +192,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         collectionidbrands = getIntent().getStringExtra("allbrands");
         collectionidshops = getIntent().getStringExtra("allshops");
         onlyTestDrive = getIntent().getStringExtra("onlytestdrives");
-        //Toast.makeText(this, "coolectid" + collectionidbikes + collectionidcat + collectionidbrands + collectionidshops, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "coolectid" + collectionidbikes +"idcat:"+ collectionidcat +"idbrand"+ collectionidbrands +"idshops:"+ collectionidshops, Toast.LENGTH_SHORT).show();
 
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -424,8 +462,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
 
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);
@@ -475,7 +517,11 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                data3.put("sortBy", priceStr);
+                if(priceStr.isEmpty()||priceStr.equals(null)||priceStr==null){
+                    data3.put("keyword", "");
+                }else {
+                    data3.put("sortBy", priceStr);
+                }
                 return data3;
             }
         };
@@ -512,8 +558,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
 
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);
@@ -616,7 +666,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
                     allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikesModelClassesList);
                     recyclerView.setAdapter(allebikesAdapter);
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL,false);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
                     recyclerView.setLayoutManager(linearLayoutManager);
                     allebikesAdapter.notifyDataSetChanged();
                     progressBar.setVisibility(GONE);
@@ -692,8 +742,11 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
-
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);
@@ -713,16 +766,16 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                 } else {
 
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
-                                    if(shopphone.equals("0")||shopphone.equals(null)){
+                                    if (shopphone.equals("0") || shopphone.equals(null)) {
                                         phonenoshop.setVisibility(GONE);
-                                    }else {
+                                    } else {
                                         phonenoshop.setVisibility(View.VISIBLE);
                                     }
 
                                     textView_empty.setText(shopname + "\n" + shopaddress);
-                                    phonenoshop.setText("Phone : "+shopphone);
+                                    phonenoshop.setText("Phone : " + shopphone);
 
-                                    if(shopbanner!=null){
+                                    if (shopbanner != null) {
                                         bannerImage.setVisibility(View.VISIBLE);
                                         ImageLoader imageLoader = VolleySingleton.getInstance(ShowAlleBikesActivity.this)
                                                 .getImageLoader();
@@ -814,8 +867,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
 
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);
@@ -913,8 +970,11 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                     String issell = jsonObjectProducts.getString("is_sell");
                                     String isrent = jsonObjectProducts.getString("is_rent");
                                     String instock = jsonObjectProducts.getString("in_stock");
-
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
                                     AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
                                     allebikesModelClass.setPrice(productPrice);
                                     allebikesModelClass.setProductName(productName);
                                     allebikesModelClass.setProductid(selproductid);
@@ -1016,9 +1076,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                         String issell = jsonCollection.getString("is_sell");
                                         String isrent = jsonCollection.getString("is_rent");
                                         String instock = jsonCollection.getString("in_stock");
-
+                                        String book = jsonCollection.getString("selprod_book_now_enable");
+                                        String prodbook = jsonCollection.getString("product_book");
                                         AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
                                         allebikesModelClass.setPrice(productPrice);
+                                        allebikesModelClass.setBooknow(book);
+                                        allebikesModelClass.setProductbook(prodbook);
                                         allebikesModelClass.setProductName(productName);
                                         allebikesModelClass.setProductid(selproductid);
                                         allebikesModelClass.setNetworkImage(productImageurl);
@@ -1141,7 +1204,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                         linearLayoutEmpty.setVisibility(GONE);
                                         allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                         recyclerView.setAdapter(allebikesAdapter);
-                                       // GridLayoutManager gridLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
+                                        // GridLayoutManager gridLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
                                         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
                                         recyclerView.setLayoutManager(linearLayoutManager);
                                         allebikesAdapter.notifyDataSetChanged();
@@ -1187,10 +1250,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         switch (v.getId()) {
             case R.id.sortItems:
                 mBottomSheetDialog.show();
-
                 break;
             case R.id.filterItems:
-
+                dialog.show();
+                break;
+            case R.id.closeIcon:
+                dialog.dismiss();
                 break;
             case R.id.phoneno_shop:
                 if (isPermissionGranted()) {
@@ -1227,6 +1292,69 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             }
         }
         startActivity(callIntent);
+    }
+
+    List<FilterListClass> filterListClasses = new ArrayList<>();
+    FiltersAdapter filtersAdapter;
+    public void getFiltersList(String type){
+        String Login_url = Apis.filters;
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if(getStatus.equals("1"))
+                            {
+                                JSONObject  jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("categoriesArr");
+                                for(int i=0;i<jsonArray.length();i++){
+                                    JSONObject jsonObjectcat = jsonArray.getJSONObject(i);
+                                    String cat_id = jsonObjectcat.getString("prodcat_id");
+                                    String cat_name = jsonObjectcat.getString("prodcat_name");
+                                    FilterListClass filterListClass = new FilterListClass();
+                                    filterListClass.setCatId(cat_id);
+                                    filterListClass.setCatName(cat_name);
+                                    filterListClasses.add(filterListClass);
+                                }
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this,LinearLayoutManager.VERTICAL,false);
+                                recyclrecat.setLayoutManager(linearLayoutManager);
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+
+                Map<String, String> data3 = new HashMap<String, String>();
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(ShowAlleBikesActivity.this).addToRequestQueue(strRequest);
+
     }
 
 

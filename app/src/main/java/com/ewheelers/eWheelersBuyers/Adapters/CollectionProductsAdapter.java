@@ -2,6 +2,7 @@ package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -20,12 +22,17 @@ import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 
 public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionProductsAdapter.CollectionProductHolder> {
     private Context context;
     private List<HomeCollectionProducts> homeCollectionProducts;
     private ImageLoader imageLoader;
+    int colType;
 
     public CollectionProductsAdapter(Context context, List<HomeCollectionProducts> homeCollectionProducts) {
         this.context = context;
@@ -33,9 +40,14 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
 
     }
 
-    public CollectionProductsAdapter(List<HomeCollectionProducts> allItemsInSection) {
-        this.homeCollectionProducts = allItemsInSection;
+    public CollectionProductsAdapter() {
+
     }
+
+   /* public CollectionProductsAdapter(List<HomeCollectionProducts> allItemsInSection) {
+        this.homeCollectionProducts = allItemsInSection;
+    }*/
+
 
     @NonNull
     @Override
@@ -59,6 +71,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                 return new CollectionProductHolder(v);
 
         }
+
         return null;
     }
 
@@ -106,9 +119,9 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
             case HomeCollectionProducts.BRANDS:
                 String urlImage = homeCollectionProducts.get(position).getBrandimageurl();
                 if (urlImage != null) {
-                    imageLoader = VolleySingleton.getInstance(context).getImageLoader();
-                    imageLoader.get(homeCollectionProducts.get(position).getBrandimageurl(), ImageLoader.getImageListener(holder.brand_image, R.drawable.cart, android.R.drawable.ic_dialog_alert));
-                    holder.brand_image.setImageUrl(homeCollectionProducts.get(position).getBrandimageurl(), imageLoader);
+                    ImageLoader imageLoaderb = VolleySingleton.getInstance(context).getImageLoader();
+                    imageLoaderb.get(homeCollectionProducts.get(position).getBrandimageurl(), ImageLoader.getImageListener(holder.brand_image, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+                    holder.brand_image.setImageUrl(homeCollectionProducts.get(position).getBrandimageurl(), imageLoaderb);
                 }
 
                 holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -182,11 +195,6 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
 
     @Override
     public int getItemCount() {
-       /* if (homeCollectionProducts.size() == 0) {
-            return 0;
-        } else {
-            return homeCollectionProducts.size();
-        }*/
         return homeCollectionProducts.size();
     }
 
@@ -201,6 +209,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
         Button shop_nowBtn;
         LinearLayout linearLayout,catLayout,shopLayout;
         LinearLayout cardView;
+
         public CollectionProductHolder(@NonNull View itemView) {
             super(itemView);
             price = itemView.findViewById(R.id.product_price);

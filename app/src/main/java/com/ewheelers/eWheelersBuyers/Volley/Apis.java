@@ -53,5 +53,6 @@ public class Apis {
     public static String searchbytags = base+"products/search-producttags-autocomplete";
     public static String addcompare = base+"/compare-products/add";
     public static String compareindex = base+"/compare-products/index";
+    public static String filters = base+"products/filters";
 
 }

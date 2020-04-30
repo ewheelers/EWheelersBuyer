@@ -43,7 +43,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp">
+            android:layout_height="160dp"
+            android:visibility="visible">
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/pager"
@@ -189,109 +190,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_10"
-                android:background="@color/white"
-                android:elevation="@dimen/padding_10"
-                android:orientation="vertical"
-                app:targetApi="lollipop">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dimen_5dp"
-                    android:weightSum="2">
-
-                    <TextView
-                        android:id="@+id/collection_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:gravity="center"
-                        android:text=""
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/showallebikes"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:autoLink="all"
-                        android:gravity="right"
-                        android:text="@string/all_ebikes"
-                        android:textColor="@color/colorHeadings"
-                        android:textSize="17sp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/collection_products"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:divider="#faf8f8"
-                    android:dividerHeight="2dp"
-                    android:paddingBottom="0dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_10"
-                android:background="@color/white"
-                android:elevation="@dimen/padding_10"
-                android:orientation="vertical"
-                app:targetApi="lollipop">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dimen_5dp"
-                    android:weightSum="2">
-
-                    <TextView
-                        android:id="@+id/categories_title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:gravity="center"
-                        android:text=""
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="17sp" />
-
-                    <TextView
-                        android:id="@+id/showallcategories"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:autoLink="all"
-                        android:gravity="right"
-                        android:text="@string/show_all"
-                        android:textColor="@color/colorHeadings"
-                        android:textSize="17sp" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/collection_categories"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:background="@color/white"
-                    android:divider="#faf8f8"
-                    android:dividerHeight="2dp"
-                    android:paddingBottom="0dp" />
-            </LinearLayout>
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
+                android:visibility="visible"
                 android:weightSum="2">
 
                 <LinearLayout
@@ -351,6 +257,105 @@
                 android:background="@color/white"
                 android:elevation="@dimen/padding_10"
                 android:orientation="vertical"
+                android:visibility="visible"
+                app:targetApi="lollipop">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dimen_5dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/collection_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/showallebikes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:autoLink="all"
+                        android:gravity="right"
+                        android:text="@string/all_ebikes"
+                        android:textColor="@color/colorHeadings"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/collection_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:divider="#faf8f8"
+                    android:dividerHeight="2dp"
+                    android:paddingBottom="0dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:background="@color/white"
+                android:elevation="@dimen/padding_10"
+                android:orientation="vertical"
+                android:visibility="visible"
+                app:targetApi="lollipop">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/dimen_5dp"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/categories_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text=""
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/showallcategories"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:autoLink="all"
+                        android:gravity="right"
+                        android:text="@string/show_all"
+                        android:textColor="@color/colorHeadings"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/collection_categories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:background="@color/white"
+                    android:divider="#faf8f8"
+                    android:dividerHeight="2dp"
+                    android:paddingBottom="0dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:background="@color/white"
+                android:elevation="@dimen/padding_10"
+                android:orientation="vertical"
+                android:visibility="visible"
                 app:targetApi="lollipop">
 
                 <LinearLayout
@@ -399,6 +404,7 @@
                 android:background="@color/white"
                 android:elevation="@dimen/padding_10"
                 android:orientation="vertical"
+                android:visibility="visible"
                 app:targetApi="lollipop">
 
                 <LinearLayout
@@ -440,6 +446,7 @@
                     android:dividerHeight="2dp"
                     android:paddingBottom="0dp" />
             </LinearLayout>
+
 
         </LinearLayout>
 

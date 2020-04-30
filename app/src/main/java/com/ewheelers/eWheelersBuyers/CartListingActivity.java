@@ -48,7 +48,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     TextView total, tax, netpayab;
     String rentalprice, rentalsecurity, rentStartdate, rentEnddate;
     SwipeRefreshLayout mSwipeRefreshLayout;
-
+    String produt_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +59,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         total = findViewById(R.id.subtotal);
         tax = findViewById(R.id.tax);
         netpayab = findViewById(R.id.netpay);
+        produt_id = getIntent().getStringExtra("selid");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
 
         placeOrder.setOnClickListener(this);
@@ -234,5 +235,12 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onRefresh() {
         cartListing();
+    }
+    @Override
+    public void onBackPressed(){
+       Intent i = new Intent(getApplicationContext(),ProductDetailActivity.class);
+       i.putExtra("productid",produt_id);
+       startActivity(i);
+       finish();
     }
 }

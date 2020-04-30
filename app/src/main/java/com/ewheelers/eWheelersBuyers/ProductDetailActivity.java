@@ -60,6 +60,7 @@ import com.ewheelers.eWheelersBuyers.ModelClass.ProductSpecifications;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -107,7 +108,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     List<Comparemodelclass> comparemodelclasses = new ArrayList<>();
 
     ImageLoader imageLoader;
-    TextView textView_product_details, shareicon,offerstoshow;
+    TextView textView_product_details, shareicon, offerstoshow;
     private InputMethodManager imm;
     String imageurls, productdescription, selproductid, productname, productprice, productmodel, isRent, testDriveEnable, booknowEnable, selbooknowEnable;
     String rentPrice, rentSecurity, bookPercentage;
@@ -116,12 +117,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     //WebView productName;
     String optionname1, attTitle;
 
-    TextView rentavailbility, findstore, rentalPrice, booknowTxt,testAvailtxt;
+    TextView rentavailbility, findstore, rentalPrice, booknowTxt, testAvailtxt;
 
     String paymetnpolicy, deliverpolicy, refundpolicy, shopname, countryname, statename, city, shopuserid;
     FrameLayout frameLayout;
     Button butn_payPolicy, delivery_policy, refund_policy, return_policy, cancellation_policy;
-    LinearLayout linearLayoutrent, bookLayout,testLayout;
+    LinearLayout linearLayoutrent, bookLayout, testLayout;
 
     Button plus, minus;
     TextView editqty;
@@ -156,7 +157,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     TextView comparetxt, viewcount, zoomImg;
     ImageView imageViewClose;
     int onclk;
-    String pro1, pro2,savedData,plength;
+    String pro1, pro2, savedData, plength;
     SearchView editTextSearch;
     TextView changeTxt, addressdealer, moreby_brand;
     String brand_Shortdesc, short_descript, brand_Name, brand_Id;
@@ -167,11 +168,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     SearchView chooseserach;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
     RelativeLayout clrelay;
+    Dialog mBottomSheetDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
-
 
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
@@ -225,18 +227,18 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         String cview = new SessionStorage().getStrings(this, SessionStorage.compareview);
         pro1 = new SessionStorage().getStrings(this, SessionStorage.productid);
         pro2 = new SessionStorage().getStrings(this, SessionStorage.productid2);
-        savedData = new SessionStorage().getStrings(this,SessionStorage.dataToSave);
-        plength = new SessionStorage().getStrings(this,SessionStorage.productslength);
+        savedData = new SessionStorage().getStrings(this, SessionStorage.dataToSave);
+        plength = new SessionStorage().getStrings(this, SessionStorage.productslength);
 
         //Toast.makeText(this, "pro1 - "+pro1+" pro2 -" +pro2, Toast.LENGTH_SHORT).show();
 
-        if(savedData!=null){
+        if (savedData != null) {
             compareView.setVisibility(View.VISIBLE);
-            viewcount.setText("View "+plength);
+            viewcount.setText("View " + plength);
         }
-        if(viewcount.getText().toString().equals("View 1")||viewcount.getText().toString().equals("View 2")){
+        if (viewcount.getText().toString().equals("View 1") || viewcount.getText().toString().equals("View 2")) {
             fab_main.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             fab_main.setVisibility(GONE);
         }
 
@@ -371,7 +373,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         options = findViewById(R.id.options_recyclerview);
         recyclerView = findViewById(R.id.horizontal_view);
         //offersrecyclerview = findViewById(R.id.offers_listview);
-        buywithlistview = findViewById(R.id.buywith_listview);
+        //buywithlistview = findViewById(R.id.buywith_listview);
         similarproductsview = findViewById(R.id.similar_listview);
 
         imageView = findViewById(R.id.imageswitcher);
@@ -379,9 +381,33 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         // policytext = findViewById(R.id.policy);
         totalreview = findViewById(R.id.totalreviews);
         totalrating = findViewById(R.id.totalratings);
-        buywithtit = findViewById(R.id.buywithtitle);
+        //buywithtit = findViewById(R.id.buywithtitle);
         similarproductTitle = findViewById(R.id.similarproductstxt);
         dealers_List = findViewById(R.id.dealers_list);
+
+
+        mBottomSheetDialog = new Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        View sheetView = getLayoutInflater().inflate(R.layout.addons_layout, null);
+        buywithtit = sheetView.findViewById(R.id.buywithtitle);
+        buywithlistview = sheetView.findViewById(R.id.buywith_listview);
+        Button button = sheetView.findViewById(R.id.addtoCart);
+        TextView textView = sheetView.findViewById(R.id.skip);
+        mBottomSheetDialog.setContentView(sheetView);
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addTocart(productId, "BUY");
+            }
+        });
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                jsonaddons("");
+                addTocart(productId, "BUY");
+            }
+        });
 
         imageView.setOnClickListener(this);
         textView_product_details.setOnClickListener(this);
@@ -682,7 +708,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                         while (subiterator.hasNext()) {
                             String subkey = (String) subiterator.next();
                             String subvalue = value.getString(subkey);
-                           // String valueOfheading = subkey + ":" + subvalue;
+                            // String valueOfheading = subkey + ":" + subvalue;
                             String valueOfheading = subkey;
                             String valueOfvalue = subvalue;
                             comparemodelclass = new Comparemodelclass();
@@ -712,9 +738,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     brand_Name = jsonObjectdata.getString("brand_name");
                     brand_Shortdesc = jsonObjectdata.getString("brand_short_description");
                     String offerstobuyer = jsonObjectdata.getString("selprodComments");
-                    if(offerstobuyer.isEmpty()||offerstobuyer==null){
+                    if (offerstobuyer.isEmpty() || offerstobuyer == null) {
                         offerstoshow.setText("No offers on this Product");
-                    }else {
+                    } else {
                         offerstoshow.setText(offerstobuyer);
                     }
                     short_descript = brand_Shortdesc;
@@ -1021,7 +1047,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             case R.id.chooseserach:
                 break;
             case R.id.buybtn:
-                addTocart(selproductid, "BUY");
+                //addTocart(selproductid, "BUY");
+                mBottomSheetDialog.show();
                 break;
             case R.id.reqtestdrive:
                 getBottomLayout();
@@ -1061,10 +1088,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 startActivity(iz);
                 break;
             case R.id.compare:
-                if(savedData==null||savedData.isEmpty()){
+                if (savedData == null || savedData.isEmpty()) {
                     addcompare(productId, "");
                     //fab_main.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     addcompare(productId, new SessionStorage().getStrings(this, SessionStorage.dataToSave));
                     //fab_main.setVisibility(View.VISIBLE);
                 }
@@ -1181,6 +1208,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.cart_count:
                 Intent inte = new Intent(getApplicationContext(), CartListingActivity.class);
+                inte.putExtra("selid",selproductid);
                 startActivity(inte);
                 break;
             case R.id.add_cart:
@@ -1329,11 +1357,11 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 JSONObject products = jsonObjectDatatoSave.getJSONObject("products");
                                 SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.dataToSave, jsonObjectDatatoSave.toString());
                                 compareView.setVisibility(View.VISIBLE);
-                                viewcount.setText("View "+products.length());
+                                viewcount.setText("View " + products.length());
                                 SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productslength, String.valueOf(products.length()));
-                                if(products.length()==3){
+                                if (products.length() == 3) {
                                     fab_main.setVisibility(GONE);
-                                }else {
+                                } else {
                                     fab_main.setVisibility(View.VISIBLE);
                                 }
                                /* if (products.length() == 1) {
@@ -1378,9 +1406,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                if(app_data==null){
+                if (app_data == null) {
                     data3.put("selProdId", productId);
-                }else {
+                } else {
                     data3.put("selProdId", productId);
                     data3.put("appData", app_data);
                 }
@@ -1730,6 +1758,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 cartCount.setText(cartcount);
                                 if (buttontext.equals("BUY")) {
                                     Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+                                    i.putExtra("selid",selproductid);
                                     startActivity(i);
                                 } else if (buttontext.equals("addcart") || buttontext.equals("rent")) {
                                     Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
@@ -1827,10 +1856,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         super.onResume();
     }
 
-   /* @Override
+    @Override
     public void onBackPressed(){
         Intent i = new Intent(getApplicationContext(),NavAppBarActivity.class);
         startActivity(i);
         finish();
-    }*/
+    }
 }
