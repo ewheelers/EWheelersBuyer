@@ -447,4 +447,12 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     public void setCoupon(String promoCode) {
         editTextPromo.setText(promoCode);
     }
+
+    @Override
+    public void onBackPressed(){
+        Intent i = new Intent(getApplicationContext(),CartListingActivity.class);
+        startActivity(i);
+        finish();
+    }
+
 }

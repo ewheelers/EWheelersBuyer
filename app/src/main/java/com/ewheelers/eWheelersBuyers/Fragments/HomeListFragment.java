@@ -3,6 +3,7 @@ package com.ewheelers.eWheelersBuyers.Fragments;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -38,6 +39,7 @@ import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.SessionStorage;
 import com.ewheelers.eWheelersBuyers.Utilities.ConnectionStateMonitor;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,9 +65,9 @@ public class HomeListFragment extends Fragment {
     private JSONArray jsonArrayCollections = null;
     private JSONArray jsonArrayProducts, jsonArrayProductscat, jsonArrayProductsbrand, jsonArrayProductsshop;
     private List<HomeCollectionProducts> homeCollectionSliderList = new ArrayList<HomeCollectionProducts>();
-
     ProgressBar progressBar;
-
+    private String[] permissions = {"android.permission.READ_EXTERNAL_STORAGE","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.CALL_PHONE","android.permission.ACCESS_COARSE_LOCATION","android.permission.ACCESS_FINE_LOCATION"};
+    int requestCode = 200;
     public HomeListFragment() {
         // Required empty public constructor
     }
@@ -79,6 +81,11 @@ public class HomeListFragment extends Fragment {
         recyclerView = v.findViewById(R.id.homelistview);
         textViewoff = v.findViewById(R.id.offlinetext);
         progressBar = v.findViewById(R.id.progress);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions( permissions, requestCode );
+        }
+
         ConnectionStateMonitor connectionStateMonitor = new ConnectionStateMonitor(getActivity());
         connectionStateMonitor.observe(this, new Observer<Boolean>() {
             @Override

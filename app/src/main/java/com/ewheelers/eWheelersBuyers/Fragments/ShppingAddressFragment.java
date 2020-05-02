@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,11 +36,12 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ShppingAddressFragment extends Fragment {
+public class ShppingAddressFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     RecyclerView recyclerView;
     List<BillingAddress> billingAddressList = new ArrayList<>();
     BillingAddressesAdapter billingAddressesAdapter;
     String tokenValue;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public ShppingAddressFragment() {
         // Required empty public constructor
@@ -59,12 +61,23 @@ public class ShppingAddressFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_shpping_address, container, false);
         recyclerView = v.findViewById(R.id.addresses_list);
         tokenValue = new SessionStorage().getStrings(getActivity(), SessionStorage.tokenvalue);
-        getAddresses();
+        swipeRefreshLayout = v.findViewById(R.id.swiprefresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        swipeRefreshLayout.setRefreshing(true);
+                                        getAddresses();
+                                    }
+                                }
+        );
 
         return v;
     }
 
     private void getAddresses() {
+        swipeRefreshLayout.setRefreshing(true);
+
         billingAddressList.clear();
         String url_link = Apis.getaddresses;
         final RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -75,56 +88,59 @@ public class ShppingAddressFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    JSONObject jsonObjectData = jsonObject.getJSONObject("data");
-                    JSONArray jsonArray = jsonObjectData.getJSONArray("addresses");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject address = jsonArray.getJSONObject(i);
-                        String uaid = address.getString("ua_id");
-                        String uauserid = address.getString("ua_user_id");
-                        String uaidentifier = address.getString("ua_identifier");
-                        String uaname = address.getString("ua_name");
-                        String address1 = address.getString("ua_address1");
-                        String address2 = address.getString("ua_address2");
-                        String city = address.getString("city_name");
-                        String cityid = address.getString("ua_city_id");
-                        String stateid = address.getString("ua_state_id");
-                        String contryid = address.getString("ua_country_id");
-                        String phone = address.getString("ua_phone");
-                        String zip = address.getString("ua_zip");
-                        String uadefault = address.getString("ua_is_default");
-                        String deleted = address.getString("ua_deleted");
-                        String statecode = address.getString("state_code");
-                        String countrycode = address.getString("country_code");
-                        String countryname = address.getString("country_name");
-                        String statename = address.getString("state_name");
-                        String cityname = address.getString("city_name");
-                        String shippingAddress = address.getString("isShippingAddress");
-                        String  autocomplete = address.getString("ua_auto_complete");
-                        BillingAddress billingAddress = new BillingAddress();
-                        billingAddress.setUa_id(uaid);
-                        billingAddress.setAutocomplete(autocomplete);
-                        billingAddress.setUa_identifier(uaidentifier);
-                        billingAddress.setUa_name(uaname);
-                        billingAddress.setUa_address1(address1);
-                        billingAddress.setUa_address2(address2);
-                        billingAddress.setCity_name(city);
-                        billingAddress.setState_name(statename);
-                        billingAddress.setCountry_name(countryname);
-                        billingAddress.setUa_zip(zip);
-                        billingAddress.setUa_phone(phone);
-                        billingAddress.setIsShippingAddress(shippingAddress);
-                        billingAddress.setUa_is_default(uadefault);
-                        billingAddress.setTypelayout(1);
-                        billingAddressList.add(billingAddress);
+                    if(status.equals("1")) {
+                        JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                        JSONArray jsonArray = jsonObjectData.getJSONArray("addresses");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject address = jsonArray.getJSONObject(i);
+                            String uaid = address.getString("ua_id");
+                            String uauserid = address.getString("ua_user_id");
+                            String uaidentifier = address.getString("ua_identifier");
+                            String uaname = address.getString("ua_name");
+                            String address1 = address.getString("ua_address1");
+                            String address2 = address.getString("ua_address2");
+                            String city = address.getString("city_name");
+                            String cityid = address.getString("ua_city_id");
+                            String stateid = address.getString("ua_state_id");
+                            String contryid = address.getString("ua_country_id");
+                            String phone = address.getString("ua_phone");
+                            String zip = address.getString("ua_zip");
+                            String uadefault = address.getString("ua_is_default");
+                            String deleted = address.getString("ua_deleted");
+                            String statecode = address.getString("state_code");
+                            String countrycode = address.getString("country_code");
+                            String countryname = address.getString("country_name");
+                            String statename = address.getString("state_name");
+                            String cityname = address.getString("city_name");
+                            String shippingAddress = address.getString("isShippingAddress");
+                            String autocomplete = address.getString("ua_auto_complete");
+                            BillingAddress billingAddress = new BillingAddress();
+                            billingAddress.setUa_id(uaid);
+                            billingAddress.setAutocomplete(autocomplete);
+                            billingAddress.setUa_identifier(uaidentifier);
+                            billingAddress.setUa_name(uaname);
+                            billingAddress.setUa_address1(address1);
+                            billingAddress.setUa_address2(address2);
+                            billingAddress.setCity_name(city);
+                            billingAddress.setState_name(statename);
+                            billingAddress.setCountry_name(countryname);
+                            billingAddress.setUa_zip(zip);
+                            billingAddress.setUa_phone(phone);
+                            billingAddress.setIsShippingAddress(shippingAddress);
+                            billingAddress.setUa_is_default(uadefault);
+                            billingAddress.setTypelayout(1);
+                            billingAddressList.add(billingAddress);
+
+                        }
+
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+                        recyclerView.setLayoutManager(linearLayoutManager);
+                        billingAddressesAdapter = new BillingAddressesAdapter(getActivity(), billingAddressList);
+                        recyclerView.setAdapter(billingAddressesAdapter);
+                        billingAddressesAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
 
                     }
-
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false);
-                    recyclerView.setLayoutManager(linearLayoutManager);
-                    billingAddressesAdapter = new BillingAddressesAdapter(getActivity(),billingAddressList);
-                    recyclerView.setAdapter(billingAddressesAdapter);
-                    billingAddressesAdapter.notifyDataSetChanged();
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -133,6 +149,7 @@ public class ShppingAddressFragment extends Fragment {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                swipeRefreshLayout.setRefreshing(false);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -158,4 +175,8 @@ public class ShppingAddressFragment extends Fragment {
     }
 
 
+    @Override
+    public void onRefresh() {
+        getAddresses();
+    }
 }

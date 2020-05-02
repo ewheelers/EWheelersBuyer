@@ -60,7 +60,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    setCheckoutSelctAddress();
+                    setCheckoutSelctAddress("1");
                 }
             }
         });
@@ -74,7 +74,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCheckoutSelctAddress();
+                setCheckoutSelctAddress("0");
             }
         });
     }
@@ -87,7 +87,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
         shipid = uaid2;
     }
 
-    private void setCheckoutSelctAddress() {
+    private void setCheckoutSelctAddress(String cond) {
         //Toast.makeText(this, "uids:"+billid+", shipid:"+shipid, Toast.LENGTH_SHORT).show();
         if (billid == null && shipid == null) {
             Toast.makeText(this, "Select Bill Address", Toast.LENGTH_SHORT).show();
@@ -137,29 +137,19 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
                 @Override
                 public Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> data3 = new HashMap<String, String>();
-                    if (billid != null && shipid != null) {
+                    if (cond.equals("1")) {
                         data3.put("billing_address_id", billid);
-                        data3.put("shipping_address_id", shipid);
+                        data3.put("shipping_address_id", billid);
                     } else {
-                        if (shipid == null) {
-                            data3.put("shipping_address_id", "");
+                        if(shipid==null) {
                             data3.put("billing_address_id", billid);
-                        } else {
+                            data3.put("shipping_address_id", "");
+                        }else {
+                            data3.put("billing_address_id", billid);
                             data3.put("shipping_address_id", shipid);
-                            data3.put("billing_address_id", "");
                         }
-
                     }
 
-                   /* if (shipid == null) {
-                        data3.put("shipping_address_id", "");
-                        data3.put("billing_address_id", billid);
-                    } else {
-                        data3.put("shipping_address_id", shipid);
-                        if(billid==null) {
-                            data3.put("billing_address_id", "");
-                        }
-                    }*/
                     return data3;
 
                 }
