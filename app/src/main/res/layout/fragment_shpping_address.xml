@@ -4,10 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.ShppingAddressFragment">
-
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiprefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/addresses_list"/>
-
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </FrameLayout>

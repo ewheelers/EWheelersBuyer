@@ -6,7 +6,8 @@
     android:orientation="horizontal"
     android:padding="5dp"
     android:background="@color/colorWhite"
-    android:layout_margin="@dimen/dimen_5dp">
+    android:layout_margin="@dimen/dimen_5dp"
+    android:baselineAligned="false">
 
 
     <LinearLayout
