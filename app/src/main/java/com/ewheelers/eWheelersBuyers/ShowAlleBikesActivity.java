@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,10 +41,14 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarChangeListener;
+import com.crystal.crystalrangeseekbar.interfaces.OnRangeSeekbarFinalValueListener;
+import com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar;
 import com.ewheelers.eWheelersBuyers.Adapters.AllebikesAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.FiltersAdapter;
 import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.FilterListClass;
+import com.ewheelers.eWheelersBuyers.ModelClass.SubFilterModelClass;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -89,8 +94,18 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     Dialog dialog;
     ImageView imageView;
     Button button;
+    RadioGroup radioGroup;
     RadioButton chip1, chip2, chip3;
-    RecyclerView recyclrecat,recyclerbrand;
+    RecyclerView recyclrecat, recyclerbrand;
+    List<FilterListClass> filterListClasses = new ArrayList<>();
+    List<SubFilterModelClass> filterListClasses2 = new ArrayList<>();
+
+    String categoriesarray, brandarray;
+    ProgressBar progressFilter;
+    BubbleThumbRangeSeekbar bubbleThumbRangeSeekbar;
+    RelativeLayout relativeseekbar;
+    TextView maxprice, minprice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,19 +148,80 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         View dialogView = getLayoutInflater().inflate(R.layout.filter_layout, null);
         imageView = dialogView.findViewById(R.id.closeIcon);
+        progressFilter = dialogView.findViewById(R.id.progressf);
+        radioGroup = dialogView.findViewById(R.id.radio_group);
         button = dialogView.findViewById(R.id.apply);
         chip1 = dialogView.findViewById(R.id.bycategory);
         chip2 = dialogView.findViewById(R.id.bybrand);
         chip3 = dialogView.findViewById(R.id.byprice);
+        relativeseekbar = dialogView.findViewById(R.id.relativeseekbar);
+        bubbleThumbRangeSeekbar = dialogView.findViewById(R.id.rangeSeekbar2);
+        minprice = dialogView.findViewById(R.id.textMin2);
+        maxprice = dialogView.findViewById(R.id.textMax2);
         recyclrecat = dialogView.findViewById(R.id.categories_list);
         recyclerbrand = dialogView.findViewById(R.id.brands_list);
         dialog.setContentView(dialogView);
-
-        chip1.setOnClickListener(new View.OnClickListener() {
+        if (chip1.isChecked()) {
+            recyclrecat.setVisibility(View.VISIBLE);
+            recyclerbrand.setVisibility(GONE);
+            relativeseekbar.setVisibility(GONE);
+            getFiltersList();
+        }
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(ShowAlleBikesActivity.this, chip1.getText().toString(), Toast.LENGTH_SHORT).show();
-                getFiltersList(chip1.getText().toString());
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                int selectedId = group.getCheckedRadioButtonId();
+                if (selectedId == R.id.bycategory) {
+                    recyclrecat.setVisibility(View.VISIBLE);
+                    recyclerbrand.setVisibility(GONE);
+                    relativeseekbar.setVisibility(GONE);
+                    getFiltersList();
+                }
+                if (selectedId == R.id.bybrand) {
+                    recyclerbrand.setVisibility(View.VISIBLE);
+                    recyclrecat.setVisibility(GONE);
+                    relativeseekbar.setVisibility(GONE);
+                    getBrandFilterList();
+                }
+
+                if (selectedId == R.id.byprice) {
+                    recyclerbrand.setVisibility(GONE);
+                    recyclrecat.setVisibility(GONE);
+                    relativeseekbar.setVisibility(View.VISIBLE);
+                    getPricerange();
+
+                }
+
+            }
+        });
+       /* if(chip1.isChecked()){
+            recyclrecat.setVisibility(View.VISIBLE);
+            getFiltersList("categories");
+        }
+        chip1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    recyclrecat.setVisibility(View.VISIBLE);
+                    getFiltersList("categories");
+
+                }
+            }
+        });*/
+
+       /* chip2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                recyclerbrand.setVisibility(View.VISIBLE);
+                recyclrecat.setVisibility(GONE);
+                getBrandFilterList();
+            }
+        });*/
+
+        chip3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
             }
         });
 
@@ -186,13 +262,13 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
         Log.i("ids:", "brandis-" + brandid + " categoryid-" + categoryid + " shopid-" + shopid);
 
-
         collectionidbikes = getIntent().getStringExtra("allpopularbikes");
         collectionidcat = getIntent().getStringExtra("allcategories");
         collectionidbrands = getIntent().getStringExtra("allbrands");
         collectionidshops = getIntent().getStringExtra("allshops");
         onlyTestDrive = getIntent().getStringExtra("onlytestdrives");
-        Toast.makeText(this, "coolectid" + collectionidbikes +"idcat:"+ collectionidcat +"idbrand"+ collectionidbrands +"idshops:"+ collectionidshops, Toast.LENGTH_SHORT).show();
+
+      //  Toast.makeText(this, "coolectid" + collectionidbikes + "idcat:" + collectionidcat + "idbrand" + collectionidbrands + "idshops:" + collectionidshops, Toast.LENGTH_SHORT).show();
 
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -404,19 +480,22 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
         if (collectionidbikes != null) {
             //collectionid = collectionidbikes;
-            getAllebikes("");
+            // getAllebikes("");
+            getCollectionProductsBikes(collectionidbikes);
+
         }
 
         if (collectionidcat != null) {
             sortFilterLayout.setVisibility(GONE);
             //collectionid = collectionidcat;
-            getCollectionProducts(collectionidcat);
+            getCollectionProductsCategories(collectionidcat);
 
         }
         if (collectionidbrands != null) {
             sortFilterLayout.setVisibility(GONE);
             //collectionid = collectionidbrands;
-            getCollectionProducts(collectionidbrands);
+            //getCollectionProducts(collectionidcat);
+            getCollectionProductsBrands(collectionidbrands);
 
         }
         if (collectionidshops != null) {
@@ -433,6 +512,333 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             }
         });
 //        getCollectionProducts(collectionid);
+    }
+
+    private void getCollectionProductsBrands(String collectionidbrands) {
+        allebikelist.clear();
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = Apis.collectionView;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONObject jsonObjectCollection = jsonObjectData.getJSONObject("collection");
+                                String collectionid = jsonObjectCollection.getString("collection_id");
+
+                                String collectionlayouttype = jsonObjectCollection.getString("collection_layout_type");
+                                //brands
+                                JSONObject jsonobjectbrands = jsonObjectData.getJSONObject("collectionItems");
+                                JSONObject jsonObjectvallayouttype = jsonobjectbrands.getJSONObject(collectionlayouttype);
+                                JSONObject jsonObjectvalcolid = jsonObjectvallayouttype.getJSONObject(collectionid);
+                                JSONArray jsonArraybrands = jsonObjectvalcolid.getJSONArray("brands");
+                                for (int l = 0; l < jsonArraybrands.length(); l++) {
+                                    JSONObject jsonObjectbrand = jsonArraybrands.getJSONObject(l);
+                                    String brandid = jsonObjectbrand.getString("brand_id");
+                                    String brandname = jsonObjectbrand.getString("brand_name");
+                                    String branddescript = jsonObjectbrand.getString("brand_short_description");
+                                    String brandimage = jsonObjectbrand.getString("brand_image");
+                                    AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setProductName(brandname);
+                                    allebikesModelClass.setPrice(branddescript);
+                                    allebikesModelClass.setProductid(brandid);
+                                    allebikesModelClass.setNetworkImage(brandimage);
+                                    allebikesModelClass.setTypeLayout(2);
+                                    allebikelist.add(allebikesModelClass);
+                                }
+                                if (allebikelist.isEmpty()) {
+                                    linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(GONE);
+
+                                } else {
+                                    linearLayoutEmpty.setVisibility(GONE);
+                                    allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
+                                    recyclerView.setAdapter(allebikesAdapter);
+                                    // GridLayoutManager gridLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    allebikesAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(GONE);
+
+                                }
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("collection_id", collectionidbrands);
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+
+    }
+
+    private void getCollectionProductsCategories(String collectionidcat) {
+        allebikelist.clear();
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = Apis.collectionView;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONObject jsonObjectCollection = jsonObjectData.getJSONObject("collection");
+                                String collectionid = jsonObjectCollection.getString("collection_id");
+
+                                String collectionlayouttype = jsonObjectCollection.getString("collection_layout_type");
+                                //Categories
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("collectionItems");
+                                for (int j = 0; j < jsonArray.length(); j++) {
+                                    JSONObject jsonCat = jsonArray.getJSONObject(j);
+                                    String prodcatid = jsonCat.getString("prodcat_id");
+                                    String prodcatname = jsonCat.getString("prodcat_name");
+                                    String prodcatblocks = jsonCat.getString("prodcat_content_block");
+                                    String prodcatcounts = jsonCat.getString("productCounts");
+                                    String prodcatimage = jsonCat.getString("image");
+                                    AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setProductName(prodcatname);
+                                    allebikesModelClass.setProductid(prodcatid);
+                                    allebikesModelClass.setNetworkImage(prodcatimage);
+                                    allebikesModelClass.setTypeLayout(1);
+                                    allebikelist.add(allebikesModelClass);
+                                }
+                                if (allebikelist.isEmpty()) {
+                                    linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(GONE);
+
+                                } else {
+                                    linearLayoutEmpty.setVisibility(GONE);
+                                    allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
+                                    recyclerView.setAdapter(allebikesAdapter);
+                                    GridLayoutManager linearLayoutManager = new GridLayoutManager(ShowAlleBikesActivity.this, 2);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    allebikesAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(GONE);
+
+                                }
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("collection_id", collectionidcat);
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    private void getCollectionProductsBikes(String collectionidbikes) {
+        allebikelist.clear();
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = Apis.collectionView;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONObject jsonObjectCollection = jsonObjectData.getJSONObject("collection");
+                                String collectionid = jsonObjectCollection.getString("collection_id");
+
+                                String collectionlayouttype = jsonObjectCollection.getString("collection_layout_type");
+                                //popular bikes
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("collectionItems");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonCollection = jsonArray.getJSONObject(i);
+                                    String productPrice = jsonCollection.getString("theprice");
+                                    String productName = jsonCollection.getString("product_name");
+                                    //String productName = jsonCollection.getString("selprod_title");
+                                    String selproductid = jsonCollection.getString("selprod_id");
+                                    String productImageurl = jsonCollection.getString("product_image_url");
+                                    String testdriveenable = jsonCollection.getString("selprod_test_drive_enable");
+                                    String issell = jsonCollection.getString("is_sell");
+                                    String isrent = jsonCollection.getString("is_rent");
+                                    String instock = jsonCollection.getString("in_stock");
+                                    String book = jsonCollection.getString("selprod_book_now_enable");
+                                    String prodbook = jsonCollection.getString("product_book");
+                                    AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setPrice(productPrice);
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
+                                    allebikesModelClass.setProductName(productName);
+                                    allebikesModelClass.setProductid(selproductid);
+                                    allebikesModelClass.setNetworkImage(productImageurl);
+                                    allebikesModelClass.setTestdriveenable(testdriveenable);
+                                    allebikesModelClass.setIssell(issell);
+                                    allebikesModelClass.setIsrent(isrent);
+                                    allebikesModelClass.setInstock(instock);
+                                    allebikesModelClass.setTypeLayout(0);
+
+                                    allebikelist.add(allebikesModelClass);
+                                }
+                                if (allebikelist.isEmpty()) {
+                                    linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(GONE);
+
+                                } else {
+                                    linearLayoutEmpty.setVisibility(GONE);
+                                    allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
+                                    recyclerView.setAdapter(allebikesAdapter);
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    allebikesAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(GONE);
+
+                                }
+
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("collection_id", collectionidbikes);
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    private void getPricerange() {
+        String Login_url = Apis.filters;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1"))
+                                progressFilter.setVisibility(GONE);
+                            {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                String minvalue = jsonObjectData.getString("filterDefaultMinValue");
+                                String maxvalue = jsonObjectData.getString("filterDefaultMaxValue");
+                                minprice.setText(String.valueOf(minvalue));
+                                maxprice.setText(String.valueOf(maxvalue));
+                                bubbleThumbRangeSeekbar.setMinValue(Float.parseFloat(minvalue));
+                                bubbleThumbRangeSeekbar.setMaxValue(Float.parseFloat(maxvalue));
+                                bubbleThumbRangeSeekbar.setOnRangeSeekbarChangeListener(new OnRangeSeekbarChangeListener() {
+                                    @Override
+                                    public void valueChanged(Number minValue, Number maxValue) {
+                                        minprice.setText(String.valueOf(minValue));
+                                        maxprice.setText(String.valueOf(maxValue));
+                                    }
+                                });
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressFilter.setVisibility(GONE);
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+
+                Map<String, String> data3 = new HashMap<String, String>();
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(ShowAlleBikesActivity.this).addToRequestQueue(strRequest);
+
     }
 
     private void getAllebikes(String priceStr) {
@@ -517,9 +923,9 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                if(priceStr.isEmpty()||priceStr.equals(null)||priceStr==null){
+                if (priceStr.isEmpty() || priceStr.equals(null) || priceStr == null) {
                     data3.put("keyword", "");
-                }else {
+                } else {
                     data3.put("sortBy", priceStr);
                 }
                 return data3;
@@ -1043,10 +1449,9 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
     }
 
-    public void getCollectionProducts(String collectionid) {
+    public void getCollectionProducts(String collectionidfrom) {
         allebikelist.clear();
         progressBar.setVisibility(View.VISIBLE);
-
         String Login_url = Apis.collectionView;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
@@ -1063,7 +1468,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                 String collectionid = jsonObjectCollection.getString("collection_id");
 
                                 String collectionlayouttype = jsonObjectCollection.getString("collection_layout_type");
-                                if (collectionid.equals("1")) { //popular bikes
+                                if (collectionid.equals(collectionidfrom)) { //popular bikes
                                     JSONArray jsonArray = jsonObjectData.getJSONArray("collectionItems");
                                     for (int i = 0; i < jsonArray.length(); i++) {
                                         JSONObject jsonCollection = jsonArray.getJSONObject(i);
@@ -1107,9 +1512,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                         progressBar.setVisibility(GONE);
 
                                     }
-                                }
-
-                                if (collectionid.equals("4")) { //categories
+                                } else if (collectionid.equals(collectionidfrom)) { //categories
                                     JSONArray jsonArray = jsonObjectData.getJSONArray("collectionItems");
                                     for (int j = 0; j < jsonArray.length(); j++) {
                                         JSONObject jsonCat = jsonArray.getJSONObject(j);
@@ -1139,9 +1542,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                         progressBar.setVisibility(GONE);
 
                                     }
-                                }
-
-                                if (collectionid.equals("5")) { //dealers
+                                } else if (collectionid.equals(collectionidfrom)) { //dealers
                                     JSONObject jsonObjectItems = jsonObjectData.getJSONObject("collectionItems");
                                     Iterator iter = jsonObjectItems.keys();
                                     while (iter.hasNext()) {
@@ -1174,9 +1575,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                         progressBar.setVisibility(GONE);
 
                                     }
-                                }
-
-                                if (collectionid.equals("6")) { // brands
+                                } else if (collectionid.equals(collectionidfrom)) { // brands
                                     // Toast.makeText(ShowAlleBikesActivity.this, "layout: "+collectionlayouttype+"\nid "+collectionid, Toast.LENGTH_SHORT).show();
                                     JSONObject jsonobjectbrands = jsonObjectData.getJSONObject("collectionItems");
                                     JSONObject jsonObjectvallayouttype = jsonobjectbrands.getJSONObject(collectionlayouttype);
@@ -1236,12 +1635,17 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                data3.put("collection_id", collectionid);
+                data3.put("collection_id", collectionidfrom);
                 return data3;
             }
         };
         strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    public void applyFilters(String catarray, String brands) {
+        categoriesarray = catarray;
+        brandarray = brands;
     }
 
 
@@ -1262,8 +1666,116 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                     call_action(shopphone);
                 }
                 break;
+            case R.id.apply:
+                dialog.dismiss();
+                Log.e("prices", Integer.parseInt(minprice.getText().toString()) + " - " + Integer.parseInt(maxprice.getText().toString()));
+                applyMethodFilters(categoriesarray, brandarray, Integer.parseInt(minprice.getText().toString()), Integer.parseInt(maxprice.getText().toString()));
+                break;
         }
     }
+
+    private void applyMethodFilters(String categoriesarray, String brandarray, int minprice, int maxprice) {
+        progressBar.setVisibility(View.VISIBLE);
+        allebikelist.clear();
+        String Login_url = Apis.filteredproducts;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("products");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
+                                    String productPrice = jsonObjectProducts.getString("theprice");
+                                    //String productName = jsonObjectProducts.getString("product_name");
+                                    String productName = jsonObjectProducts.getString("selprod_title");
+                                    String selproductid = jsonObjectProducts.getString("selprod_id");
+                                    String productImageurl = jsonObjectProducts.getString("product_image_url");
+                                    String testdriveenable = jsonObjectProducts.getString("selprod_test_drive_enable");
+                                    String issell = jsonObjectProducts.getString("is_sell");
+                                    String isrent = jsonObjectProducts.getString("is_rent");
+                                    String instock = jsonObjectProducts.getString("in_stock");
+                                    String book = jsonObjectProducts.getString("selprod_book_now_enable");
+                                    String prodbook = jsonObjectProducts.getString("product_book");
+
+                                    AllebikesModelClass allebikesModelClass = new AllebikesModelClass();
+                                    allebikesModelClass.setBooknow(book);
+                                    allebikesModelClass.setProductbook(prodbook);
+                                    allebikesModelClass.setPrice(productPrice);
+                                    allebikesModelClass.setProductName(productName);
+                                    allebikesModelClass.setProductid(selproductid);
+                                    allebikesModelClass.setNetworkImage(productImageurl);
+                                    allebikesModelClass.setTestdriveenable(testdriveenable);
+                                    allebikesModelClass.setIssell(issell);
+                                    allebikesModelClass.setIsrent(isrent);
+                                    allebikesModelClass.setInstock(instock);
+                                    allebikesModelClass.setTypeLayout(0);
+
+                                    allebikelist.add(allebikesModelClass);
+                                }
+                                if (allebikelist.isEmpty()) {
+                                    linearLayoutEmpty.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(GONE);
+
+                                } else {
+                                    linearLayoutEmpty.setVisibility(GONE);
+                                    allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
+                                    recyclerView.setAdapter(allebikesAdapter);
+                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    allebikesAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(GONE);
+
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+                progressBar.setVisibility(GONE);
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                if (categoriesarray == null && brandarray == null) {
+                    data3.put("prodcat", "");
+                    data3.put("brand", "");
+                } else {
+                    data3.put("prodcat", categoriesarray);
+                    data3.put("brand", brandarray);
+                    data3.put("price-min-range", String.valueOf(minprice));
+                    data3.put("price-max-range", String.valueOf(maxprice));
+
+                }
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+
+    }
+
 
     private boolean isPermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -1294,11 +1806,12 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         startActivity(callIntent);
     }
 
-    List<FilterListClass> filterListClasses = new ArrayList<>();
-    FiltersAdapter filtersAdapter;
-    public void getFiltersList(String type){
-        String Login_url = Apis.filters;
 
+    public void getFiltersList() {
+        progressFilter.setVisibility(View.VISIBLE);
+        filterListClasses.clear();
+        filterListClasses2.clear();
+        String Login_url = Apis.filters;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
@@ -1308,22 +1821,39 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
-                            if(getStatus.equals("1"))
+                            if (getStatus.equals("1"))
+                                progressFilter.setVisibility(GONE);
                             {
-                                JSONObject  jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                                 JSONArray jsonArray = jsonObjectData.getJSONArray("categoriesArr");
-                                for(int i=0;i<jsonArray.length();i++){
+                                for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject jsonObjectcat = jsonArray.getJSONObject(i);
                                     String cat_id = jsonObjectcat.getString("prodcat_id");
                                     String cat_name = jsonObjectcat.getString("prodcat_name");
+
                                     FilterListClass filterListClass = new FilterListClass();
                                     filterListClass.setCatId(cat_id);
                                     filterListClass.setCatName(cat_name);
+                                    filterListClass.setType(0);
                                     filterListClasses.add(filterListClass);
-                                }
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this,LinearLayoutManager.VERTICAL,false);
-                                recyclrecat.setLayoutManager(linearLayoutManager);
 
+                                    JSONArray jsonArrayChildren = jsonObjectcat.getJSONArray("children");
+                                    for (int x = 0; x < jsonArrayChildren.length(); x++) {
+                                        JSONObject jsonObject1 = jsonArrayChildren.getJSONObject(x);
+                                        String name = jsonObject1.getString("prodcat_name");
+                                        String subcatid = jsonObject1.getString("prodcat_id");
+                                        SubFilterModelClass filterListClasssub = new SubFilterModelClass();
+                                        filterListClasssub.setSubcatid(subcatid);
+                                        filterListClasssub.setSubname(name);
+                                        filterListClasses2.add(filterListClasssub);
+                                    }
+
+
+                                }
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, LinearLayoutManager.VERTICAL, false);
+                                recyclrecat.setLayoutManager(linearLayoutManager);
+                                FiltersAdapter filtersAdapter = new FiltersAdapter(ShowAlleBikesActivity.this, filterListClasses, filterListClasses2);
+                                recyclrecat.setAdapter(filtersAdapter);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1332,6 +1862,73 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressFilter.setVisibility(GONE);
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+
+                Map<String, String> data3 = new HashMap<String, String>();
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(ShowAlleBikesActivity.this).addToRequestQueue(strRequest);
+
+    }
+
+    public void getBrandFilterList() {
+        progressFilter.setVisibility(View.VISIBLE);
+        filterListClasses.clear();
+        String Login_url = Apis.filters;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1"))
+                                progressFilter.setVisibility(GONE);
+                            {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONArray jsonArraybrands = jsonObjectData.getJSONArray("brandsArr");
+                                for (int i = 0; i < jsonArraybrands.length(); i++) {
+                                    JSONObject jsonObject1 = jsonArraybrands.getJSONObject(i);
+                                    String branid = jsonObject1.getString("brand_id");
+                                    String branname = jsonObject1.getString("brand_name");
+                                    FilterListClass filterListClass = new FilterListClass();
+                                    filterListClass.setBrandid(branid);
+                                    filterListClass.setBrandname(branname);
+                                    filterListClass.setType(1);
+                                    filterListClasses.add(filterListClass);
+                                }
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, LinearLayoutManager.VERTICAL, false);
+                                recyclerbrand.setLayoutManager(linearLayoutManager);
+                                FiltersAdapter filtersAdapterbrand = new FiltersAdapter(ShowAlleBikesActivity.this, filterListClasses, null);
+                                recyclerbrand.setAdapter(filtersAdapterbrand);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressFilter.setVisibility(GONE);
                 VolleyLog.d("Main", "Error :" + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }

@@ -13,6 +13,7 @@ public class ServiceProvidersClass implements Serializable {
     private String serviceprovider_latitude;
     private String serviceprovider_longitude;
     private String distance;
+    private String city;
 
     private double currentlatitude;
     private double currentlongitude;
@@ -22,6 +23,14 @@ public class ServiceProvidersClass implements Serializable {
     public static final int PARKING=2;
 
     private int typeofLayout;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public String getDistance() {
         return distance;

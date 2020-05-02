@@ -45,6 +45,32 @@
         </LinearLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/emptyView"
+        android:paddingTop="@dimen/dimen_20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/ic_emptyorders"
+        android:id="@+id/emptyview"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:text="No Orders."/>
+        <Button
+            android:id="@+id/shop_now"
+            android:layout_marginTop="@dimen/dimen_20dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="Shop now"
+            android:layout_gravity="center"
+            android:background="@drawable/button_bg"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swiprefresh"
         android:layout_width="match_parent"

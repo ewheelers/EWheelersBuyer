@@ -84,7 +84,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
 
                         String key = cartListClasses.get(position).getKeyvalue();
                         Log.e("key", key);
-                        if (context instanceof CartListingActivity) {
+                       // if (context instanceof CartListingActivity) {
                             // ((CartListingActivity) context).removecartItem(key,position);
                             String tokenvalue = new SessionStorage().getStrings(context, SessionStorage.tokenvalue);
 
@@ -139,7 +139,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                             VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
 
 
-                        }
+                       // }
                     }
                 });
                 holder.addproduct.setOnClickListener(new View.OnClickListener() {
@@ -284,7 +284,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
 
                         String key = cartListClasses.get(position).getKeyvalue();
                         Log.e("key", key);
-                        if (context instanceof CartListingActivity) {
+                       // if (context instanceof CartListingActivity) {
                             // ((CartListingActivity) context).removecartItem(key,position);
                             String tokenvalue = new SessionStorage().getStrings(context, SessionStorage.tokenvalue);
 
@@ -339,7 +339,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
                             VolleySingleton.getInstance(context).addToRequestQueue(strRequest);
 
 
-                        }
+                       // }
                     }
                 });
                 holder.addproduct.setOnClickListener(new View.OnClickListener() {

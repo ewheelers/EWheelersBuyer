@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context=".Fragments.HomeListFragment">
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swiprefresh"
+
+    <ProgressBar
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-  <androidx.recyclerview.widget.RecyclerView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:id="@+id/homelistview"/>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:id="@+id/progress"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/offlinetext"
+        android:paddingTop="@dimen/dimen_50dp"
+        android:visibility="gone"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:text="You are in Offline Enable Mobiel data or Wifi to make Online"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/ic_offline"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/homelistview"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

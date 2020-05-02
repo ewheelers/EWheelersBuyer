@@ -348,7 +348,7 @@ public class BillingAddressesAdapter extends RecyclerView.Adapter<BillingAddress
                         if (context instanceof SetupBillingAddressActivity) {
                             ((SetupBillingAddressActivity) context).setUidsecond(billingAddressList.get(position).getUa_id());
                         }
-                        Toast.makeText(context, "selctshipid " + billingAddressList.get(position).getUa_id(), Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(context, "selctshipid " + billingAddressList.get(position).getUa_id(), Toast.LENGTH_SHORT).show();
                     }
                 });
                 if (index_row == position) {

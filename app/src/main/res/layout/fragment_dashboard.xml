@@ -2,7 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressbar"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+    <TextView
+        android:visibility="gone"
+        android:drawableTop="@drawable/ic_notifications_off_black_24dp"
+        android:layout_marginTop="@dimen/dimen_20dp"
+        android:id="@+id/emptyview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Notification to show."
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

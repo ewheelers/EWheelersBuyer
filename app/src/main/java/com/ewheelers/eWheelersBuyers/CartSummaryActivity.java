@@ -54,12 +54,13 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     RecyclerView pricelist;
     PricedetailAdapter pricedetailAdapter;
     String net_amount;
-    TextView changeAddress,customerChangeAddress,customerShippingAddress;
+    TextView changeAddress, customerChangeAddress, customerShippingAddress;
     RecyclerView recyclerViewCoupons;
     Button have_coupon;
     List<PromoCodesModel> promoCodesModels = new ArrayList<>();
     CouponsAdapter couponsAdapter;
     Button cod_option;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,32 +134,32 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     netamount.setText(amount);
 
                     JSONObject jsonObjectBillAddress = dataJsonObject.getJSONObject("cartSelectedBillingAddress");
-                    if(jsonObjectBillAddress.toString().equals("{}")){
+                    if (jsonObjectBillAddress.toString().equals("{}")) {
                         customerAddress.setText("Setup Billing Address");
                         customerAddress.setTextColor(Color.RED);
-                    }else {
+                    } else {
                         String customername = jsonObjectBillAddress.getString("ua_name");
                         String u_address1 = jsonObjectBillAddress.getString("ua_address1");
                         String ua_address2 = jsonObjectBillAddress.getString("ua_address2");
                         String u_city = jsonObjectBillAddress.getString("ua_city");
                         String u_phone = jsonObjectBillAddress.getString("ua_phone");
                         String u_autocomplete = jsonObjectBillAddress.getString("ua_auto_complete");
-                        customerAddress.setText(customername+"\n"+u_autocomplete+"\n"+u_address1+" Phone "+u_phone);
+                        customerAddress.setText(customername + "\n" + u_autocomplete + "\n" + u_address1 + " Phone " + u_phone);
                         //customerAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_city + u_phone);
                     }
 
                     JSONObject jsonObjectCartShipping = dataJsonObject.getJSONObject("cartSelectedShippingAddress");
-                    if(jsonObjectCartShipping.toString().equals("{}")){
-                        customerAddress.setText("Setup Shipping Address");
-                        customerAddress.setTextColor(Color.RED);
-                    }else {
+                    if (jsonObjectCartShipping.toString().equals("{}")) {
+                        customerShippingAddress.setText("Setup Shipping Address");
+                        customerShippingAddress.setTextColor(Color.RED);
+                    } else {
                         String customername = jsonObjectCartShipping.getString("ua_name");
                         String u_address1 = jsonObjectCartShipping.getString("ua_address1");
                         String ua_address2 = jsonObjectCartShipping.getString("ua_address2");
                         String u_city = jsonObjectCartShipping.getString("ua_city");
                         String u_phone = jsonObjectCartShipping.getString("ua_phone");
                         String u_autocomplete = jsonObjectCartShipping.getString("ua_auto_complete");
-                        customerShippingAddress.setText(customername+"\n"+u_autocomplete+"\n"+u_address1+" Phone "+u_phone);
+                        customerShippingAddress.setText(customername + "\n" + u_autocomplete + "\n" + u_address1 + " Phone " + u_phone);
                         //customerShippingAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_phone);
                     }
                     JSONArray jsonArrayProduct = dataJsonObject.getJSONArray("products");
@@ -172,7 +173,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         String shopautocomplete = jsonObjectselleraddress.getString("shop_auto_complete");
                         String shop_phone = jsonObjectselleraddress.getString("shop_phone");
                         //sellerAddress.setText(shopcontact_name + "\n" + shop_address_line_1 + " " + shop_address_line_2+"\n"+shop_city);
-                        sellerAddress.setText(shopcontact_name + "\n" + shopautocomplete+" "+shop_address_line_1+" "+shop_address_line_2+ " \nPhone : "+shop_phone);
+                        sellerAddress.setText(shopcontact_name + "\n" + shopautocomplete + " " + shop_address_line_1 + " " + shop_address_line_2 + " \nPhone : " + shop_phone);
 
                     }
 
@@ -220,7 +221,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.shippingAddressChange:
-                Intent i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
+                Intent i = new Intent(getApplicationContext(), SetupBillingAddressActivity.class);
                 startActivity(i);
                 break;
             case R.id.have_coupons:
@@ -233,15 +234,19 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 RemovePromoCode();
                 break;
             case R.id.payment:
-                Intent in = new Intent(getApplicationContext(), StartPaymentActivity.class);
-                in.putExtra("netamount", net_amount);
-               /* in.putExtra("name",);
-                in.putExtra("mobile",);
-                in.putExtra("Productname",);*/
-                startActivity(in);
+                if (customerAddress.getText().toString().equals("Setup Billing Address")) {
+                    Toast.makeText(this, "Select Billing Address to continue", Toast.LENGTH_SHORT).show();
+                } else if (customerShippingAddress.getText().toString().equals("Setup Shipping Address")) {
+                    Toast.makeText(this, "Select Shipping Address to continue", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent in = new Intent(getApplicationContext(), StartPaymentActivity.class);
+                    in.putExtra("netamount", net_amount);
+                    startActivity(in);
+                }
+
                 break;
             case R.id.changeAddress:
-                i = new Intent(getApplicationContext(),SetupBillingAddressActivity.class);
+                i = new Intent(getApplicationContext(), SetupBillingAddressActivity.class);
                 startActivity(i);
                 break;
            /* case R.id.cod:
@@ -264,16 +269,16 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     Toast.makeText(CartSummaryActivity.this, msg, Toast.LENGTH_SHORT).show();
                     JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                     JSONArray jsonArray = jsonObjectData.getJSONArray("offers");
-                    for(int i=0;i<jsonArray.length();i++){
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                         String coupon = jsonObject1.getString("coupon_code");
                         PromoCodesModel promoCodesModel = new PromoCodesModel();
                         promoCodesModel.setPromoCode(coupon);
                         promoCodesModels.add(promoCodesModel);
                     }
-                    GridLayoutManager linearLayoutManager = new GridLayoutManager(CartSummaryActivity.this,2);
+                    GridLayoutManager linearLayoutManager = new GridLayoutManager(CartSummaryActivity.this, 2);
                     recyclerViewCoupons.setLayoutManager(linearLayoutManager);
-                    couponsAdapter = new CouponsAdapter(CartSummaryActivity.this,promoCodesModels);
+                    couponsAdapter = new CouponsAdapter(CartSummaryActivity.this, promoCodesModels);
                     recyclerViewCoupons.setAdapter(couponsAdapter);
                     couponsAdapter.notifyDataSetChanged();
 

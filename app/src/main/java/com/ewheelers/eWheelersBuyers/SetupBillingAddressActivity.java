@@ -35,14 +35,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SetupBillingAddressActivity extends AppCompatActivity  {
+public class SetupBillingAddressActivity extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     Button buttonadd;
     Button continueBtn;
     CheckBox checkBoxSame;
-    String billid,shipid;
+    String billid, shipid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +59,15 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
         checkBoxSame.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     setCheckoutSelctAddress();
-                }else {
-
                 }
             }
         });
         buttonadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),AddNewAddressActivity.class);
+                Intent i = new Intent(getApplicationContext(), AddNewAddressActivity.class);
                 startActivity(i);
             }
         });
@@ -91,10 +89,10 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
 
     private void setCheckoutSelctAddress() {
         //Toast.makeText(this, "uids:"+billid+", shipid:"+shipid, Toast.LENGTH_SHORT).show();
-        if(billid==null&&shipid==null){
+        if (billid == null && shipid == null) {
             Toast.makeText(this, "Select Bill Address", Toast.LENGTH_SHORT).show();
             checkBoxSame.setChecked(false);
-        }else {
+        } else {
             String tokenvalue = new SessionStorage().getStrings(SetupBillingAddressActivity.this, SessionStorage.tokenvalue);
             String Login_url = Apis.setupaddressselection;
             StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -109,9 +107,9 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
                                 if (getStatus.equals("1")) {
                                    /* Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                     mySnackbar.show();*/
-                                   Intent i = new Intent(getApplicationContext(),CartSummaryActivity.class);
-                                   startActivity(i);
-                                   finish();
+                                    Intent i = new Intent(getApplicationContext(), CartSummaryActivity.class);
+                                    startActivity(i);
+                                    finish();
 
                                 } else {
                                     Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
@@ -139,12 +137,29 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
                 @Override
                 public Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> data3 = new HashMap<String, String>();
-                    data3.put("billing_address_id", billid);
-                    if (shipid == null) {
-                        data3.put("shipping_address_id", billid);
+                    if (billid != null && shipid != null) {
+                        data3.put("billing_address_id", billid);
+                        data3.put("shipping_address_id", shipid);
+                    } else {
+                        if (shipid == null) {
+                            data3.put("shipping_address_id", "");
+                            data3.put("billing_address_id", billid);
+                        } else {
+                            data3.put("shipping_address_id", shipid);
+                            data3.put("billing_address_id", "");
+                        }
+
+                    }
+
+                   /* if (shipid == null) {
+                        data3.put("shipping_address_id", "");
+                        data3.put("billing_address_id", billid);
                     } else {
                         data3.put("shipping_address_id", shipid);
-                    }
+                        if(billid==null) {
+                            data3.put("billing_address_id", "");
+                        }
+                    }*/
                     return data3;
 
                 }
@@ -154,8 +169,6 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
         }
 
     }
-
-
 
 
     public class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -171,7 +184,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
                 fragment = new AddressListFragment();
             } else if (position == 1) {
                 fragment = new ShppingAddressFragment();
-               // fragment = new AddNewAddressFragment();
+                // fragment = new AddNewAddressFragment();
             }
             return fragment;
         }
@@ -192,7 +205,6 @@ public class SetupBillingAddressActivity extends AppCompatActivity  {
             return title;
         }
     }
-
 
 
 }

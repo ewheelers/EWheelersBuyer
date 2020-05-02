@@ -55,7 +55,7 @@
 
     <HorizontalScrollView
         android:id="@+id/chipgroup"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -122,7 +122,7 @@
         android:layout_marginRight="@dimen/padding_10"
         android:background="@color/white"
         app:iconifiedByDefault="false"
-        app:queryHint="Enter pincode" />
+        app:queryHint="Enter city" />
 
     <ProgressBar
         android:id="@+id/progress"

@@ -12,6 +12,8 @@
         android:src="@drawable/close" />
 
     <LinearLayout
+        android:layout_marginTop="@dimen/dimen_5dp"
+        android:layout_marginBottom="@dimen/dimen_5dp"
         android:id="@+id/filterLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,6 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/bycategory"
+                    android:checked="true"
                     android:text="By Categories"/>
                 <RadioButton
                     android:layout_width="match_parent"
@@ -56,7 +59,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.75"
+            android:padding="@dimen/dimen_5dp"
             android:orientation="vertical">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressf"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,6 +77,54 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/brands_list"
                 android:visibility="gone"/>
+
+            <RelativeLayout
+                android:id="@+id/relativeseekbar"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="60dp"
+                android:clipChildren="false">
+
+                <com.crystal.crystalrangeseekbar.widgets.BubbleThumbRangeSeekbar
+                    android:id="@+id/rangeSeekbar2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:corner_radius="10"
+                    app:bar_color="#C69E89"
+                    app:bar_highlight_color="#A54B17"
+                    app:left_thumb_color="#775E4F"
+                    app:right_thumb_color="#775E4F"
+                    app:left_thumb_color_pressed="#4C2D1A"
+                    app:right_thumb_color_pressed="#4C2D1A"
+                    app:data_type="_integer"/>
+
+                <TextView
+                    android:id="@+id/textMin2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:layout_below="@id/rangeSeekbar2"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="10dp"
+                    android:textSize="16dp"
+                    android:textColor="#000"/>
+
+                <TextView
+                    android:id="@+id/textMax2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:layout_below="@id/rangeSeekbar2"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 

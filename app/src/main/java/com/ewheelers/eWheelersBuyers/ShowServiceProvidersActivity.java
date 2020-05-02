@@ -218,6 +218,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                                                 serviceProvidersClass.setServiceprovider_shopname(identifier);
                                                 serviceProvidersClass.setServiceprovider_phone_number(uaphone);
                                                 serviceProvidersClass.setServiceprovider_address(uaautocomplete);
+                                                serviceProvidersClass.setCity(uacity);
                                                 serviceProvidersClass.setServiceprovider_latitude(ualatitude);
                                                 serviceProvidersClass.setServiceprovider_longitude(ualongitude);
                                                 double dis = Double.parseDouble(uadistance);
@@ -275,8 +276,8 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("latitude", String.valueOf(latitude));
                 data3.put("longitude", String.valueOf(longitude));
-                data3.put("zip", pincode);
-                //data3.put("address", address);
+                //data3.put("zip", pincode);
+                data3.put("address", pincode);
                 return data3;
             }
         };
@@ -427,8 +428,8 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("latitude", String.valueOf(latitude));
                 data3.put("longitude", String.valueOf(longitude));
-                data3.put("zip", zipcode);
-                //data3.put("address", address);
+                //data3.put("zip", zipcode);
+                data3.put("address", zipcode);
                 return data3;
             }
         };

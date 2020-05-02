@@ -18,6 +18,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/total_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,13 +101,24 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/clearcart"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Clear Cart" />
         <Button
             android:id="@+id/place_order"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Place Order" />
+</LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -118,6 +130,7 @@
         android:drawablePadding="@dimen/padding_10"
         android:text="Cart is Empty"
         android:textSize="16sp"
+        android:textColor="@color/Black"
         android:visibility="gone" />
 
 </RelativeLayout>

@@ -20,7 +20,7 @@
         app:cardCornerRadius="28dp">
 
         <ImageView
-            android:src="@drawable/parking"
+            android:src="@drawable/parkicon"
             android:padding="@dimen/dimen_5dp"
             android:id="@+id/roundedimage"
             android:layout_width="match_parent"

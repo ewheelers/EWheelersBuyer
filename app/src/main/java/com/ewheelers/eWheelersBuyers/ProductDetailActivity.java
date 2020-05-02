@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,12 +29,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -165,10 +168,13 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ExtendedFloatingActionButton extendedFloatingButton;
     Boolean isOpen = false;
     FloatingActionButton fab_main;
-    SearchView chooseserach;
+    android.widget.SearchView chooseserach;
+    ListView listView;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
     RelativeLayout clrelay;
     Dialog mBottomSheetDialog;
+    String attr_grp_cat_id;
+    ArrayList<String> strings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,12 +184,13 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         productId = getIntent().getStringExtra("productid");
 
-        Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
         clrelay = findViewById(R.id.clrelay);
+        listView = findViewById(R.id.searchAdapter);
         closereqbtnimg = findViewById(R.id.closereqbtn);
         offerstoshow = findViewById(R.id.offerstext);
         fab_main = findViewById(R.id.fab);
-        chooseserach = findViewById(R.id.chooseserach);
+        chooseserach = findViewById(R.id.searchview);
         extendedFloatingButton = findViewById(R.id.buybtn);
         requestTestDrive = findViewById(R.id.reqtestdrive);
         bookLayout = findViewById(R.id.booklayout);
@@ -200,6 +207,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         addressdealer = findViewById(R.id.dealers_list_address);
         changeTxt.setOnClickListener(this);
         testLayout.setOnClickListener(this);
+
         editTextSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -386,7 +394,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         dealers_List = findViewById(R.id.dealers_list);
 
 
-        mBottomSheetDialog = new Dialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        mBottomSheetDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         View sheetView = getLayoutInflater().inflate(R.layout.addons_layout, null);
         buywithtit = sheetView.findViewById(R.id.buywithtitle);
         buywithlistview = sheetView.findViewById(R.id.buywith_listview);
@@ -961,6 +969,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     buywithlistview.setAdapter(addonsAdapter);
                     addonsAdapter.notifyDataSetChanged();
 
+
                     GridLayoutManager gridLayoutManagerSimilar = new GridLayoutManager(ProductDetailActivity.this, 2);
                     similarproductsview.setLayoutManager(gridLayoutManagerSimilar);
                     productdetailsAdapterSimilar = new ProductdetailsAdapter(ProductDetailActivity.this, similarList);
@@ -1023,6 +1032,91 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         return optionselect;
     }
 
+    private void addcompare(String productId, String app_data) {
+        String tokenvalue = new SessionStorage().getStrings(ProductDetailActivity.this, SessionStorage.tokenvalue);
+        String Login_url = Apis.addcompare;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_SHORT);
+                                mySnackbar.show();
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                JSONObject jsonObjectDatatoSave = jsonObjectData.getJSONObject("dataToSave");
+                                attr_grp_cat_id = jsonObjectDatatoSave.getString("attr_grp_cat_id");
+                                JSONObject products = jsonObjectDatatoSave.getJSONObject("products");
+                                SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.dataToSave, jsonObjectDatatoSave.toString());
+                                compareView.setVisibility(View.VISIBLE);
+                                viewcount.setText("View " + products.length());
+                                SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productslength, String.valueOf(products.length()));
+                                if (products.length() == 3) {
+                                    fab_main.setVisibility(GONE);
+                                } else {
+                                    fab_main.setVisibility(View.VISIBLE);
+                                }
+                               /* if (products.length() == 1) {
+                                    compareView.setVisibility(View.VISIBLE);
+                                    //viewcount.setText("View "+products.length());
+                                    comparetxt.setText("added");
+                                    comparetxt.setEnabled(false);
+                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
+                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid, productId);
+                                } else if (products.length() == 2) {
+                                   // viewcount.setText("View "+products.length());
+                                    comparetxt.setText("added");
+                                    comparetxt.setEnabled(false);
+                                    //SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
+                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid2, productId);
+                                }*/
+
+
+                            } else {
+                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_SHORT);
+                                mySnackbar.show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                if (app_data == null) {
+                    data3.put("selProdId", productId);
+                } else {
+                    data3.put("selProdId", productId);
+                    data3.put("appData", app_data);
+                }
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -1037,18 +1131,22 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     chooseserach.startAnimation(fab_close);
                     fab_main.startAnimation(fab_anticlock);
                     isOpen = false;
+                    listView.setVisibility(GONE);
                 } else {
                     chooseserach.setVisibility(View.VISIBLE);
                     chooseserach.startAnimation(fab_open);
                     fab_main.startAnimation(fab_clock);
                     isOpen = true;
+                    openchoosesearch(attr_grp_cat_id);
                 }
-                break;
-            case R.id.chooseserach:
                 break;
             case R.id.buybtn:
                 //addTocart(selproductid, "BUY");
-                mBottomSheetDialog.show();
+                if (buyDetailsList.isEmpty()) {
+                    mBottomSheetDialog.dismiss();
+                } else {
+                    mBottomSheetDialog.show();
+                }
                 break;
             case R.id.reqtestdrive:
                 getBottomLayout();
@@ -1208,7 +1306,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.cart_count:
                 Intent inte = new Intent(getApplicationContext(), CartListingActivity.class);
-                inte.putExtra("selid",selproductid);
+                inte.putExtra("selid", selproductid);
                 startActivity(inte);
                 break;
             case R.id.add_cart:
@@ -1336,9 +1434,34 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-    private void addcompare(String productId, String app_data) {
+    private void openchoosesearch(String attr_grp_cat_id) {
+        chooseserach.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                listView.setVisibility(GONE);
+                addcompare(splitString(query),new SessionStorage().getStrings(ProductDetailActivity.this, SessionStorage.dataToSave));
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty()){
+                    listView.setVisibility(View.VISIBLE);
+                    getautotag(attr_grp_cat_id, "");
+                }else {
+                    listView.setVisibility(View.VISIBLE);
+                    getautotag(attr_grp_cat_id, newText);
+                   // Toast.makeText(ProductDetailActivity.this, "catid" + attr_grp_cat_id + newText, Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void getautotag(String attr_grp_cat_id,String searchtxt) {
+        strings.clear();
         String tokenvalue = new SessionStorage().getStrings(ProductDetailActivity.this, SessionStorage.tokenvalue);
-        String Login_url = Apis.addcompare;
+        String Login_url = Apis.autocompletesearch;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
@@ -1349,36 +1472,24 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
-                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_SHORT);
-                                mySnackbar.show();
                                 JSONObject jsonObjectData = jsonObject.getJSONObject("data");
-                                JSONObject jsonObjectDatatoSave = jsonObjectData.getJSONObject("dataToSave");
-                                String attr_grp_cat_id = jsonObjectDatatoSave.getString("attr_grp_cat_id");
-                                JSONObject products = jsonObjectDatatoSave.getJSONObject("products");
-                                SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.dataToSave, jsonObjectDatatoSave.toString());
-                                compareView.setVisibility(View.VISIBLE);
-                                viewcount.setText("View " + products.length());
-                                SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productslength, String.valueOf(products.length()));
-                                if (products.length() == 3) {
-                                    fab_main.setVisibility(GONE);
-                                } else {
-                                    fab_main.setVisibility(View.VISIBLE);
+                                JSONArray jsonArray = jsonObjectData.getJSONArray("productList");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsons = jsonArray.getJSONObject(i);
+                                    String pid = jsons.getString("id");
+                                    String pname = jsons.getString("name");
+                                    strings.add(pid+" - "+pname);
                                 }
-                               /* if (products.length() == 1) {
-                                    compareView.setVisibility(View.VISIBLE);
-                                    //viewcount.setText("View "+products.length());
-                                    comparetxt.setText("added");
-                                    comparetxt.setEnabled(false);
-                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
-                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid, productId);
-                                } else if (products.length() == 2) {
-                                   // viewcount.setText("View "+products.length());
-                                    comparetxt.setText("added");
-                                    comparetxt.setEnabled(false);
-                                    //SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.compareview, "1");
-                                    SessionStorage.saveString(ProductDetailActivity.this, SessionStorage.productid2, productId);
-                                }*/
 
+                                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(ProductDetailActivity.this, android.R.layout.simple_dropdown_item_1line, strings);
+                                listView.setAdapter(itemsAdapter);
+                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        chooseserach.setQuery(strings.get(position),true);
+
+                                    }
+                                });
 
                             } else {
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_SHORT);
@@ -1406,18 +1517,32 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                if (app_data == null) {
-                    data3.put("selProdId", productId);
-                } else {
-                    data3.put("selProdId", productId);
-                    data3.put("appData", app_data);
-                }
+                data3.put("attr_grp_cat_id", attr_grp_cat_id);
+                data3.put("keyword", searchtxt);
                 return data3;
 
             }
         };
         strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    public String splitString(String str)
+    {
+        StringBuffer alpha = new StringBuffer(),
+                num = new StringBuffer(), special = new StringBuffer();
+
+        for (int i=0; i<str.length(); i++)
+        {
+            if (Character.isDigit(str.charAt(i)))
+                num.append(str.charAt(i));
+            else if(Character.isAlphabetic(str.charAt(i)))
+                alpha.append(str.charAt(i));
+            else
+                special.append(str.charAt(i));
+        }
+
+        return String.valueOf(num);
     }
 
     private void showTruitonDatePickerDialogendRent(View v) {
@@ -1661,6 +1786,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+            i.putExtra("selid", selproductid);
             startActivity(i);
         }
     }
@@ -1670,6 +1796,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+            i.putExtra("selid", selproductid);
             startActivity(i);
         }
     }
@@ -1758,7 +1885,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 cartCount.setText(cartcount);
                                 if (buttontext.equals("BUY")) {
                                     Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
-                                    i.putExtra("selid",selproductid);
+                                    i.putExtra("selid", selproductid);
                                     startActivity(i);
                                 } else if (buttontext.equals("addcart") || buttontext.equals("rent")) {
                                     Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
@@ -1767,6 +1894,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                     mySnackbar.show();
                                 } else if (buttontext.equals("Booknow")) {
                                     Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+                                    i.putExtra("selid", selproductid);
                                     startActivity(i);
                                 }
                             } else {
@@ -1857,9 +1985,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onBackPressed(){
-        Intent i = new Intent(getApplicationContext(),NavAppBarActivity.class);
+    public void onBackPressed() {
+        Intent i = new Intent(getApplicationContext(), NavAppBarActivity.class);
         startActivity(i);
-        finish();
+        //finish();
     }
 }

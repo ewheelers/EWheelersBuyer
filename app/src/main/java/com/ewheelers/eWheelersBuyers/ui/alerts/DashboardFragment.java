@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -45,13 +47,16 @@ public class DashboardFragment extends Fragment {
     private DashboardViewModel dashboardViewModel;
     List<NotificationsAlertModel> notificationsAlertModels = new ArrayList<>();
     String tokenvalue,unread;
-
+    ProgressBar progressBar;
+    TextView textViewempty;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
                 ViewModelProviders.of(this).get(DashboardViewModel.class);
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
         recyclerView = root.findViewById(R.id.alerts_list);
+        progressBar = root.findViewById(R.id.progressbar);
+        textViewempty = root.findViewById(R.id.emptyview);
         tokenvalue = new SessionStorage().getStrings(getActivity(), SessionStorage.tokenvalue);
         alertslist();
         dashboardViewModel.getText().observe(this, new Observer<String>() {
@@ -64,6 +69,7 @@ public class DashboardFragment extends Fragment {
     }
 
     public void alertslist() {
+        progressBar.setVisibility(View.VISIBLE);
         notificationsAlertModels.clear();
         String Login_url = Apis.notificationslist;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
@@ -98,16 +104,22 @@ public class DashboardFragment extends Fragment {
                                     notificationsAlertModels.add(notificationsAlertModel);
                                 }
                                 if(notificationsAlertModels.isEmpty()){
-                                    Toast.makeText(getActivity(), "No notifications to show", Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getActivity(), "No notifications to show", Toast.LENGTH_LONG).show();
+                                    progressBar.setVisibility(View.GONE);
+                                    textViewempty.setVisibility(View.VISIBLE);
                                 }else {
+                                    textViewempty.setVisibility(View.GONE);
                                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
                                     recyclerView.setLayoutManager(linearLayoutManager);
                                     alertsAdapter = new AlertsAdapter(getActivity(), notificationsAlertModels);
                                     recyclerView.setAdapter(alertsAdapter);
                                     alertsAdapter.notifyDataSetChanged();
+                                    progressBar.setVisibility(View.GONE);
+
                                 }
                             } else {
-                                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                                textViewempty.setVisibility(View.VISIBLE);
                             }
 
                         } catch (JSONException e) {
@@ -117,6 +129,7 @@ public class DashboardFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error :" + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }

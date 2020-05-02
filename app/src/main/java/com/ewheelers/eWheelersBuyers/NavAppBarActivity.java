@@ -182,6 +182,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
+                i.putExtra("selid","");
                 startActivity(i);
             }
         });
@@ -283,7 +284,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             ActivityCompat.requestPermissions(NavAppBarActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         } else {
-            Toast.makeText(mContext, "You need have granted permission", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(mContext, "You need have granted permission", Toast.LENGTH_SHORT).show();
             newgps = new NewGPSTracker(mContext, NavAppBarActivity.this);
 
             // Check if GPS enabled

@@ -32,7 +32,6 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
     private Context context;
     private List<HomeCollectionProducts> homeCollectionProducts;
     private ImageLoader imageLoader;
-    int colType;
 
     public CollectionProductsAdapter(Context context, List<HomeCollectionProducts> homeCollectionProducts) {
         this.context = context;
@@ -124,6 +123,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                     holder.brand_image.setImageUrl(homeCollectionProducts.get(position).getBrandimageurl(), imageLoaderb);
                 }
 
+                Log.e("bran",homeCollectionProducts.get(position).getBrandid());
                 holder.cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

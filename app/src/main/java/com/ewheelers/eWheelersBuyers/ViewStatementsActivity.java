@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -36,16 +38,19 @@ String tokenValue;
 TextView rewardPoints,titleTxt;
 List<StatementsModel> statementsModels = new ArrayList<>();
 StatementsAdapter statementsAdapter;
+TextView textViewempty;
+ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_statements);
 
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
-
+        textViewempty = findViewById(R.id.emptyview);
         rewardPoints = findViewById(R.id.reward_points);
         type_statement = getIntent().getStringExtra("type");
         recyclerView = findViewById(R.id.recycler_reward);
+        progressBar = findViewById(R.id.progress);
         titleTxt = findViewById(R.id.title);
         if(type_statement.equals("rewards")) {
             titleTxt.setText("Reward Points");
@@ -64,6 +69,7 @@ StatementsAdapter statementsAdapter;
     }
 
     private void getCoupons() {
+        progressBar.setVisibility(View.VISIBLE);
         statementsModels.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.offerslisting;
@@ -96,13 +102,21 @@ StatementsAdapter statementsAdapter;
                             statementsModel.setTypeLayout(2);
                             statementsModels.add(statementsModel);
                         }
-
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this,RecyclerView.VERTICAL,false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this,statementsModels);
-                        recyclerView.setAdapter(statementsAdapter);
-                        statementsAdapter.notifyDataSetChanged();
-
+                        if(statementsModels.isEmpty()){
+                            progressBar.setVisibility(View.GONE);
+                            textViewempty.setVisibility(View.VISIBLE);
+                        }else {
+                            progressBar.setVisibility(View.GONE);
+                            textViewempty.setVisibility(View.GONE);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this, RecyclerView.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this, statementsModels);
+                            recyclerView.setAdapter(statementsAdapter);
+                            statementsAdapter.notifyDataSetChanged();
+                        }
+                    }else {
+                        progressBar.setVisibility(View.GONE);
+                        textViewempty.setVisibility(View.VISIBLE);
                     }
 
 
@@ -114,6 +128,7 @@ StatementsAdapter statementsAdapter;
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -139,6 +154,7 @@ StatementsAdapter statementsAdapter;
     }
 
     private void getCreditStatement() {
+        progressBar.setVisibility(View.VISIBLE);
         statementsModels.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.getcreditpoints;
@@ -176,13 +192,20 @@ StatementsAdapter statementsAdapter;
                             statementsModel.setTypeLayout(1);
                             statementsModels.add(statementsModel);
                         }
+                        if(statementsModels.isEmpty()){
+                            textViewempty.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
 
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this,RecyclerView.VERTICAL,false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this,statementsModels);
-                        recyclerView.setAdapter(statementsAdapter);
-                        statementsAdapter.notifyDataSetChanged();
+                        }else {
+                            progressBar.setVisibility(View.GONE);
+                            textViewempty.setVisibility(View.GONE);
 
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this, RecyclerView.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this, statementsModels);
+                            recyclerView.setAdapter(statementsAdapter);
+                            statementsAdapter.notifyDataSetChanged();
+                        }
                     }
 
 
@@ -194,6 +217,7 @@ StatementsAdapter statementsAdapter;
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -219,6 +243,7 @@ StatementsAdapter statementsAdapter;
     }
 
     public void rewardStatement(){
+        progressBar.setVisibility(View.VISIBLE);
         statementsModels.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.getrewardpoints;
@@ -250,13 +275,19 @@ StatementsAdapter statementsAdapter;
                             statementsModel.setTypeLayout(0);
                             statementsModels.add(statementsModel);
                         }
+                        if(statementsModels.isEmpty()){
+                            textViewempty.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
 
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this,RecyclerView.VERTICAL,false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this,statementsModels);
-                        recyclerView.setAdapter(statementsAdapter);
-                        statementsAdapter.notifyDataSetChanged();
-
+                        }else {
+                            progressBar.setVisibility(View.GONE);
+                            textViewempty.setVisibility(View.GONE);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ViewStatementsActivity.this, RecyclerView.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            statementsAdapter = new StatementsAdapter(ViewStatementsActivity.this, statementsModels);
+                            recyclerView.setAdapter(statementsAdapter);
+                            statementsAdapter.notifyDataSetChanged();
+                        }
                     }
 
 
@@ -268,6 +299,7 @@ StatementsAdapter statementsAdapter;
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 

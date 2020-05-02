@@ -1,201 +1,219 @@
 package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeModelClass;
 import com.ewheelers.eWheelersBuyers.R;
+import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
+import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAdapter.HomeHolder> {
     Context context;
     private List<HomeModelClass> homeCollectionProducts;
-    private List<HomeCollectionProducts> homeCollectionProductsList = new ArrayList<>();
-    private List<HomeCollectionProducts> homeCollectionCategoryList = new ArrayList<>();
-    private List<HomeCollectionProducts> homeCollectionbannersList = new ArrayList<>();
-    private List<HomeCollectionProducts> homeCollectionshopsList = new ArrayList<>();
+    private List<HomeCollectionProducts> homeCollectionProductsSliders;
 
-    private ArrayList<ArrayList<Integer>> mDataList;
-    private SparseIntArray positionList = new SparseIntArray();
-
-    public HomeCollectionAdapter(Context context, List<HomeModelClass> homeCollectionProducts) {
+    public HomeCollectionAdapter(Context context, List<HomeModelClass> homeCollectionProducts, List<HomeCollectionProducts> homeCollectionProductsSliders) {
         this.context = context;
         this.homeCollectionProducts = homeCollectionProducts;
-    }
+        this.homeCollectionProductsSliders = homeCollectionProductsSliders;
 
+    }
 
     @NonNull
     @Override
     public HomeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = null;
-        switch (viewType) {
-            case HomeModelClass.PRODUCTLAYOUT:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_heading_layout, parent, false);
-                return new HomeHolder(v);
-            case HomeModelClass.CATEGORYLAYOUT:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.cat_layout, parent, false);
-                return new HomeHolder(v);
-            case HomeModelClass.BRANDLAYOUT:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.brandslayout, parent, false);
-                return new HomeHolder(v);
-            case HomeModelClass.SHOPSLAYOUT:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.shops_layout, parent, false);
-                return new HomeHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_heading_layout, parent, false);
+        return new HomeHolder(v);
 
-        }
-        return null;
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeHolder holder, int position) {
-        final int itemType = getItemViewType(position);
-        switch (itemType) {
-            case HomeModelClass.PRODUCTLAYOUT:
-                homeCollectionProductsList.clear();
-                holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
-                for (int j = 0; j < homeCollectionProducts.get(position).getJsonArraylist().length(); j++) {
-                    try {
-                        JSONObject products = homeCollectionProducts.get(position).getJsonArraylist().getJSONObject(j);
-                        String productName = products.getString("product_name");
-                        String productPrice = products.getString("selprod_price");
-                        String productImageurl = products.getString("product_image_url");
-                        String selproductid = products.getString("selprod_id");
-                        String productid = products.getString("product_id");
-                        String productcatname = products.getString("prodcat_name");
-                        String isSell = products.getString("is_sell");
-                        String isRent = products.getString("is_rent");
-                        String rentPrice = products.getString("rent_price");
-                        String rentaltype = products.getString("rental_type");
+        //holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
+        String prima = homeCollectionProducts.get(position).getPrimaryrecord();
+        int prodarrlenth = homeCollectionProducts.get(position).getHomeCollectionProducts().size();
+        int catarrlenth = homeCollectionProducts.get(position).getHomeCollectionProductsCategories().size();
+        int shopsarrlenth = homeCollectionProducts.get(position).getHomeCollectionProductsShops().size();
+        int brandsarrlenth = homeCollectionProducts.get(position).getHomeCollectionProductsBrands().size();
 
-                        HomeCollectionProducts homeCollectionProducts1 = new HomeCollectionProducts();
-                        homeCollectionProducts1.setProdcat_name(productcatname);
-                        homeCollectionProducts1.setProduct_name(productName);
-                        homeCollectionProducts1.setSelprod_price(productPrice);
-                        homeCollectionProducts1.setProduct_image_url(productImageurl);
-                        homeCollectionProducts1.setSelprod_id(selproductid);
-                        homeCollectionProducts1.setProduct_id(productid);
-                        homeCollectionProducts1.setIs_rent(isRent);
-                        homeCollectionProducts1.setType(0);
-                        homeCollectionProductsList.add(homeCollectionProducts1);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+        holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
 
+
+        String collType = homeCollectionProducts.get(position).getCollectiontype();
+
+        if (position == 0) {
+            holder.relativeLayout.setVisibility(View.VISIBLE);
+        }
+
+        if(position==2){
+            holder.linearLayout.setVisibility(View.VISIBLE);
+            ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+            imageLoader.get("https:/www.ewheelers.in/image/slide/24/3/1/MOBILE?t=1580018050", ImageLoader.getImageListener(holder.networkImageView1, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+            holder.networkImageView1.setImageUrl("https://www.ewheelers.in//image//slide//24//3//1//MOBILE?t=1580018050", imageLoader);
+
+            imageLoader.get("https://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", ImageLoader.getImageListener(holder.networkImageView2, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+            holder.networkImageView2.setImageUrl("https://www.ewheelers.in/image/slide/19/3/1/MOBILE?t=1580017670", imageLoader);
+            holder.testlayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("onlytestdrives", "1");
+                    intent.putExtra("type", "Test Drives");
+                    context.startActivity(intent);
                 }
-                CollectionProductsAdapter collectionProductsAdapter = new CollectionProductsAdapter(context, homeCollectionProductsList);
+            });
+            holder.rentlayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("onlytestdrives", "0");
+                    intent.putExtra("type", "Rental Bikes");
+                    context.startActivity(intent);
+                }
+            });
+        }
+
+        if (collType.equals("1")) {
+
+            if(prodarrlenth>=Integer.parseInt(prima)){
+                holder.showall.setVisibility(View.VISIBLE);
+            }else {
+                holder.showall.setVisibility(View.VISIBLE);
+            }
+
+            holder.progressBar.setVisibility(View.VISIBLE);
+            if (homeCollectionProducts.get(position).getHomeCollectionProducts().isEmpty()) {
+                holder.progressBar.setVisibility(View.GONE);
+            } else {
+                holder.progressBar.setVisibility(View.GONE);
+                CollectionProductsAdapter collectionbannersAdapter = new CollectionProductsAdapter(context, homeCollectionProducts.get(position).getHomeCollectionProducts());
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
                 holder.recyclerlist.setLayoutManager(linearLayoutManager);
-                holder.recyclerlist.setAdapter(collectionProductsAdapter);
-                //collectionProductsAdapter.notifyDataSetChanged();
-                break;
-            case HomeModelClass.CATEGORYLAYOUT:
-                homeCollectionCategoryList.clear();
-                holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
-                for (int s = 0; s < homeCollectionProducts.get(position).getJsonArraylist().length(); s++) {
-                    try {
-                        JSONObject jsonObjectcat = homeCollectionProducts.get(position).getJsonArraylist().getJSONObject(s);
-                        String prodcat_id = jsonObjectcat.getString("prodcat_id");
-                        String prodcat_name = jsonObjectcat.getString("prodcat_name");
-                        String prodcat_description = jsonObjectcat.getString("prodcat_description");
-                        String category_image_url = jsonObjectcat.getString("category_image_url");
-                        HomeCollectionProducts homeCollectionProducts2 = new HomeCollectionProducts();
-                        homeCollectionProducts2.setProdcategory_name(prodcat_name);
-                        homeCollectionProducts2.setProdcategory_imageurl(category_image_url);
-                        homeCollectionProducts2.setProdcategory_id(prodcat_id);
-                        homeCollectionProducts2.setType(3);
-                        homeCollectionCategoryList.add(homeCollectionProducts2);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                CollectionProductsAdapter collectionCategoryAdapter = new CollectionProductsAdapter(context, homeCollectionCategoryList);
-                LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
-                holder.recyclerlist.setLayoutManager(linearLayoutManager2);
-                holder.recyclerlist.setAdapter(collectionCategoryAdapter);
-                collectionCategoryAdapter.notifyDataSetChanged();
-                break;
-            case HomeModelClass.SHOPSLAYOUT:
-                homeCollectionshopsList.clear();
-                holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
-                for (int k = 0; k < homeCollectionProducts.get(position).getJsonArraylist().length(); k++) {
-                    JSONObject jsonObjectshop1 = null;
-                    try {
-                        jsonObjectshop1 = homeCollectionProducts.get(position).getJsonArraylist().getJSONObject(k);
-                        String shopbanner = jsonObjectshop1.getString("shop_banner");
-                        String shop_id = jsonObjectshop1.getString("shop_id");
-                        String shop_user_id = jsonObjectshop1.getString("shop_user_id");
-                        String shop_name = jsonObjectshop1.getString("shop_name");
-                        String country_name = jsonObjectshop1.getString("country_name");
-                        String state_name = jsonObjectshop1.getString("state_name");
-                        String rating = jsonObjectshop1.getString("rating");
-                        String shop_logo = jsonObjectshop1.getString("shop_logo");
-
-                        HomeCollectionProducts homeCollectionProducts3 = new HomeCollectionProducts();
-                        homeCollectionProducts3.setShopbanner(shopbanner);
-                        homeCollectionProducts3.setShopid(shop_id);
-                        homeCollectionProducts3.setShoplogo(shop_logo);
-                        homeCollectionProducts3.setShopname(shop_name);
-                        homeCollectionProducts3.setShopuserid(shop_user_id);
-                        homeCollectionProducts3.setCountryname(country_name);
-                        homeCollectionProducts3.setStatename(state_name);
-                        homeCollectionProducts3.setRating(rating);
-                        homeCollectionProducts3.setType(4);
-                        homeCollectionshopsList.add(homeCollectionProducts3);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                CollectionProductsAdapter collectionShopsAdapter = new CollectionProductsAdapter(context, homeCollectionshopsList);
-                LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
-                holder.recyclerlist.setLayoutManager(linearLayoutManager3);
-                holder.recyclerlist.setAdapter(collectionShopsAdapter);
-                collectionShopsAdapter.notifyDataSetChanged();
-                break;
-            case HomeModelClass.BRANDLAYOUT:
-                homeCollectionbannersList.clear();
-                holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
-                for (int d = 0; d < homeCollectionProducts.get(position).getJsonArraylist().length(); d++) {
-                    try {
-                        JSONObject products = homeCollectionProducts.get(position).getJsonArraylist().getJSONObject(d);
-                        String brandid = products.getString("brand_id");
-                        String brandname = products.getString("brand_name");
-                        String brandimage = products.getString("brand_image");
-
-                        HomeCollectionProducts homeCollectionProducts4 = new HomeCollectionProducts();
-                        homeCollectionProducts4.setBrandimageurl(brandimage);
-                        homeCollectionProducts4.setBrandid(brandid);
-                        homeCollectionProducts4.setBrandname(brandname);
-                        homeCollectionProducts4.setType(1);
-                        homeCollectionbannersList.add(homeCollectionProducts4);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                CollectionProductsAdapter collectionbannersAdapter = new CollectionProductsAdapter(context, homeCollectionbannersList);
-                GridLayoutManager linearLayoutManager4 = new GridLayoutManager(context, 3);
-                holder.recyclerlist.setLayoutManager(linearLayoutManager4);
                 holder.recyclerlist.setAdapter(collectionbannersAdapter);
-                collectionbannersAdapter.notifyDataSetChanged();
+            }
 
-                break;
+            holder.showall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("allpopularbikes", homeCollectionProducts.get(position).getCollectionId());
+                    intent.putExtra("instock", 1);
+                    intent.putExtra("type", "eBikes");
+                    context.startActivity(intent);
+                }
+            });
+
         }
+
+        if (collType.equals("2")) {
+            if(catarrlenth>=Integer.parseInt(prima)){
+                holder.showall.setVisibility(View.VISIBLE);
+            }else {
+                holder.showall.setVisibility(View.VISIBLE);
+            }
+            holder.progressBar.setVisibility(View.VISIBLE);
+            if (homeCollectionProducts.get(position).getHomeCollectionProductsCategories().isEmpty()) {
+                holder.progressBar.setVisibility(View.GONE);
+            } else {
+                holder.progressBar.setVisibility(View.GONE);
+                CollectionProductsAdapter collectionbannersAdapter = new CollectionProductsAdapter(context, homeCollectionProducts.get(position).getHomeCollectionProductsCategories());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+                holder.recyclerlist.setLayoutManager(linearLayoutManager);
+                holder.recyclerlist.setAdapter(collectionbannersAdapter);
+            }
+            holder.showall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("allcategories", homeCollectionProducts.get(position).getCollectionId());
+                    intent.putExtra("type", "Categories");
+                    context.startActivity(intent);
+                }
+            });
+        }
+
+        if (collType.equals("3")) {
+            if(shopsarrlenth>=Integer.parseInt(prima)){
+                holder.showall.setVisibility(View.VISIBLE);
+            }else {
+                holder.showall.setVisibility(View.VISIBLE);
+            }
+            holder.progressBar.setVisibility(View.VISIBLE);
+            if (homeCollectionProducts.get(position).getHomeCollectionProductsShops().isEmpty()) {
+                holder.progressBar.setVisibility(View.GONE);
+            } else {
+                holder.progressBar.setVisibility(View.GONE);
+                CollectionProductsAdapter collectionbannersAdapter = new CollectionProductsAdapter(context, homeCollectionProducts.get(position).getHomeCollectionProductsShops());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+                holder.recyclerlist.setLayoutManager(linearLayoutManager);
+                holder.recyclerlist.setAdapter(collectionbannersAdapter);
+            }
+
+            holder.showall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("allshops", homeCollectionProducts.get(position).getCollectionId());
+                    intent.putExtra("type", "Dealers");
+                    context.startActivity(intent);
+                }
+            });
+        }
+
+        if (collType.equals("4")) {
+            if(brandsarrlenth>=Integer.parseInt(prima)){
+                holder.showall.setVisibility(View.VISIBLE);
+            }else {
+                holder.showall.setVisibility(View.VISIBLE);
+            }
+            holder.progressBar.setVisibility(View.VISIBLE);
+            if (homeCollectionProducts.get(position).getHomeCollectionProductsBrands().isEmpty()) {
+                holder.progressBar.setVisibility(View.GONE);
+            } else {
+                holder.progressBar.setVisibility(View.GONE);
+                CollectionProductsAdapter collectionbannersAdapter = new CollectionProductsAdapter(context, homeCollectionProducts.get(position).getHomeCollectionProductsBrands());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+                holder.recyclerlist.setLayoutManager(linearLayoutManager);
+                holder.recyclerlist.setAdapter(collectionbannersAdapter);
+            }
+            holder.showall.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent  intent = new Intent(context, ShowAlleBikesActivity.class);
+                    intent.putExtra("allbrands", homeCollectionProducts.get(position).getCollectionId());
+                    intent.putExtra("type", "Brands");
+                    context.startActivity(intent);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -203,20 +221,94 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
         return homeCollectionProducts.size();
     }
 
-    @Override
+   /* @Override
     public int getItemViewType(int position) {
         return homeCollectionProducts.get(position).getTypeoflayout();
-    }
-
+    }*/
 
     public class HomeHolder extends RecyclerView.ViewHolder {
         TextView title;
         RecyclerView recyclerlist;
+        TextView showall;
+        ProgressBar progressBar;
+        RelativeLayout relativeLayout;
+        private ViewPager mPager;
+        private int currentPage = 0;
+        private int NUM_PAGES = 0;
+        private ArrayList<String> ImagesArray = new ArrayList<String>();
+
+        LinearLayout linearLayout,testlayout,rentlayout;
+        NetworkImageView networkImageView1,networkImageView2;
 
         public HomeHolder(@NonNull View itemView) {
             super(itemView);
-            recyclerlist = itemView.findViewById(R.id.collection_listview);
+            recyclerlist = itemView.findViewById(R.id.recycl);
             title = itemView.findViewById(R.id.collection_title);
+            showall = itemView.findViewById(R.id.showall);
+            progressBar = itemView.findViewById(R.id.progress);
+            relativeLayout = itemView.findViewById(R.id.screen);
+            linearLayout = itemView.findViewById(R.id.buttonslay);
+            networkImageView1 = itemView.findViewById(R.id.book_test_drive);
+            networkImageView2 = itemView.findViewById(R.id.rent_ebike);
+            testlayout = itemView.findViewById(R.id.testDrive_layout);
+            rentlayout = itemView.findViewById(R.id.rent_layout);
+
+            if (homeCollectionProductsSliders != null) {
+                for (int i = 0; i < homeCollectionProductsSliders.size(); i++)
+                    ImagesArray.add(homeCollectionProductsSliders.get(i).getSlideImageurl());
+            }
+            mPager = (ViewPager) itemView.findViewById(R.id.pager);
+            mPager.setAdapter(new SlidingImage_Adapter(context, ImagesArray));
+
+            CirclePageIndicator indicator = (CirclePageIndicator) itemView.findViewById(R.id.indicator);
+            indicator.setViewPager(mPager);
+
+            final float density = context.getResources().getDisplayMetrics().density;
+
+//Set circle indicator radius
+            indicator.setRadius(5 * density);
+
+            NUM_PAGES = homeCollectionProductsSliders.size();
+
+            // Auto start of viewpager
+            final Handler handler = new Handler();
+            final Runnable Update = new Runnable() {
+                public void run() {
+                    if (currentPage == NUM_PAGES) {
+                        currentPage = 0;
+                    }
+                    mPager.setCurrentItem(currentPage++, false);
+                }
+            };
+            Timer swipeTimer = new Timer();
+            swipeTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    handler.post(Update);
+                }
+            }, 4000, 4000);
+
+            // Pager listener over indicator
+            indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+                @Override
+                public void onPageSelected(int position) {
+                    currentPage = position;
+
+                }
+
+                @Override
+                public void onPageScrolled(int pos, float arg1, int arg2) {
+
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int pos) {
+
+                }
+            });
+
+
         }
     }
 

@@ -1,37 +1,84 @@
 package com.ewheelers.eWheelersBuyers.ModelClass;
 
+import android.view.View;
+
 import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class HomeModelClass implements Serializable {
-    public static final int PRODUCTLAYOUT=0;
-    public static final int CATEGORYLAYOUT=1;
-    public static final int BRANDLAYOUT=2;
-    public static final int SHOPSLAYOUT=3;
+    public static final int PRODUCTLAYOUT=1;
+    public static final int BANNERLAYOUT=0;
 
     int typeoflayout;
+    String collectionId;
+    String primaryrecord;
     String headcatTitle;
     String collectiontype;
+    String totproducts;
     List<HomeCollectionProducts> homeCollectionProducts;
-    List<JSONArray> jsonArray;
-    JSONArray jsonArraylist;
+    List<HomeCollectionProducts> homeCollectionProductsBrands;
+    List<HomeCollectionProducts> homeCollectionProductsShops;
+    List<HomeCollectionProducts> homeCollectionProductsCategories;
+    List<HomeCollectionProducts> homeCollectionProductsSlidersList;
 
-    public JSONArray getJsonArraylist() {
-        return jsonArraylist;
+    public String getTotproducts() {
+        return totproducts;
     }
 
-    public void setJsonArraylist(JSONArray jsonArraylist) {
-        this.jsonArraylist = jsonArraylist;
+    public void setTotproducts(String totproducts) {
+        this.totproducts = totproducts;
     }
 
-    public List<JSONArray> getJsonArray() {
-        return jsonArray;
+    public List<HomeCollectionProducts> getHomeCollectionProductsSlidersList() {
+        return homeCollectionProductsSlidersList;
     }
 
-    public void setJsonArray(List<JSONArray> jsonArray) {
-        this.jsonArray = jsonArray;
+    public void setHomeCollectionProductsSlidersList(List<HomeCollectionProducts> homeCollectionProductsSlidersList) {
+        this.homeCollectionProductsSlidersList = homeCollectionProductsSlidersList;
+    }
+
+    public List<HomeCollectionProducts> getHomeCollectionProductsCategories() {
+        return homeCollectionProductsCategories;
+    }
+
+    public void setHomeCollectionProductsCategories(List<HomeCollectionProducts> homeCollectionProductsCategories) {
+        this.homeCollectionProductsCategories = homeCollectionProductsCategories;
+    }
+
+    public List<HomeCollectionProducts> getHomeCollectionProductsShops() {
+        return homeCollectionProductsShops;
+    }
+
+    public void setHomeCollectionProductsShops(List<HomeCollectionProducts> homeCollectionProductsShops) {
+        this.homeCollectionProductsShops = homeCollectionProductsShops;
+    }
+
+    public List<HomeCollectionProducts> getHomeCollectionProductsBrands() {
+        return homeCollectionProductsBrands;
+    }
+
+    public void setHomeCollectionProductsBrands(List<HomeCollectionProducts> homeCollectionProductsBrands) {
+        this.homeCollectionProductsBrands = homeCollectionProductsBrands;
+    }
+
+
+
+    public String getPrimaryrecord() {
+        return primaryrecord;
+    }
+
+    public void setPrimaryrecord(String primaryrecord) {
+        this.primaryrecord = primaryrecord;
+    }
+
+    public String getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(String collectionId) {
+        this.collectionId = collectionId;
     }
 
     public int getTypeoflayout() {

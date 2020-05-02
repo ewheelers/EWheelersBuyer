@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -41,12 +43,16 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
     SwipeRefreshLayout mSwipeRefreshLayout;
     TextView goBack;
     androidx.appcompat.widget.SearchView searchView;
+    LinearLayout linearLayout;
+    Button buttonshopnow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_test_drives);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
         recyclerView = findViewById(R.id.testdrive_list);
+        linearLayout = findViewById(R.id.emptyView);
+        buttonshopnow = findViewById(R.id.shop_now);
         goBack = findViewById(R.id.goback);
         searchView = findViewById(R.id.searchview);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
@@ -86,9 +92,13 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent i = new Intent(MyTestDrivesActivity.this,NavAppBarActivity.class);
-                startActivity(i);
-                finish();*/
+                onBackPressed();
+            }
+        });
+
+        buttonshopnow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 onBackPressed();
             }
         });
@@ -136,18 +146,23 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                             myTestDriveModel.setSellername(dealrename);
                             myTestDriveModelList.add(myTestDriveModel);
                         }
-
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyTestDrivesActivity.this,RecyclerView.VERTICAL,false);
-                        recyclerView.setLayoutManager(linearLayoutManager);
-                        myTestDrivesAdapter = new MyTestDrivesAdapter(MyTestDrivesActivity.this,myTestDriveModelList);
-                        recyclerView.setAdapter(myTestDrivesAdapter);
-                       //myTestDrivesAdapter.notifyDataSetChanged();
-                        mSwipeRefreshLayout.setRefreshing(false);
-                        myTestDrivesAdapter.notifyDataSetChanged();
+                        if(myTestDriveModelList.isEmpty()){
+                            linearLayout.setVisibility(View.VISIBLE);
+                        }else {
+                            linearLayout.setVisibility(View.GONE);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyTestDrivesActivity.this, RecyclerView.VERTICAL, false);
+                            recyclerView.setLayoutManager(linearLayoutManager);
+                            myTestDrivesAdapter = new MyTestDrivesAdapter(MyTestDrivesActivity.this, myTestDriveModelList);
+                            recyclerView.setAdapter(myTestDrivesAdapter);
+                            //myTestDrivesAdapter.notifyDataSetChanged();
+                            mSwipeRefreshLayout.setRefreshing(false);
+                            myTestDrivesAdapter.notifyDataSetChanged();
                        /* recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyTestDrivesActivity.this, R.anim.layoutanimationleft));
                         recyclerView.getAdapter().notifyDataSetChanged();
                         recyclerView.scheduleLayoutAnimation();*/
-
+                        }
+                    }else {
+                        linearLayout.setVisibility(View.VISIBLE);
                     }
 
                 } catch (JSONException e) {

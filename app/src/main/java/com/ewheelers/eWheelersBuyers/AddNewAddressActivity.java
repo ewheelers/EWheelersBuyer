@@ -82,7 +82,7 @@ public class AddNewAddressActivity extends AppCompatActivity implements View.OnC
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
-        Toast.makeText(this, "uid:"+uaid, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(this, "uid:"+uaid, Toast.LENGTH_SHORT).show();
 
         configureCameraIdle();
 

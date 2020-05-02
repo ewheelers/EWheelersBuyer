@@ -977,9 +977,20 @@
             app:icon="@drawable/cart"
             app:rippleColor="@color/LightPink" />
 
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/chooseserach"
-            android:layout_width="wrap_content"
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:id="@+id/searchAdapter"
+            android:background="@color/white"
+            android:elevation="@dimen/padding_10"
+            android:layout_above="@+id/searchview"/>
+
+        <SearchView
+            android:iconifiedByDefault="false"
+            android:queryHint="Add Product to compare"
+            android:id="@+id/searchview"
+            android:layout_width="match_parent"
             android:layout_height="68dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
@@ -988,9 +999,7 @@
             android:background="@drawable/actionbarwhitebg"
             android:elevation="20dp"
             android:padding="8dp"
-            android:visibility="invisible"
-            app:iconifiedByDefault="false"
-            app:queryHint="Choose Product" />
+            android:visibility="invisible"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

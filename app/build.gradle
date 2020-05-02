@@ -77,4 +77,6 @@ dependencies {
     //implementation 'com.google.firebase:firebase-core:15.0.0'
     implementation 'androidx.work:work-runtime:2.3.4'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.crystal:crystalrangeseekbar:1.1.3'
+
 }
