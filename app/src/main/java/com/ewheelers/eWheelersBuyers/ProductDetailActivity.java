@@ -1988,6 +1988,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onBackPressed() {
         Intent i = new Intent(getApplicationContext(), NavAppBarActivity.class);
         startActivity(i);
-        //finish();
+        finish();
     }
 }

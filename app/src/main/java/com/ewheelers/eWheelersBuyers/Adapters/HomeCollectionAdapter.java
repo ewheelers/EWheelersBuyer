@@ -70,6 +70,8 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
 
         if (position == 0) {
             holder.relativeLayout.setVisibility(View.VISIBLE);
+        }else {
+            holder.relativeLayout.setVisibility(View.GONE);
         }
 
         if(position==2){
