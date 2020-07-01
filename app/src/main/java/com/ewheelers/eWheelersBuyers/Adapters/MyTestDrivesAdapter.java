@@ -43,15 +43,13 @@ import java.util.Map;
 
 public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapter.TestDrivesholder> {
     Context context;
-    List<MyTestDriveModel> myTestDriveModelList;
+    private List<MyTestDriveModel> myTestDriveModelList;
+    private int mStatusCode = 0;
     private MyTestDrivesAdapter myTestDrivesAdapter;
-    int mStatusCode = 0;
-
     public MyTestDrivesAdapter(Context context, List<MyTestDriveModel> myTestDriveModelList) {
         this.context = context;
         this.myTestDriveModelList = myTestDriveModelList;
         this.myTestDrivesAdapter = this;
-
     }
 
     @NonNull
@@ -81,6 +79,7 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
             holder.canceltxt.setVisibility(View.GONE);
             holder.delivertxt.setTextColor(Color.GRAY);
             holder.accepttxt.setTextColor(Color.GRAY);
+            holder.cancelUnder.setVisibility(View.GONE);
 
         } else if (status.equals("1")) {
             holder.viewdrive.setVisibility(View.VISIBLE);
@@ -92,32 +91,24 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
             holder.pendingtxt.setTextColor(Color.parseColor("#9C3C34"));
             holder.accepttxt.setTextColor(Color.parseColor("#9C3C34"));
             holder.comfirmtxt.setTextColor(Color.parseColor("#9C3C34"));
-
-            //holder.pendingtxt.setTextColor(Color.GRAY);
             holder.canceltxt.setVisibility(View.GONE);
             holder.delivertxt.setTextColor(Color.GRAY);
-            //holder.accepttxt.setTextColor(Color.GRAY);
+            holder.cancelUnder.setVisibility(View.GONE);
+
         } else if (status.equals("2")) {
             holder.viewdrive.setVisibility(View.GONE);
             holder.canceldrive.setVisibility(View.GONE);
             holder.confirmdrive.setVisibility(View.GONE);
             holder.completetxt.setVisibility(View.GONE);
             holder.linearLayoutTrack.setVisibility(View.GONE);
-
-           /* holder.completetxt.setText(myTestDriveModelList.get(position).getPtdr_comments());
-            holder.completetxt.setTextColor(Color.parseColor("#9C3C34"));*/
-
             holder.canceltxt.setVisibility(View.VISIBLE);
             holder.cancelUnder.setVisibility(View.VISIBLE);
-           /* holder.pendingtxt.setTextColor(Color.GRAY);
-            holder.comfirmtxt.setTextColor(Color.GRAY);
-            holder.delivertxt.setTextColor(Color.GRAY);
-            holder.accepttxt.setTextColor(Color.GRAY);*/
         } else if (status.equals("3")) {
             holder.viewdrive.setVisibility(View.VISIBLE);
             holder.canceldrive.setVisibility(View.GONE);
             holder.confirmdrive.setVisibility(View.GONE);
             holder.completetxt.setVisibility(View.GONE);
+            holder.cancelUnder.setVisibility(View.GONE);
 
             holder.linearLayoutTrack.setVisibility(View.VISIBLE);
 
@@ -125,11 +116,7 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
             holder.accepttxt.setTextColor(Color.parseColor("#9C3C34"));
             holder.comfirmtxt.setTextColor(Color.parseColor("#9C3C34"));
             holder.delivertxt.setTextColor(Color.parseColor("#9C3C34"));
-
-            // holder.pendingtxt.setTextColor(Color.GRAY);
-            // holder.comfirmtxt.setTextColor(Color.GRAY);
             holder.canceltxt.setVisibility(View.GONE);
-            //holder.accepttxt.setTextColor(Color.GRAY);
         } else if (status.equals("4")) {
             holder.viewdrive.setVisibility(View.GONE);
             holder.canceldrive.setVisibility(View.GONE);
@@ -138,12 +125,7 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
             holder.linearLayoutTrack.setVisibility(View.GONE);
             holder.cancelUnder.setVisibility(View.VISIBLE);
             holder.completetxt.setVisibility(View.VISIBLE);
-/*
-            holder.pendingtxt.setTextColor(Color.GRAY);
-            holder.comfirmtxt.setTextColor(Color.GRAY);
-            holder.canceltxt.setVisibility(View.GONE);
-            holder.delivertxt.setTextColor(Color.GRAY);
-            holder.accepttxt.setTextColor(Color.GRAY);*/
+
         } else if (status.equals("5")) {
             holder.viewdrive.setVisibility(View.VISIBLE);
             holder.canceldrive.setVisibility(View.VISIBLE);
@@ -153,11 +135,11 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
 
             holder.pendingtxt.setTextColor(Color.parseColor("#9C3C34"));
             holder.accepttxt.setTextColor(Color.parseColor("#9C3C34"));
-
-            // holder.pendingtxt.setTextColor(Color.GRAY);
             holder.comfirmtxt.setTextColor(Color.GRAY);
             holder.canceltxt.setVisibility(View.GONE);
             holder.delivertxt.setTextColor(Color.GRAY);
+            holder.cancelUnder.setVisibility(View.GONE);
+
         }
 
         holder.canceldrive.setOnClickListener(new View.OnClickListener() {
@@ -188,23 +170,17 @@ public class MyTestDrivesAdapter extends RecyclerView.Adapter<MyTestDrivesAdapte
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_link, new com.android.volley.Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                /*if (mStatusCode == 200) {
-                                    if (context instanceof MyTestDrivesActivity) {
-                                        ((MyTestDrivesActivity) context).onRefresh();
-                                    }
-                                    holder.linearLayoutTrack.setVisibility(View.GONE);
-                                    alertDialog.dismiss();
-                                }*/
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(response);
                                     String status = jsonObject.getString("status");
                                     String message = jsonObject.getString("msg");
                                     if (status.equals("1")) {
+
                                         if (context instanceof MyTestDrivesActivity) {
                                             ((MyTestDrivesActivity) context).onRefresh();
                                         }
-                                        holder.linearLayoutTrack.setVisibility(View.GONE);
+                                        myTestDrivesAdapter.notifyDataSetChanged();
                                         alertDialog.dismiss();
                                     }
                                 } catch (JSONException e) {

@@ -49,19 +49,6 @@
                         app:iconifiedByDefault="false"
                         app:queryHint="Search here" />
 
-                    <!-- <EditText
-                         android:id="@+id/searchText"
-                         android:imeOptions="actionSearch"
-                         android:singleLine="true"
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:layout_centerInParent="true"
-                         android:background="@android:color/transparent"
-                         android:gravity="center_horizontal"
-                         android:hint="Search"
-                         android:textColorHint="@color/colorBlack"
-                         android:textSize="15sp" />-->
-
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -88,6 +75,15 @@
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
         </LinearLayout>
+
+        <ProgressBar
+            android:layout_marginTop="50dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/progress"
+            android:visibility="gone"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollview"
@@ -123,16 +119,6 @@
                         android:layout_weight="0.5"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
-
-                        <!--<androidx.appcompat.widget.SearchView
-                            android:id="@+id/enterpincode"
-                            android:layout_width="wrap_content"
-                            android:layout_height="36dp"
-                            android:inputType="number"
-                            android:maxWidth="150dp"
-                            app:queryHint="Enter Pin Code"
-                            app:searchIcon="@drawable/currentlocation" />-->
-
 
                         <TextView
                             android:id="@+id/share"
@@ -365,8 +351,6 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="@dimen/dimen_5dp"
-                                android:singleLine="true"
-                                android:text="Seller Name"
                                 android:textColor="@color/Black"
                                 android:textStyle="bold" />
 
@@ -375,16 +359,15 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:text="Seller Address"
                                 android:textColor="@color/Black" />
 
                             <TextView
+                                style="@style/Widget.MaterialComponents.Button"
                                 android:id="@+id/change_text"
                                 android:layout_width="150dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="@dimen/padding_10"
-                                android:background="@drawable/button_bg_redtransperent"
                                 android:gravity="center"
                                 android:padding="@dimen/dimen_5dp"
                                 android:text="Change Dealer"
@@ -397,7 +380,7 @@
                             android:layout_weight="0.25"
                             android:gravity="center_horizontal"
                             android:orientation="vertical"
-                            android:weightSum="2">
+                            android:weightSum="3">
 
                             <ImageView
                                 android:id="@+id/call_seller"
@@ -415,41 +398,17 @@
                                 android:layout_margin="@dimen/padding_10"
                                 android:layout_weight="1"
                                 app:srcCompat="@drawable/ic_findstore" />
+                            <TextView
+                                android:id="@+id/distant"
+                                android:layout_width="wrap_content"
+                                android:layout_height="0dp"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textColor="@color/colorAccent" />
                         </LinearLayout>
 
                     </LinearLayout>
                 </LinearLayout>
-
-
-                <!--
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginBottom="@dimen/dimen_5dp"
-                                    android:padding="@dimen/dimen_5dp">
-
-                                    <TextView
-                                        android:id="@+id/choose_dealer"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Dealer"
-                                        android:textColor="@color/Black"
-                                        android:textStyle="bold" />
-
-                                    <TextView
-                                        android:id="@+id/dealers_list"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="@dimen/padding_10"
-                                        android:layout_marginLeft="@dimen/padding_10"
-                                        android:singleLine="false"
-                                        android:textColor="@color/colorPrimary"
-                                        android:textStyle="normal" />
-                                    &lt;!&ndash; <Spinner
-                                         android:id="@+id/dealers_list"
-                                         style="@style/spinner_style" />&ndash;&gt;
-                                </LinearLayout>
-                -->
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/options_recyclerview"
@@ -642,11 +601,6 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_10"
                     android:textColor="@color/Black" />
-                <!-- <androidx.recyclerview.widget.RecyclerView
-                     android:id="@+id/offers_listview"
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content" />-->
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -662,8 +616,8 @@
                     android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:visibility="gone"
-                    android:id="@+id/buywith_listview"
+                    android:visibility="visible"
+                    android:id="@+id/autobanners"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -704,12 +658,14 @@
                         android:orientation="horizontal">
 
                         <Button
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/payment_policy"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:text="Payment" />
 
                         <Button
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/delivery_policy"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
@@ -718,6 +674,7 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/refund_policy"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
@@ -726,6 +683,7 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/return_policy"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
@@ -734,11 +692,12 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/cancellation_policy"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:background="@color/colorWhite"
-                            android:text="Cancellation"
+                            android:text="Cancel"
                             android:textColor="@color/colorBlack" />
                     </LinearLayout>
                 </HorizontalScrollView>
@@ -1019,9 +978,5 @@
             app:srcCompat="@drawable/ic_add_black_24dp" />
 
     </RelativeLayout>
-
-    <include layout="@layout/bottome_sheet_layout" />
-
-    <include layout="@layout/bottom_sheet_rent_layout" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

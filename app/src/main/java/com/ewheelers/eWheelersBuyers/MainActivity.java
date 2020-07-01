@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        }, 3*1000); // wait for
+        }, 2*1000); // wait for
     }
 
   /*  private class WebViewClient extends android.webkit.WebViewClient

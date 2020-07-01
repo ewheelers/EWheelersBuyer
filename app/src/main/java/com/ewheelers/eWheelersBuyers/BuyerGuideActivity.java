@@ -21,9 +21,46 @@ public class BuyerGuideActivity extends AppCompatActivity {
        /* setContentView(R.layout.activity_buyer_guide);
         webView = findViewById(R.id.webview);//https://ewheelers.in/blog
         webView.loadUrl("https://ewheelers.in/blog");*/
-        Toast.makeText(this, "Please wait to Load...", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Loading ... Please wait", Toast.LENGTH_LONG).show();
         String getText = getIntent().getStringExtra("opens");
-        assert getText != null;
+        String geturlas = getIntent().getStringExtra("openurl");
+        String bottomurl = getIntent().getStringExtra("openurlbottom");
+        String topurl = getIntent().getStringExtra("openurltop");
+        String banurl = getIntent().getStringExtra("bannerurl");
+        if(banurl!=null)
+        {
+            url = banurl;
+        }
+        if (topurl != null)
+        {
+            url = topurl;
+        }
+        if (bottomurl != null)
+        {
+            url = bottomurl;
+        }
+
+        if (geturlas != null)
+        {
+            url = geturlas;
+        }
+
+        if (getText != null)
+        {
+            if (getText.equals("openshort")) {
+                url = "https://ewheelers.in/about-us";
+            } else if (getText.equals("howworks")) {
+                url = "https://ewheelers.in/service-process";
+            } else if (getText.equals("terms")) {
+                url = "https://ewheelers.in/terms-conditions";
+            } else if (getText.equals("support")) {
+                url = "https://ewheelers.in/ev-store-near-you";
+            } else {
+                url = "https://ewheelers.in/blog";
+            }
+        }
+
+      /*  assert getText != null;
         if (getText.equals("openshort")) {
             url = "https://ewheelers.in/about-us";
         } else if (getText.equals("howworks")) {
@@ -34,7 +71,7 @@ public class BuyerGuideActivity extends AppCompatActivity {
             url = "https://ewheelers.in/ev-store-near-you";
         } else {
             url = "https://ewheelers.in/blog";
-        }
+        }*/
         mWebview = new WebView(this);
 
         mWebview.getSettings().setJavaScriptEnabled(true); // enable javascript

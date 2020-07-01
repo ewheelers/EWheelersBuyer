@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginLeft="@dimen/padding_10"
-    android:layout_marginRight="@dimen/padding_10"
     android:layout_marginTop="@dimen/dimen_5dp"
+    android:layout_marginRight="@dimen/padding_10"
     android:elevation="@dimen/padding_10"
     android:orientation="vertical">
 
@@ -18,7 +18,7 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="160dp"/>
+            android:layout_height="160dp" />
 
         <com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator
             android:id="@+id/indicator"
@@ -90,13 +90,21 @@
 
     </LinearLayout>
 
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/topbannerimage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
 
     <LinearLayout
-        android:background="@color/white"
-        android:layout_marginTop="@dimen/padding_10"
         android:id="@+id/collection_lay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_10"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/collection_title"
@@ -109,7 +117,6 @@
             android:textSize="17sp" />
 
         <TextView
-            android:visibility="visible"
             android:id="@+id/showall"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -118,13 +125,14 @@
             android:gravity="right"
             android:text="More >> "
             android:textColor="@color/colorHeadings"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:visibility="visible" />
     </LinearLayout>
 
     <RelativeLayout
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <ProgressBar
             android:id="@+id/progress"
@@ -133,10 +141,15 @@
             android:layout_centerInParent="true"
             android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/padding_10">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 
 </LinearLayout>

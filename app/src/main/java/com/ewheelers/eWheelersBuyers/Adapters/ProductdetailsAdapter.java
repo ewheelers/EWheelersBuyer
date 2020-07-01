@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.ewheelers.eWheelersBuyers.BuyerGuideActivity;
+import com.ewheelers.eWheelersBuyers.ChargeDetailPage;
 import com.ewheelers.eWheelersBuyers.ModelClass.OptionValues;
 import com.ewheelers.eWheelersBuyers.ModelClass.ProductDetails;
 import com.ewheelers.eWheelersBuyers.ProductDetailActivity;
@@ -52,18 +54,19 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
     boolean mSpinnerInitialized = true;
     private int selectedItem = 0;
     private String zoom;
+
     public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails) {
         this.context = context;
         this.productDetails = productDetails;
     }
 
-    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails,int selectedItem) {
+    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails, int selectedItem) {
         this.context = context;
         this.productDetails = productDetails;
         this.selectedItem = selectedItem;
     }
 
-    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails,int selectedItem,String zoom) {
+    public ProductdetailsAdapter(Context context, List<ProductDetails> productDetails, int selectedItem, String zoom) {
         this.context = context;
         this.productDetails = productDetails;
         this.selectedItem = selectedItem;
@@ -85,9 +88,9 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
             case ProductDetails.OFFERS:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.available_offers_layout, parent, false);
                 return new MyHolder(v);
-           /* case ProductDetails.BUYWITH:
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.buytogether_layout, parent, false);
-                return new MyHolder(v);*/
+            case ProductDetails.BANNERSLIST:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.banner_image_layout, parent, false);
+                return new MyHolder(v);
             case ProductDetails.SIMILARPRODUCTS:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.similarproducts_layout, parent, false);
                 return new MyHolder(v);
@@ -104,18 +107,31 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
         final int itemType = getItemViewType(position);
 
         switch (itemType) {
+            case ProductDetails.BANNERSLIST:
+                ImageLoader imageLoaderbaner = VolleySingleton.getInstance(context).getImageLoader();
+                imageLoaderbaner.get(productDetails.get(position).getDetailspageBanners(), ImageLoader.getImageListener(holder.bannerImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
+                holder.bannerImageView.setImageUrl(productDetails.get(position).getDetailspageBanners(), imageLoaderbaner);
+                holder.bannercard.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, BuyerGuideActivity.class);
+                        i.putExtra("bannerurl", productDetails.get(position).getDetailbannerurl());
+                        context.startActivity(i);
+                    }
+                });
+                break;
             case ProductDetails.PREVIEWIMAGES:
                 //final String url = productDetails.get(position).getProductimg_url();
-                if(selectedItem==position){
+                if (selectedItem == position) {
                     holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
-                }else {
+                } else {
                     holder.cardView.setBackgroundColor(Color.WHITE);
                 }
                 if (productDetails.get(position).getProductimg_url() != null) {
 
-                    if(zoom.equals("zoom")) {
+                    if (zoom.equals("zoom")) {
                         ((ZoomingActivity) context).onClickcalled(productDetails.get(selectedItem).getProductimg_url());
-                    }else {
+                    } else {
                         ((ProductDetailActivity) context).onClickcalled(productDetails.get(selectedItem).getProductimg_url());
                     }
 
@@ -126,15 +142,15 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                     holder.cardView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                          //  ((ProductDetailActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
-                            if(zoom.equals("zoom")){
+                            //  ((ProductDetailActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
+                            if (zoom.equals("zoom")) {
                                 int PreviousSelectedItem = selectedItem;
                                 selectedItem = position;
                                 holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
                                 ((ZoomingActivity) context).onClickcalled(productDetails.get(position).getProductimg_url());
                                 notifyItemChanged(PreviousSelectedItem);
                                 notifyDataSetChanged();
-                            }else {
+                            } else {
                                 int PreviousSelectedItem = selectedItem;
                                 selectedItem = position;
                                 holder.cardView.setBackground(context.getResources().getDrawable(R.drawable.border_bg));
@@ -181,7 +197,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                         if (!mSpinnerInitialized) {
                             // Your code goes gere
                             //Toast.makeText(context, "opt: " + items.get(pos).getOptionValuenames(), Toast.LENGTH_SHORT).show();
-                            if(!finalFirstselected.equals(optionValuesData.get(pos).getOptionValuenames())) {
+                            if (!finalFirstselected.equals(optionValuesData.get(pos).getOptionValuenames())) {
                                 ((ProductDetailActivity) context).getProductDetails(optionValuesData.get(pos).getOptionUrlValue());
                             }
                         }
@@ -332,7 +348,8 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                     public void onClick(View v) {
 
                         if (holder.bottomBtn.getText().toString().equals("Test Drive")) {
-                            ((ProductDetailActivity) context).getBottomLayout();
+                            //((ProductDetailActivity) context).getBottomLayout();
+
                            /* Intent i = new Intent(context, CartActivity.class);
                             i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
                             i.putExtra("buttontext", String.valueOf(productDetails.get(position).getButtonText()));
@@ -345,7 +362,7 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
                         }
                         if (holder.bottomBtn.getText().toString().equals("Rent")) {
-                            ((ProductDetailActivity) context).getBottomLayoutforRent();
+                            // ((ProductDetailActivity) context).getBottomLayoutforRent();
                         }
                         if (holder.bottomBtn.getText().toString().equals("BUY")) {
                           /*  Intent i = new Intent(context, RecommendProductsActivity.class);
@@ -365,15 +382,15 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                 holder.icon.setImageResource(productDetails.get(position).getImageicon());
                 holder.offertitle.setText(productDetails.get(position).getOffertitle());
                 // holder.offercaption.setText(productDetails.get(position).getOffercaption());
-                holder.icon.setOnClickListener(new View.OnClickListener() {
+              /*  holder.icon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (position == 1) {
-                            ((ProductDetailActivity) context).OfferClick(position);
-                           /* Intent i = new Intent(context,CartActivity.class);
+                            //((ProductDetailActivity) context).OfferClick(position);
+                           *//* Intent i = new Intent(context,CartActivity.class);
                             i.putExtra("selproductid", String.valueOf(productDetails.get(position).getSelproductid()));
                             i.putExtra("buttontext", String.valueOf(productDetails.get(position).getOffertitle()));
-                            context.startActivity(i);*/
+                            context.startActivity(i);*//*
                         } else {
                             Tooltip tooltip = new Tooltip.Builder(v)
                                     .setText("Sorry. No " + productDetails.get(position).getOffertitle() + " Offers Available Now.")
@@ -381,16 +398,16 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
                                     .setBackgroundColor(Color.parseColor("#9c3c34"))
                                     .setCancelable(true)
                                     .show();
-                           /* new Handler().postDelayed(new Runnable() {
+                           *//* new Handler().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     tooltip.dismiss();
                                 }
-                            },2000);*/
+                            },2000);*//*
                             //((ProductDetailActivity)context).showSnackbar(productDetails.get(position).getOffertitle());
                         }
                     }
-                });
+                });*/
                 break;
         }
 
@@ -413,8 +430,8 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
 
     public class MyHolder extends RecyclerView.ViewHolder {
-        NetworkImageView networkImageView, buywithimgIcon, product_image;
-        CardView cardView;
+        NetworkImageView networkImageView, buywithimgIcon, product_image, bannerImageView;
+        CardView cardView, bannercard;
         Spinner optionvalues;
         TextView optionnames;
         ImageView icon;
@@ -427,6 +444,8 @@ public class ProductdetailsAdapter extends RecyclerView.Adapter<ProductdetailsAd
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
+            bannerImageView = itemView.findViewById(R.id.banner_image);
+            bannercard = itemView.findViewById(R.id.banner_card);
             networkImageView = itemView.findViewById(R.id.preview_small_img);
             cardView = itemView.findViewById(R.id.card_click);
             optionnames = itemView.findViewById(R.id.option_name);

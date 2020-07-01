@@ -20,5 +20,13 @@
     <string name="find_more_products_from_this_brand"><u>(More Products From This Brand)</u></string>
     <string name="todo">TODO</string>
     <string name="share">share</string>
+    <string name="cancel"><u>Cancel</u></string>
+    <string-array name="list">
+        <item>MON - 09:00AM - 10:00AM</item>
+        <item>TUE - 09:00AM - 10:00AM</item>
+        <item>WED - 09:00AM - 10:00AM</item>
+        <item>THU - 09:00AM - 10:00AM</item>
+        <item>FRI - 09:00AM - 10:00AM</item>
+    </string-array>
 
 </resources>

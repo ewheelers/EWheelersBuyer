@@ -39,6 +39,16 @@
     </LinearLayout>
 </LinearLayout>
 
+    <TextView
+        android:visibility="gone"
+        android:textColor="@color/Black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptyview"
+        android:drawableTop="@drawable/ic_emptyorders"
+        android:layout_marginTop="@dimen/dimen_20dp"
+        android:text="No Records to show."
+        android:textAlignment="center"/>
     <ProgressBar
         android:visibility="gone"
         android:padding="@dimen/padding_10"

@@ -126,7 +126,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:drawableBottom="@drawable/cart"
+        android:drawableTop="@drawable/ic_emptyorders"
         android:drawablePadding="@dimen/padding_10"
         android:text="Cart is Empty"
         android:textSize="16sp"

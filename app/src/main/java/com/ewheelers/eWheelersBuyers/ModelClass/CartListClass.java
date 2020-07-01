@@ -6,7 +6,7 @@ public class CartListClass {
     public static final int ADDONLAYOUT=0;
     public static final int MAINPRODUCT=1;
 
-
+    private String productid;
     private String imageurl;
     private String productName;
     private String productOption;
@@ -29,6 +29,24 @@ public class CartListClass {
     public String total;
     public String rentStartdate;
     public String rentEnddate;
+
+    private String sellerAddress;
+
+    public String getProductid() {
+        return productid;
+    }
+
+    public void setProductid(String productid) {
+        this.productid = productid;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
 
     public String getRentalprice() {
         return rentalprice;

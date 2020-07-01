@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -21,10 +24,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ewheelers.eWheelersBuyers.ModelClass.SellerListModel;
+import com.ewheelers.eWheelersBuyers.NewGPSTracker;
 import com.ewheelers.eWheelersBuyers.ProductDetailActivity;
 import com.ewheelers.eWheelersBuyers.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,8 +38,10 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
     Context context;
     List<SellerListModel> sellerListModels;
     List<SellerListModel> sellerFilter;
-
-
+    int index_row=-1;
+    NewGPSTracker newgps;
+    Geocoder geocoder;
+    List<Address> addresses;
     public SellerListAdapter(Context context, List<SellerListModel> sellerListModels) {
         this.context = context;
         this.sellerListModels = sellerListModels;
@@ -50,7 +58,42 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
     @Override
     public void onBindViewHolder(@NonNull SellHolder holder, int position) {
         holder.sellerName.setText(sellerListModels.get(position).getSellersname());
-        holder.sellerAddress.setText(sellerListModels.get(position).getSellersaddress());
+
+        //holder.sellerAddress.setText(sellerListModels.get(position).getSellersaddress());
+        newgps = new NewGPSTracker(context,null);
+        geocoder = new Geocoder(context, Locale.ENGLISH);
+        try {
+            addresses = geocoder.getFromLocation(Double.parseDouble(sellerListModels.get(position).getSellerslatitude()),Double.parseDouble(sellerListModels.get(position).getSellerslongitude()), 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        StringBuilder str1 = new StringBuilder();
+        StringBuilder str2 = new StringBuilder();
+        StringBuilder str3 = new StringBuilder();
+        StringBuilder str4 = new StringBuilder();
+        StringBuilder str5 = new StringBuilder();
+        StringBuilder str6 = new StringBuilder();
+
+        if (Geocoder.isPresent()) {
+
+            Address returnAddress = addresses.get(0);
+
+            String address = returnAddress.getAddressLine(0);
+            String localityString = returnAddress.getSubLocality();
+            String citys = returnAddress.getLocality();
+            String region_code = returnAddress.getCountryName();
+            String zipcode = returnAddress.getPostalCode();
+            String statenam = returnAddress.getAdminArea();
+            str1.append(address);
+            str2.append(localityString);
+            str3.append(citys);
+            str4.append(region_code);
+            str5.append(zipcode);
+            str6.append(statenam);
+            holder.sellerAddress.setText(str1);
+
+        }
+
         String sellerphone = sellerListModels.get(position).getSellersphoneno();
         holder.sellerPrice.setText("Selling Price \u20B9" + sellerListModels.get(position).getSellerPrice());
         String codavail = sellerListModels.get(position).getSellerCod();
@@ -68,6 +111,9 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
                 }
             }
         });
+
+        holder.diastnace.setText(sellerListModels.get(position).getDistance());
+
         holder.sellerNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,12 +125,22 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
         holder.viewdetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                index_row=position;
+                notifyDataSetChanged();
                 Intent i = new Intent(context, ProductDetailActivity.class);
                 i.putExtra("productid", sellerListModels.get(position).getSelproductid());
                 context.startActivity(i);
             }
         });
-
+        if(index_row==position){
+            holder.viewdetails.setBackground(context.getResources().getDrawable(R.drawable.button_bg));
+            holder.viewdetails.setTextColor(Color.WHITE);
+        }
+        else
+        {
+            holder.viewdetails.setBackground(context.getResources().getDrawable(R.drawable.button_bg_redtransperent));
+            holder.viewdetails.setTextColor(Color.parseColor("#9C3C34"));
+        }
 
     }
 
@@ -162,7 +218,7 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
 
 
     public class SellHolder extends RecyclerView.ViewHolder {
-        TextView sellerName, sellerAddress, sellerPrice, sellerCod, viewdetails;
+        TextView sellerName, sellerAddress, sellerPrice, sellerCod, viewdetails, diastnace;
         ImageView sellerCall, sellerNavigate;
 
         public SellHolder(@NonNull View itemView) {
@@ -174,6 +230,7 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
             sellerPrice = itemView.findViewById(R.id.seller_price);
             sellerCod = itemView.findViewById(R.id.seller_cod);
             viewdetails = itemView.findViewById(R.id.seller_viewdetails);
+            diastnace = itemView.findViewById(R.id.dist);
         }
     }
 }

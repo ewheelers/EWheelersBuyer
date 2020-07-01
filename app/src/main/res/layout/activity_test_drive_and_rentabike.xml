@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/snak_layout"
+    tools:context=".TestDriveAndRentabike">
+
+    <TextView
+        android:id="@+id/TestDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/padding_10"
+        android:text="Requesting Test Drive"
+        android:textColor="@color/Black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/item_lay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:background="@color/white"
+                android:elevation="@dimen/padding_10"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/shop_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_10"
+                    android:text="Shop name"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/layout_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/imageView4"
+                        android:layout_width="0dp"
+                        android:layout_height="96dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.5"
+                        android:padding="@dimen/padding_10"
+                        app:srcCompat="@drawable/ic_scooter" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1.5"
+                        android:orientation="vertical"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/brand"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorPrimary"
+                            android:textStyle="normal" />
+
+                        <TextView
+                            android:id="@+id/title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:visibility="gone"
+                            android:id="@+id/options"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/price"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:id="@+id/qty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dimen_5dp"
+                    android:orientation="vertical"
+                    android:padding="@dimen/dimen_15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pick-up Address"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/changepickaddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:text="Change"
+                            android:textColor="@color/blue"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/seller_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/Black" />
+
+                    <TextView
+                        android:id="@+id/delivery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableEnd="@drawable/iicon"
+                        android:drawablePadding="@dimen/padding_10"
+                        android:text="Delivery Process"
+                        android:textColor="@color/colorAccent"/>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lineardrive"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:orientation="vertical"
+                android:padding="@dimen/padding_10">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="Location : "
+                        android:textColor="@color/Black" />
+
+                    <EditText
+                        android:id="@+id/enter_location"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/border_bg"
+                        android:hint="Enter Location"
+                        android:inputType="textPersonName"
+                        android:padding="5dp"
+                        android:textColor="@color/Black"
+                        android:textColorHint="@color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:text="Phone No : "
+                        android:textColor="@color/Black" />
+
+                    <EditText
+                        android:id="@+id/enter_phoneno"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/border_bg"
+                        android:hint="Enter Phone No"
+                        android:inputType="number"
+                        android:maxLength="10"
+                        android:padding="5dp"
+                        android:textColor="@color/Black"
+                        android:textColorHint="@color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/date_image"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:drawableRight="@drawable/ic_date"
+                        android:gravity="center_vertical"
+                        android:paddingRight="5dp"
+                        android:text="Date : "
+                        android:textColor="@color/Black" />
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/border_bg"
+                        android:inputType="date"
+                        android:padding="5dp"
+                        android:text="yyyy-mm-dd"
+                        android:textColor="@color/Black"
+                        android:textColorHint="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:id="@+id/time_image"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:drawableRight="@drawable/ic_time"
+                        android:gravity="center_vertical"
+                        android:paddingRight="5dp"
+                        android:text="Time : "
+                        android:textColor="@color/Black" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:background="@drawable/border_bg"
+                        android:inputType="time"
+                        android:padding="5dp"
+                        android:text="hr:min"
+                        android:textColor="@color/Black"
+                        android:textColorHint="@color/white" />
+                </LinearLayout>
+
+                <Button
+                    android:visibility="visible"
+                    android:id="@+id/submitButton"
+                    style="@style/TextAppearance.MaterialComponents.Button"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="25dp"
+                    android:text="Submit" />
+
+                <ProgressBar
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:id="@+id/loadprogress"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/linearrent"
+                android:layout_marginTop="@dimen/padding_10"
+                android:padding="@dimen/padding_10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/Black"
+                    android:text="Enter Start Date And End Date To Calculate Rental Price"/>
+                <TextView
+                    android:id="@+id/min_rent_duration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/Black"
+                    android:text="Minimum Rental Duration "/>
+                <LinearLayout
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textColor="@color/Black"
+                        android:id="@+id/startdate_image"
+                        android:gravity="center_vertical"
+                        android:drawableRight="@drawable/ic_date"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.75"
+                        android:paddingRight="5dp"
+                        android:layout_height="wrap_content"
+                        android:text="Start Date: "/>
+                    <TextView
+                        android:textColor="@color/Black"
+                        android:inputType="date"
+                        android:padding="5dp"
+                        android:background="@drawable/border_bg"
+                        android:id="@+id/startdate"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.25"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:weightSum="2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:textColor="@color/Black"
+                        android:id="@+id/enddate_image"
+                        android:gravity="center_vertical"
+                        android:drawableRight="@drawable/ic_date"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.75"
+                        android:paddingRight="5dp"
+                        android:layout_height="wrap_content"
+                        android:text="End Date : "/>
+                    <TextView
+                        android:textColor="@color/Black"
+                        android:inputType="time"
+                        android:padding="5dp"
+                        android:background="@drawable/border_bg"
+                        android:id="@+id/enddate"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.25"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/rent_price"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/Black"
+                    android:textStyle="italic"
+                    android:text="Rental Price: + Rental Security: "/>
+
+                <TextView
+                    android:id="@+id/total_payment"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/Black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="Total Payment :"/>
+
+                <Button
+                    style="@style/TextAppearance.MaterialComponents.Button"
+                    android:id="@+id/submitButtonRent"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:text="Submit"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -111,9 +111,9 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
         finish();
     }
 
-    private void getAllTestdrives(String keyword) {
+    public void getAllTestdrives(String keyword) {
         mSwipeRefreshLayout.setRefreshing(true);
-       // myTestDriveModelList.clear();
+        myTestDriveModelList.clear();
         String url_link = Apis.alltestdriverequests;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_link, new com.android.volley.Response.Listener<String>() {
@@ -154,12 +154,8 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                             recyclerView.setLayoutManager(linearLayoutManager);
                             myTestDrivesAdapter = new MyTestDrivesAdapter(MyTestDrivesActivity.this, myTestDriveModelList);
                             recyclerView.setAdapter(myTestDrivesAdapter);
-                            //myTestDrivesAdapter.notifyDataSetChanged();
                             mSwipeRefreshLayout.setRefreshing(false);
                             myTestDrivesAdapter.notifyDataSetChanged();
-                       /* recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyTestDrivesActivity.this, R.anim.layoutanimationleft));
-                        recyclerView.getAdapter().notifyDataSetChanged();
-                        recyclerView.scheduleLayoutAnimation();*/
                         }
                     }else {
                         linearLayout.setVisibility(View.VISIBLE);
@@ -204,6 +200,5 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
     @Override
     public void onRefresh() {
         getAllTestdrives("");
-
     }
 }

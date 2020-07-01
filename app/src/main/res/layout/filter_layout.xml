@@ -22,6 +22,8 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/allfilterslay"
+            android:visibility="visible"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -33,14 +35,24 @@
                 <RadioButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/bycategory"
+                    android:id="@+id/byall"
                     android:checked="true"
+                    android:text="All"/>
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bycategory"
                     android:text="By Categories"/>
                 <RadioButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/bybrand"
                     android:text="By Brands"/>
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/byoptions"
+                    android:text="By Options"/>
                 <RadioButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,11 +67,15 @@
             android:layout_height="match_parent"
             android:background="@color/light_grey" />
 
-        <LinearLayout
+        <ScrollView
+            android:padding="@dimen/dimen_5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.75"
-            android:padding="@dimen/dimen_5dp"
+            android:layout_weight="0.75">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
             <ProgressBar
                 android:layout_width="wrap_content"
@@ -77,12 +93,17 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/brands_list"
                 android:visibility="gone"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/options_list"
+                android:visibility="gone"/>
 
             <RelativeLayout
                 android:id="@+id/relativeseekbar"
                 android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
                 android:clipChildren="false">
 
@@ -126,6 +147,9 @@
 
 
         </LinearLayout>
+
+        </ScrollView>
+
     </LinearLayout>
 
     <Button

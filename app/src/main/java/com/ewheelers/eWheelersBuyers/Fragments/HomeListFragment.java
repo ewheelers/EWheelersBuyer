@@ -1,11 +1,14 @@
 package com.ewheelers.eWheelersBuyers.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,11 +17,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,25 +32,32 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.eWheelersBuyers.Adapters.AllebikesAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.HomeCollectionAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.SlidingImage_Adapter;
+import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeModelClass;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.SessionStorage;
+import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
 import com.ewheelers.eWheelersBuyers.Utilities.ConnectionStateMonitor;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
+import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,11 +66,18 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.view.View.GONE;
+import static com.ewheelers.eWheelersBuyers.SessionStorage.tokenvalue;
 
-public class HomeListFragment extends Fragment {
+
+public class HomeListFragment extends Fragment implements View.OnClickListener {
     private RecyclerView recyclerView;
     private TextView textViewoff;
     private List<HomeModelClass> homeModelClasses = new ArrayList<>();
+    private List<HomeModelClass> homeModelClassesBanner = new ArrayList<>();
+    private List<HomeModelClass> homeModelClassesBannerBotom = new ArrayList<>();
+    private List<HomeModelClass> homeModelClassesBannerTop = new ArrayList<>();
+
     private HomeCollectionAdapter collectionAdapter;
 
     private String cartcount;
@@ -67,8 +86,11 @@ public class HomeListFragment extends Fragment {
     private JSONArray jsonArrayProducts, jsonArrayProductscat, jsonArrayProductsbrand, jsonArrayProductsshop;
     private List<HomeCollectionProducts> homeCollectionSliderList = new ArrayList<HomeCollectionProducts>();
     ProgressBar progressBar;
-    private String[] permissions = {"android.permission.READ_EXTERNAL_STORAGE","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.CALL_PHONE","android.permission.ACCESS_COARSE_LOCATION","android.permission.ACCESS_FINE_LOCATION"};
-    int requestCode = 200;
+   /* private String[] permissions = {"android.permission.FLASHLIGHT","android.permission.CAMERA","android.hardware.camera.autofocus","android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
+    int requestCode = 200;*/
+    Button mFloatingActionButton;
+    NestedScrollView nestedScrollView;
+
     public HomeListFragment() {
         // Required empty public constructor
     }
@@ -82,13 +104,31 @@ public class HomeListFragment extends Fragment {
         recyclerView = v.findViewById(R.id.homelistview);
         textViewoff = v.findViewById(R.id.offlinetext);
         progressBar = v.findViewById(R.id.progress);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions( permissions, requestCode );
+        mFloatingActionButton = v.findViewById(R.id.floating_action_button);
+        nestedScrollView = v.findViewById(R.id.nestedscroll);
+        mFloatingActionButton.setOnClickListener(this);
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, requestCode);
         }
+*/
+        ConnectionStateMonitor connectionStateMonitor = new ConnectionStateMonitor(getActivity());
+        connectionStateMonitor.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    // network availale
+                    recyclerView.setVisibility(View.VISIBLE);
+                    textViewoff.setVisibility(View.INVISIBLE);
+                } else {
+                    // network lost
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    textViewoff.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
-
-        recyclerView.getViewTreeObserver()
+        gethomecollections();
+      /*  recyclerView.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
@@ -97,30 +137,24 @@ public class HomeListFragment extends Fragment {
                         //Remove listener after changed RecyclerView's height to prevent infinite loop
                         recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
+                });*/
+        nestedScrollView.getViewTreeObserver()
+                .addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+                    @Override
+                    public void onScrollChanged() {
+                        if (nestedScrollView.getChildAt(0).getBottom() <= (nestedScrollView.getHeight() + nestedScrollView.getScrollY())) {
+                            //scroll view is at bottom
+                            mFloatingActionButton.setVisibility(View.VISIBLE);
+                        } else {
+                            //scroll view is not at bottom
+                            mFloatingActionButton.setVisibility(View.GONE);
+                        }
+                    }
                 });
-
-        ConnectionStateMonitor connectionStateMonitor = new ConnectionStateMonitor(getActivity());
-        connectionStateMonitor.observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if (aBoolean){
-                    // network availale
-                    gethomecollections(v);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    textViewoff.setVisibility(View.GONE);
-                }else{
-                    // network lost
-                   // Toast.makeText(getActivity(), "no network", Toast.LENGTH_SHORT).show();
-                    recyclerView.setVisibility(View.GONE);
-                    textViewoff.setVisibility(View.VISIBLE);
-                }
-            }
-        });
         return v;
     }
 
-
-    private void gethomecollections(View v) {
+    public void gethomecollections() {
         progressBar.setVisibility(View.VISIBLE);
         final RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         String serverurl = Apis.home;
@@ -132,12 +166,49 @@ public class HomeListFragment extends Fragment {
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
                     if (status.equals("1")) {
-                        progressBar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.INVISIBLE);
                         homeModelClasses.clear();
                         homeCollectionSliderList.clear();
 
                         JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                         cartcount = dataJsonObject.getString("cartItemsCount");
+
+                        JSONObject jsonObjecttopbanner = dataJsonObject.getJSONObject("Home_Page_Middle_Banner");
+                        JSONArray jsonArraybanners = jsonObjecttopbanner.getJSONArray("banners");
+                        for (int ban = 0; ban < jsonArraybanners.length(); ban++) {
+                            JSONObject jsonObjectbaneer = jsonArraybanners.getJSONObject(ban);
+                            String bannerurl = jsonObjectbaneer.getString("banner_url");
+                            String bannerimageurl = jsonObjectbaneer.getString("banner_image_url");
+                            HomeModelClass homeModelClass = new HomeModelClass();
+                            homeModelClass.setBannerurl(bannerurl);
+                            homeModelClass.setBannerimageurl(bannerimageurl);
+                            homeModelClassesBanner.add(homeModelClass);
+                        }
+
+                        JSONObject jsonObjectbottombanner = dataJsonObject.getJSONObject("Home_Page_Bottom_Banner");
+                        JSONArray jsonArraybannersbot = jsonObjectbottombanner.getJSONArray("banners");
+                        for (int ban = 0; ban < jsonArraybannersbot.length(); ban++) {
+                            JSONObject jsonObjectbaneerbot = jsonArraybannersbot.getJSONObject(ban);
+                            String bannerurl = jsonObjectbaneerbot.getString("banner_url");
+                            String bannerimageurl = jsonObjectbaneerbot.getString("banner_image_url");
+                            HomeModelClass homeModelClass = new HomeModelClass();
+                            homeModelClass.setBannerurl(bannerurl);
+                            homeModelClass.setBannerimageurl(bannerimageurl);
+                            homeModelClassesBannerBotom.add(homeModelClass);
+                        }
+
+                        JSONObject jsonObjecttop = dataJsonObject.getJSONObject("Home_Page_Top_Banner");
+                        JSONArray jsonArraybannerstop = jsonObjecttop.getJSONArray("banners");
+                        for (int ban = 0; ban < jsonArraybannerstop.length(); ban++) {
+                            JSONObject jsonObjectbaneertop = jsonArraybannerstop.getJSONObject(ban);
+                            String bannerurl = jsonObjectbaneertop.getString("banner_url");
+                            String bannerimageurl = jsonObjectbaneertop.getString("banner_image_url");
+                            HomeModelClass homeModelClass = new HomeModelClass();
+                            homeModelClass.setBannerurl(bannerurl);
+                            homeModelClass.setBannerimageurl(bannerimageurl);
+                            homeModelClassesBannerTop.add(homeModelClass);
+                        }
+
 
                         JSONArray jsonArray = dataJsonObject.getJSONArray("slides");
                         for (int k = 0; k < jsonArray.length(); k++) {
@@ -163,6 +234,8 @@ public class HomeListFragment extends Fragment {
                             if (collectionName.equals("Garage Categories")) {
 
                             } else if (collectionName.equals("Garage Brands")) {
+
+                            } else if (collectionName.equals("Business Opportunities")) {
 
                             } else {
 
@@ -322,6 +395,7 @@ public class HomeListFragment extends Fragment {
 
                                 }
                                 if (coll_type.equals("4")) {
+                                    String collection_id = jsonObjectProducts.getString("collection_id");
                                     String primaryrecordbrand = jsonObjectProducts.getString("collection_primary_records");
                                     jsonArrayProductsbrand = jsonObjectProducts.getJSONArray("brands");
                                     if (jsonArrayProductsbrand.length() <= Integer.parseInt(primaryrecordbrand)) {
@@ -337,12 +411,14 @@ public class HomeListFragment extends Fragment {
                                                 homeCollectionProducts4.setBrandimageurl(brandimage);
                                                 homeCollectionProducts4.setBrandid(brandid);
                                                 homeCollectionProducts4.setBrandname(brandname);
+                                                homeCollectionProducts4.setCollectionid(collection_id);
                                                 homeCollectionProducts4.setType(1);
                                                 homeCollectionProductsListBrands.add(homeCollectionProducts4);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
                                         }
+
                                     } else {
                                         for (int t = 0; t < Integer.parseInt(primaryrecordbrand); t++) {
                                             JSONObject productsbrand = null;
@@ -356,12 +432,14 @@ public class HomeListFragment extends Fragment {
                                                 homeCollectionProducts4.setBrandimageurl(brandimage);
                                                 homeCollectionProducts4.setBrandid(brandid);
                                                 homeCollectionProducts4.setBrandname(brandname);
+                                                homeCollectionProducts4.setCollectionid(collection_id);
                                                 homeCollectionProducts4.setType(1);
                                                 homeCollectionProductsListBrands.add(homeCollectionProducts4);
                                             } catch (JSONException e) {
                                                 e.printStackTrace();
                                             }
                                         }
+
                                     }
                                 }
                                 HomeModelClass homeModelClass = new HomeModelClass();
@@ -369,6 +447,9 @@ public class HomeListFragment extends Fragment {
                                 homeModelClass.setHomeCollectionProductsBrands(homeCollectionProductsListBrands);
                                 homeModelClass.setHomeCollectionProductsShops(homeCollectionShopsList);
                                 homeModelClass.setHomeCollectionProductsCategories(homeCollectionCategoriesList);
+                                homeModelClass.setHomeModelClassesBanners(homeModelClassesBanner);
+                                homeModelClass.setHomeModelClassesBannersBottom(homeModelClassesBannerBotom);
+                                homeModelClass.setHomeModelClassesBannersTop(homeModelClassesBannerTop);
                                 homeModelClass.setPrimaryrecord(primaryrecord);
                                 homeModelClass.setCollectionId(collectionid);
                                 homeModelClass.setHeadcatTitle(collectionName);
@@ -381,7 +462,7 @@ public class HomeListFragment extends Fragment {
                         recyclerView.setLayoutManager(linearLayoutManager);
                         recyclerView.setAdapter(collectionAdapter);
                         //recyclerView.stopScroll();
-                        //collectionAdapter.notifyDataSetChanged();
+                        collectionAdapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getActivity(), "" + msg, Toast.LENGTH_SHORT).show();
                     }
@@ -394,7 +475,7 @@ public class HomeListFragment extends Fragment {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.INVISIBLE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }
@@ -418,4 +499,14 @@ public class HomeListFragment extends Fragment {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.floating_action_button:
+                //nestedScrollView.fullScroll(View.FOCUS_UP);
+                nestedScrollView.fling(0);
+                nestedScrollView.smoothScrollTo(0, 0);
+                break;
+        }
+    }
 }

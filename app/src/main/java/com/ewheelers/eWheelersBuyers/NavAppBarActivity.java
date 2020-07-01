@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -79,8 +80,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -89,6 +92,8 @@ import tourguide.tourguide.Overlay;
 import tourguide.tourguide.Pointer;
 import tourguide.tourguide.ToolTip;
 import tourguide.tourguide.TourGuide;
+
+import static java.lang.System.exit;
 
 public class NavAppBarActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnSuccessListener<AppUpdateInfo> {
     NavigationView navigationView;
@@ -100,7 +105,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
     RecyclerView recyclerView;
     MenuIconAdapter menuIconAdapter;
-    List<HomeMenuIcons> homeMenuIcons = new ArrayList<>();
+    List<HomeMenuIcons> homeMenuIcon = new ArrayList<>();
     DrawerLayout drawer;
 
     GPSTracker gps;
@@ -129,11 +134,20 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
     public static final int REQUEST_CODE = 1234;
     private int RC_APP_UPDATE = 1;
+
+    private Toast toast;
+    private long lastBackPressTime = 0;
+    private String[] permissions = {"android.hardware.camera.flash", "android.permission.FLASHLIGHT", "android.permission.CAMERA", "android.hardware.camera.autofocus", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
+    int requestCode = 200;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_app_bar);
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(permissions, requestCode);
+        }
 
         getuser_location = findViewById(R.id.fetch_location);
 
@@ -149,14 +163,14 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         showmenuicon = findViewById(R.id.showmenu);
         mainCartCount = findViewById(R.id.maincartcount);
         tokenvalue = new SessionStorage().getStrings(NavAppBarActivity.this, SessionStorage.tokenvalue);
-        appUpdateManager.getAppUpdateInfo().addOnSuccessListener( this);
+        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(this);
         mNeedsFlexibleUpdate = false;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-               // Toast.makeText(NavAppBarActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(getApplicationContext(),SearchResultActivity.class);
-                i.putExtra("keyword",query);
+                // Toast.makeText(NavAppBarActivity.this, "keyword:" + query, Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(getApplicationContext(), SearchResultActivity.class);
+                i.putExtra("keyword", query);
                 startActivity(i);
                 list.setVisibility(View.GONE);
                 return false;
@@ -198,7 +212,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
-                i.putExtra("selid","");
+                i.putExtra("selid", "");
                 startActivity(i);
             }
         });
@@ -218,38 +232,17 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         });
         navView = findViewById(R.id.nav_view);
 
-      /*  AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_alerts, R.id.navigation_wallet, R.id.navigation_help, R.id.navigation_profile)
-                .build();*/
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        // navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(2);
-
-
-     /*   mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_chats, R.id.nav_orders,
-                R.id.nav_my_account, R.id.nav_contactus, R.id.nav_share)
-                .setDrawerLayout(drawer)
-                .build();*/
-        // NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        //NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        // NavigationUI.setupWithNavController(navigationView, navController);
         navigationView.setNavigationItemSelectedListener(this);
-
+        //getProfileattributes();
         menuIconAdapter = new MenuIconAdapter(this, homeMenuIcons());
-        // GridLayoutManager linearLayoutManager = new GridLayoutManager(this,4);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(menuIconAdapter);
 
-       /* Intent intent = new Intent(getApplicationContext(), DiscountActivity.class);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-        startActivity(intent);*/
-
-        //getcurrentLocation();
-        //getCartCountHome();
         initGoogleAPIClient();
         showSettingDialog();
 
@@ -300,7 +293,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             ActivityCompat.requestPermissions(NavAppBarActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
         } else {
-           // Toast.makeText(mContext, "You need have granted permission", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(mContext, "You need have granted permission", Toast.LENGTH_SHORT).show();
             newgps = new NewGPSTracker(mContext, NavAppBarActivity.this);
 
             // Check if GPS enabled
@@ -312,54 +305,58 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 // \n is for new line
 
                 // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                if (latitude != 0 && longitude != 0) {
+                    try {
+                        geocoder = new Geocoder(this, Locale.ENGLISH);
+                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        StringBuilder str1 = new StringBuilder();
+                        StringBuilder str2 = new StringBuilder();
+                        StringBuilder str3 = new StringBuilder();
+                        StringBuilder str4 = new StringBuilder();
+                        StringBuilder str5 = new StringBuilder();
+                        StringBuilder str6 = new StringBuilder();
 
-                try {
-                    geocoder = new Geocoder(this, Locale.ENGLISH);
-                    addresses = geocoder.getFromLocation(latitude, longitude, 1);
-                    StringBuilder str1 = new StringBuilder();
-                    StringBuilder str2 = new StringBuilder();
-                    StringBuilder str3 = new StringBuilder();
-                    StringBuilder str4 = new StringBuilder();
-                    StringBuilder str5 = new StringBuilder();
-                    StringBuilder str6 = new StringBuilder();
+                        if (Geocoder.isPresent()) {
 
-                    if (Geocoder.isPresent()) {
+                            Address returnAddress = addresses.get(0);
 
-                        Address returnAddress = addresses.get(0);
+                            String address = returnAddress.getAddressLine(0);
+                            String localityString = returnAddress.getSubLocality();
+                            String citys = returnAddress.getLocality();
+                            String region_code = returnAddress.getCountryName();
+                            String zipcode = returnAddress.getPostalCode();
+                            String statenam = returnAddress.getAdminArea();
+                            str1.append(address);
+                            str2.append(localityString);
+                            str3.append(citys);
+                            str4.append(region_code);
+                            str5.append(zipcode);
+                            str6.append(statenam);
 
-                        String address = returnAddress.getAddressLine(0);
-                        String localityString = returnAddress.getSubLocality();
-                        String citys = returnAddress.getLocality();
-                        String region_code = returnAddress.getCountryName();
-                        String zipcode = returnAddress.getPostalCode();
-                        String statenam = returnAddress.getAdminArea();
-                        str1.append(address);
-                        str2.append(localityString);
-                        str3.append(citys);
-                        str4.append(region_code);
-                        str5.append(zipcode);
-                        str6.append(statenam);
+                            //getuser_location.setText(str3);
+                            //  countrycode.setText(str4);
+                            //  pincodeno.setText(str5);
+                            //  statename.setText(str6);
+                            //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
+                            //donator_addre.setEnabled(false);
+                            //city.setText(str1);
+                            Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
 
-                        //getuser_location.setText(str3);
-                        //  countrycode.setText(str4);
-                        //  pincodeno.setText(str5);
-                        //  statename.setText(str6);
-                        //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
-                        //donator_addre.setEnabled(false);
-                        //city.setText(str1);
-                        Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
-
-                    } else {
-                        Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("tag", e.getMessage());
                     }
-                } catch (Exception e) {
-                    Log.e("tag", e.getMessage());
+                }else {
+
+                    Toast.makeText(NavAppBarActivity.this, "No fetched current location", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 // Can't get location.
                 // GPS or network is not enabled.
                 // Ask user to enable GPS/network in settings.
-                gps.showSettingsAlert();
+                newgps.showSettingsAlert();
             }
         }
 
@@ -378,13 +375,13 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
-                            JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
-                            JSONArray jsonArray = jsonObjectdata.getJSONArray("suggestions");
-                            for(int i=0;i<jsonArray.length();i++){
-                                JSONObject jsonObjectVal = jsonArray.getJSONObject(i);
-                                String value = jsonObjectVal.getString("value");
-                                strings.add(value);
-                            }
+                                JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+                                JSONArray jsonArray = jsonObjectdata.getJSONArray("suggestions");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject jsonObjectVal = jsonArray.getJSONObject(i);
+                                    String value = jsonObjectVal.getString("value");
+                                    strings.add(value);
+                                }
                                 list.setAdapter(new ArrayAdapter<String>(NavAppBarActivity.this, android.R.layout.simple_spinner_dropdown_item, strings));
                                 list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
@@ -393,6 +390,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                                         searchView.setQuery(s, true);
                                     }
                                 });
+                                list.deferNotifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -496,7 +494,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                         // Can't get location.
                         // GPS or network is not enabled.
                         // Ask user to enable GPS/network in settings.
-                        gps.showSettingsAlert();
+                        newgps.showSettingsAlert();
                     }
 
                 } else {
@@ -545,17 +543,81 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
 
     public List<HomeMenuIcons> homeMenuIcons() {
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_parking, "Parking"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_evcharg, "Charge"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_mechanics, "Repair"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_tyre, "Puncture"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_parking, "Parking"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_evcharg, "Charge"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_mechanics, "Repair"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_tyre, "Puncture"));
         //homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_spareparts, "spares"));
         // homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_accessroies, "accessories"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_battery, "Batteries"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_key, "Key Repair"));
-        homeMenuIcons.add(new HomeMenuIcons(R.drawable.ic_waterwash, "Bike wash"));
-        return homeMenuIcons;
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_battery, "Batteries"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_key, "Key Repair"));
+        homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_waterwash, "Bike Wash"));
+        return homeMenuIcon;
     }
+
+
+    public void getProfileattributes() {
+        String url_link = Apis.sellerprofileattributes;
+        final RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String status = jsonObject.getString("status");
+                    String msg = jsonObject.getString("msg");
+                    if (status.equals("1")) {
+                        JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                        JSONObject jsonObject1 = jsonObjectData.getJSONObject("result");
+                        JSONObject jsonObject2 = jsonObject1.getJSONObject("Partner Type");
+                        Iterator iterator = jsonObject2.keys();
+                        while (iterator.hasNext()) {
+                            String keys = (String) iterator.next();
+                            String values = jsonObject2.getString(keys);
+                            HomeMenuIcons homeMenuIcons = new HomeMenuIcons(R.drawable.loction_icon,values);
+                            homeMenuIcon.add(homeMenuIcons);
+                        }
+
+                        menuIconAdapter = new MenuIconAdapter(NavAppBarActivity.this, homeMenuIcon);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(NavAppBarActivity.this, RecyclerView.HORIZONTAL, false);
+                        recyclerView.setLayoutManager(linearLayoutManager);
+                        recyclerView.setAdapter(menuIconAdapter);
+
+                    } else {
+                        Toast.makeText(NavAppBarActivity.this, "check: " + msg, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error: " + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+
+            }
+        }) {
+
+           /* @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenValue);
+                return params;
+            }*/
+
+            @Override
+            public Map<String, String> getParams() {
+                return null;
+            }
+
+        };
+        // Add the realibility on the connection.
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        queue.add(stringRequest);
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -583,7 +645,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             logoutviaApi();
         }
 
-        if(id==R.id.nav_partner){
+        if (id == R.id.nav_partner) {
             Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("https://play.google.com/store/apps/details?id=com.ewheelers.ewheelers"));
             startActivity(viewIntent);
         }
@@ -603,17 +665,17 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             }
         }
 
-        if(id==R.id.nav_blog){
+        if (id == R.id.nav_blog) {
             Intent in = new Intent(getApplicationContext(), BuyerGuideActivity.class);
             in.putExtra("opens", "blog");
             startActivity(in);
         }
-        if(id==R.id.nav_contactus){
+        if (id == R.id.nav_contactus) {
             Intent in = new Intent(getApplicationContext(), BuyerGuideActivity.class);
             in.putExtra("opens", "openshort");
             startActivity(in);
         }
-        if(id==R.id.nav_share){
+        if (id == R.id.nav_share) {
             Intent in = new Intent(getApplicationContext(), BuyerGuideActivity.class);
             in.putExtra("opens", "support");
             startActivity(in);
@@ -799,26 +861,26 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         super.onResume();
     }
 
-    boolean doubleBackToExitPressedOnce = false;
-
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            return;
-        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(NavAppBarActivity.this);
+        builder.setTitle(R.string.app_name);
+        builder.setIcon(R.mipmap.buyer_logo);
+        builder.setMessage("Do you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
 
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-                finish();
-            }
-        }, 2000);
     }
 
     public void setcount(String unread) {
@@ -840,43 +902,44 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         appUpdateManager = AppUpdateManagerFactory.create(context);
         return super.onCreateView(parent, name, context, attrs);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult( requestCode, resultCode, data );
+        super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_APP_UPDATE) {
             if (resultCode != RESULT_OK) {
-                Log.e( "AppUpdate", "onActivityResult: app download failed" );
+                Log.e("AppUpdate", "onActivityResult: app download failed");
             }
         }
     }
 
     @Override
     public void onSuccess(AppUpdateInfo appUpdateInfo) {
-        Log.e("abc","abc");
+        Log.e("abc", "abc");
 
 
         if (appUpdateInfo.updateAvailability()
                 == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
             // If an in-app update is already running, resume the update.
             startUpdate(appUpdateInfo, AppUpdateType.IMMEDIATE);
-            Log.e("abc1","abc1");
+            Log.e("abc1", "abc1");
 
         } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
             // If the update is downloaded but not installed,
             // notify the user to complete the update.
             popupSnackbarForCompleteUpdate();
-            Log.e("abc2","abc2");
+            Log.e("abc2", "abc2");
 
         } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
             if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
                 startUpdate(appUpdateInfo, AppUpdateType.IMMEDIATE);
-                Log.e("abc3","abc3");
+                Log.e("abc3", "abc3");
 
             } else if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
                 mNeedsFlexibleUpdate = true;
                 showFlexibleUpdateNotification();
-                Log.e("abc4","abc4");
+                Log.e("abc4", "abc4");
 
             }
         }

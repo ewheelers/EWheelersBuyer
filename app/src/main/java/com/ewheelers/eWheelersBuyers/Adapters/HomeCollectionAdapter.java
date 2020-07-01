@@ -17,21 +17,36 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.android.volley.toolbox.StringRequest;
+import com.ewheelers.eWheelersBuyers.BuyerGuideActivity;
 import com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeModelClass;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
+import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.ewheelers.eWheelersBuyers.SessionStorage.tokenvalue;
 
 
 public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAdapter.HomeHolder> {
@@ -63,6 +78,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
         int shopsarrlenth = homeCollectionProducts.get(position).getHomeCollectionProductsShops().size();
         int brandsarrlenth = homeCollectionProducts.get(position).getHomeCollectionProductsBrands().size();
 
+
         holder.title.setText(homeCollectionProducts.get(position).getHeadcatTitle());
 
 
@@ -70,8 +86,28 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
 
         if (position == 0) {
             holder.relativeLayout.setVisibility(View.VISIBLE);
-        }else {
+        }
+        else {
             holder.relativeLayout.setVisibility(View.GONE);
+        }
+
+        if(position==1){
+            if(homeCollectionProducts.get(position).getHomeModelClassesBanners().isEmpty()){
+                holder.topbanner.setVisibility(View.GONE);
+            }else {
+                holder.topbanner.setVisibility(View.VISIBLE);
+                ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+                imageLoader.get(homeCollectionProducts.get(position).getHomeModelClassesBanners().get(0).getBannerimageurl(), ImageLoader.getImageListener(holder.topbanner, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+                holder.topbanner.setImageUrl(homeCollectionProducts.get(position).getHomeModelClassesBanners().get(0).getBannerimageurl(), imageLoader);
+                holder.topbanner.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, BuyerGuideActivity.class);
+                        i.putExtra("openurl", homeCollectionProducts.get(position).getHomeModelClassesBanners().get(0).getBannerurl());
+                        context.startActivity(i);
+                    }
+                });
+            }
         }
 
         if(position==2){
@@ -102,6 +138,45 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
             });
         }
 
+        if(position==3){
+            if(homeCollectionProducts.get(position).getHomeModelClassesBannersTop().isEmpty()){
+                holder.topbanner.setVisibility(View.GONE);
+            }else {
+                holder.topbanner.setVisibility(View.VISIBLE);
+                ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+                imageLoader.get(homeCollectionProducts.get(position).getHomeModelClassesBannersTop().get(0).getBannerimageurl(), ImageLoader.getImageListener(holder.topbanner, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+                holder.topbanner.setImageUrl(homeCollectionProducts.get(position).getHomeModelClassesBannersTop().get(0).getBannerimageurl(), imageLoader);
+                holder.topbanner.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, BuyerGuideActivity.class);
+                        i.putExtra("openurltop", homeCollectionProducts.get(position).getHomeModelClassesBannersTop().get(0).getBannerurl());
+                        context.startActivity(i);
+                    }
+                });
+            }
+        }
+
+
+        if(position==5){
+            if(homeCollectionProducts.get(position).getHomeModelClassesBannersBottom().isEmpty()){
+                holder.topbanner.setVisibility(View.GONE);
+            }else {
+                holder.topbanner.setVisibility(View.VISIBLE);
+                ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
+                imageLoader.get(homeCollectionProducts.get(position).getHomeModelClassesBannersBottom().get(0).getBannerimageurl(), ImageLoader.getImageListener(holder.topbanner, R.drawable.cart, android.R.drawable.ic_dialog_alert));
+                holder.topbanner.setImageUrl(homeCollectionProducts.get(position).getHomeModelClassesBannersBottom().get(0).getBannerimageurl(), imageLoader);
+                holder.topbanner.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, BuyerGuideActivity.class);
+                        i.putExtra("openurlbottom", homeCollectionProducts.get(position).getHomeModelClassesBannersBottom().get(0).getBannerurl());
+                        context.startActivity(i);
+                    }
+                });
+            }
+        }
+
         if (collType.equals("1")) {
 
             if(prodarrlenth>=Integer.parseInt(prima)){
@@ -119,6 +194,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
                 holder.recyclerlist.setLayoutManager(linearLayoutManager);
                 holder.recyclerlist.setAdapter(collectionbannersAdapter);
+                collectionbannersAdapter.notifyDataSetChanged();
             }
 
             holder.showall.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +225,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
                 holder.recyclerlist.setLayoutManager(linearLayoutManager);
                 holder.recyclerlist.setAdapter(collectionbannersAdapter);
+                collectionbannersAdapter.notifyDataSetChanged();
             }
             holder.showall.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,6 +236,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                     context.startActivity(intent);
                 }
             });
+
         }
 
         if (collType.equals("3")) {
@@ -176,6 +254,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
                 holder.recyclerlist.setLayoutManager(linearLayoutManager);
                 holder.recyclerlist.setAdapter(collectionbannersAdapter);
+                collectionbannersAdapter.notifyDataSetChanged();
             }
 
             holder.showall.setOnClickListener(new View.OnClickListener() {
@@ -204,6 +283,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
                 holder.recyclerlist.setLayoutManager(linearLayoutManager);
                 holder.recyclerlist.setAdapter(collectionbannersAdapter);
+                collectionbannersAdapter.notifyDataSetChanged();
             }
             holder.showall.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -214,6 +294,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                     context.startActivity(intent);
                 }
             });
+
         }
 
     }
@@ -242,8 +323,11 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
         LinearLayout linearLayout,testlayout,rentlayout;
         NetworkImageView networkImageView1,networkImageView2;
 
+        NetworkImageView topbanner;
+
         public HomeHolder(@NonNull View itemView) {
             super(itemView);
+            topbanner = itemView.findViewById(R.id.topbannerimage);
             recyclerlist = itemView.findViewById(R.id.recycl);
             title = itemView.findViewById(R.id.collection_title);
             showall = itemView.findViewById(R.id.showall);

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
 import com.ewheelers.eWheelersBuyers.ProductDetailActivity;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
+import com.ewheelers.eWheelersBuyers.TestDriveAndRentabike;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 
 import org.json.JSONArray;
@@ -106,9 +108,13 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
 
                 holder.availRent.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(context, ProductDetailActivity.class);
+                    public void onClick(View v) { //typeoflayout
+                       /* Intent i = new Intent(context, ProductDetailActivity.class);
                         i.putExtra("rent", "rent");
+                        i.putExtra("productid", homeCollectionProducts.get(position).getSelprod_id());
+                        context.startActivity(i);*/
+                        Intent i = new Intent(context, TestDriveAndRentabike.class);
+                        i.putExtra("typeoflayout", "rent");
                         i.putExtra("productid", homeCollectionProducts.get(position).getSelprod_id());
                         context.startActivity(i);
                     }
@@ -130,6 +136,7 @@ public class CollectionProductsAdapter extends RecyclerView.Adapter<CollectionPr
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("brandid",homeCollectionProducts.get(position).getBrandid());
                         intent.putExtra("brandname",homeCollectionProducts.get(position).getBrandname());
+                        intent.putExtra("collid",homeCollectionProducts.get(position).getCollectionid());
                         context.startActivity(intent);
                     }
                 });

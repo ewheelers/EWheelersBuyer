@@ -8,9 +8,18 @@
     android:elevation="@dimen/padding_10"
     android:orientation="vertical"
     android:padding="5dp">
-
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.android.volley.toolbox.NetworkImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:padding="@dimen/dimen_5dp"
+            android:background="@drawable/border_bg"
+            android:id="@+id/net_img"/>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="@dimen/padding_10"
@@ -40,6 +49,7 @@
             android:layout_height="wrap_content"
             android:textStyle="bold" />
     </LinearLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:singleLine="true"
-            android:text="Onspot service"
+            android:text="Request Service"
             android:textAllCaps="false" />
 
         <ImageView

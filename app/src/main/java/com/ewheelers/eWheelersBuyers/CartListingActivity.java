@@ -254,8 +254,11 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
+                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
                                 cartListingAdapter.notifyDataSetChanged();
                                 onRefresh();
+                            }else {
+                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -301,17 +304,20 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         cartListing();
     }
 
-    @Override
+   /* @Override
     public void onBackPressed(){
+        //super.onBackPressed();
         if(produt_id==null||produt_id.isEmpty()) {
             Intent i = new Intent(getApplicationContext(), NavAppBarActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
             finish();
         }else {
             Intent i = new Intent(getApplicationContext(), ProductDetailActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             i.putExtra("productid", produt_id);
             startActivity(i);
             finish();
         }
-    }
+    }*/
 }

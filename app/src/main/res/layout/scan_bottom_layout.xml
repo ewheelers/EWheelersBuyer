@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:textColor="@color/Black"
+    android:padding="@dimen/padding_10"
+    android:text = "Please connect your vehicle and continue with details and payment."/>
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_electricity"/>
+    <Button
+        android:id="@+id/proceed"
+        android:layout_margin="@dimen/padding_10"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_bg"
+        style="@style/TextAppearance.MaterialComponents.Button"
+        android:text="Proceed"
+        android:layout_gravity="center"
+        android:textColor="@color/white"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:layout_gravity="center"
+        android:textColor="@color/Black"
+        android:id="@+id/cancel"
+        android:padding="@dimen/padding_10"/>
+
+</LinearLayout>

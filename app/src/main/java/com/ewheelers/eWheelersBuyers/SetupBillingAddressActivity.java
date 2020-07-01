@@ -108,6 +108,7 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
                                    /* Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                     mySnackbar.show();*/
                                     Intent i = new Intent(getApplicationContext(), CartSummaryActivity.class);
+                                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
                                     finish();
 

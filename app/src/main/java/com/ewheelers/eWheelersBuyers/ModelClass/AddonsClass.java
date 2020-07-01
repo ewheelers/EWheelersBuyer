@@ -7,6 +7,42 @@ public class AddonsClass {
     private String buywithorderqty;
     private String butwithselectedProductId;
     private String buywithQuantity;
+    private String logo;
+    private String uaname;
+    private String uaddress;
+    private String serviceprovider;
+
+    public String getServiceprovider() {
+        return serviceprovider;
+    }
+
+    public void setServiceprovider(String serviceprovider) {
+        this.serviceprovider = serviceprovider;
+    }
+
+    public String getUaname() {
+        return uaname;
+    }
+
+    public void setUaname(String uaname) {
+        this.uaname = uaname;
+    }
+
+    public String getUaddress() {
+        return uaddress;
+    }
+
+    public void setUaddress(String uaddress) {
+        this.uaddress = uaddress;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
     public String getBuywithimageurl() {
         return buywithimageurl;

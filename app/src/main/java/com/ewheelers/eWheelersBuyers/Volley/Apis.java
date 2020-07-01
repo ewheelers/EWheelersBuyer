@@ -55,5 +55,13 @@ public class Apis {
     public static String autocompletesearch = base+"/compare-products/autocomplete";
     public static String compareindex = base+"/compare-products/index";
     public static String filters = base+"products/filters";
+    public static String chipfilters = base+"products/get-seller-products-attributes/";
+    public static String chargeStations = base+"addresses/search-stations";
+    public static String spproductslist = base+"products/get-seller-products-by-criteria";
+    public static String sellerlistprofile = base+"home/get-seller-list-by-profile-attributes";
+    public static String sellerprofileattributes = base+"home/get-seller-profile-attributes";
+
+    public static String passwordUpdate = base+"account/update-password";
+
 
 }

@@ -1,31 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     tools:context=".Fragments.HomeListFragment">
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/progress"
-        android:visibility="gone"/>
     <TextView
         android:id="@+id/offlinetext"
-        android:paddingTop="@dimen/dimen_50dp"
-        android:visibility="gone"
-        android:textAlignment="center"
-        android:textColor="@color/colorPrimary"
-        android:text="You are in Offline Enable Mobiel data or Wifi to make Online"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/ic_offline"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/homelistview"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:drawableTop="@drawable/ic_offline"
+        android:paddingTop="@dimen/dimen_50dp"
+        android:text="You are in Offline.Check network Connection"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimary"
+        android:visibility="invisible" />
 
-</LinearLayout>
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedscroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homelistview"
+            android:paddingTop="@dimen/dimen_70dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
+
+    </androidx.core.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:indeterminate="true"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dimen_16sp">
+        <Button
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/floating_action_button"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:visibility="gone"
+            android:padding="@dimen/padding_10"
+            android:background="@drawable/round_button"
+            app:fabSize="normal"
+            android:drawableTop="@drawable/ic_arrow_upward" />
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

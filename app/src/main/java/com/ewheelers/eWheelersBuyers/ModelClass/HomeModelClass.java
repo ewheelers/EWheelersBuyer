@@ -23,6 +23,53 @@ public class HomeModelClass implements Serializable {
     List<HomeCollectionProducts> homeCollectionProductsCategories;
     List<HomeCollectionProducts> homeCollectionProductsSlidersList;
 
+    String bannerurl;
+    String bannerimageurl;
+
+    List<HomeModelClass> homeModelClassesBanners;
+    List<HomeModelClass> homeModelClassesBannersBottom;
+    List<HomeModelClass> homeModelClassesBannersTop;
+
+    public List<HomeModelClass> getHomeModelClassesBannersTop() {
+        return homeModelClassesBannersTop;
+    }
+
+    public void setHomeModelClassesBannersTop(List<HomeModelClass> homeModelClassesBannersTop) {
+        this.homeModelClassesBannersTop = homeModelClassesBannersTop;
+    }
+
+    public List<HomeModelClass> getHomeModelClassesBannersBottom() {
+        return homeModelClassesBannersBottom;
+    }
+
+    public void setHomeModelClassesBannersBottom(List<HomeModelClass> homeModelClassesBannersBottom) {
+        this.homeModelClassesBannersBottom = homeModelClassesBannersBottom;
+    }
+
+    public List<HomeModelClass> getHomeModelClassesBanners() {
+        return homeModelClassesBanners;
+    }
+
+    public void setHomeModelClassesBanners(List<HomeModelClass> homeModelClassesBanners) {
+        this.homeModelClassesBanners = homeModelClassesBanners;
+    }
+
+    public String getBannerurl() {
+        return bannerurl;
+    }
+
+    public void setBannerurl(String bannerurl) {
+        this.bannerurl = bannerurl;
+    }
+
+    public String getBannerimageurl() {
+        return bannerimageurl;
+    }
+
+    public void setBannerimageurl(String bannerimageurl) {
+        this.bannerimageurl = bannerimageurl;
+    }
+
     public String getTotproducts() {
         return totproducts;
     }

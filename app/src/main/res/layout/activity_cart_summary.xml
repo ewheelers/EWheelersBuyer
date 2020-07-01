@@ -1,303 +1,274 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/summarylayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/padding_10"
-    android:id="@+id/linear_layout"
-    tools:context=".CartSummaryActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:background="@drawable/border_bg"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:padding="@dimen/dimen_15dp"
-        android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:textColor="@color/colorPrimary"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pick-up Address"/>
-        <TextView
-            android:visibility="gone"
-            android:gravity="right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Change"/>
-    </LinearLayout>
-
-    <TextView
-        android:textColor="@color/Black"
-        android:id="@+id/seller_address"
+        android:id="@+id/bottomedlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pick-up Address"/>
-    <TextView
-        android:textSize="16sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Delivery Process"
-        android:drawablePadding="@dimen/padding_10"
-        android:drawableEnd="@drawable/iicon"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginTop="@dimen/padding_10"
-        android:background="@drawable/border_bg"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:padding="@dimen/dimen_15dp"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Billing Address"/>
-            <TextView
-                android:id="@+id/changeAddress"
-                android:textColor="@color/blue"
-                android:gravity="right"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Change"/>
-        </LinearLayout>
-
-        <TextView
-            android:textColor="@color/Black"
-            android:id="@+id/customer_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="customer Address"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_marginTop="@dimen/padding_10"
-        android:background="@drawable/border_bg"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:padding="@dimen/dimen_15dp"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shipping Address"/>
-            <TextView
-                android:id="@+id/shippingAddressChange"
-                android:textColor="@color/blue"
-                android:gravity="right"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Change"/>
-        </LinearLayout>
-
-        <TextView
-            android:textColor="@color/Black"
-            android:id="@+id/customer_shipping_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="customer Address"/>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/walletBal"
-        android:padding="@dimen/padding_10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Wallet Balance"/>
-
-    <TextView
-        android:id="@+id/wallet_details"
-        android:padding="@dimen/padding_10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Details"/>
-
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Use my Wallet Balance"/>
-
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/remainBalance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Remaining Wallet Balance"/>
-
-    <LinearLayout
-        android:padding="@dimen/padding_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:textColor="@color/blue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Wallet Balance Applied"/>
-        <TextView
-            android:id="@+id/totalAmount"
-            android:gravity="right"
-            android:textColor="@color/colorPrimary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Amount"/>
-    </LinearLayout>
-    </LinearLayout>
-
-    <Button
-        android:layout_margin="@dimen/padding_10"
-        android:id="@+id/have_coupons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_bg"
-        android:text="I Have a Coupon"
-        android:textColor="@color/white"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/couponlist"/>
-
-    <LinearLayout
-        android:visibility="visible"
-        android:id="@+id/apply_promo_layout"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2">
-        <EditText
-            android:id="@+id/promo_code"
-            android:singleLine="true"
-            android:padding="6dp"
-            android:background="@drawable/border_bg"
-            android:layout_width="0dp"
-            android:layout_weight="1.5"
-            android:layout_height="wrap_content"
-            android:hint="Enter Promo Code"/>
-        <TextView
-            android:textColor="@color/colorPrimary"
-            android:id="@+id/apply_code"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:text="Apply"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:visibility="gone"
-        android:id="@+id/promoLayout"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-    <TextView
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorPrimary"
-        android:padding="@dimen/padding_10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/promo_result"/>
-
-        <Button
-            android:id="@+id/remove_promocode"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_gravity="center_horizontal"
-            android:text="Remove"
-            android:layout_marginBottom="5dp"
-            android:textColor="@color/colorWhite"
-            android:background="@drawable/button_bg"/>
-
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/price_list"/>
-
-    <LinearLayout
-        android:visibility="visible"
-        android:padding="@dimen/padding_10"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/actionbarwhitebg"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:elevation="@dimen/dimen_12dp"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/no_items"
-            android:textColor="@color/blue"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Payable Now"/>
+        android:orientation="horizontal"
+        android:paddingRight="@dimen/dimen_5dp"
+        android:paddingLeft="@dimen/dimen_5dp"
+        android:visibility="visible">
+
         <TextView
             android:id="@+id/amount"
-            android:gravity="right"
-            android:textColor="@color/blue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="Amount"/>
+            android:gravity="start"
+            android:text="$ 00.00"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/payment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/dimen_5dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:text="Continue"
+            android:textColor="@color/white" />
+
     </LinearLayout>
 
-    <Button
-        android:layout_marginTop="@dimen/dimen_20dp"
-        android:background="@drawable/button_bg"
-        android:textColor="@color/white"
-        android:layout_gravity="center"
-        android:id="@+id/payment"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:text="Continue"/>
+    <androidx.core.widget.NestedScrollView
+        android:layout_above="@+id/bottomedlayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/padding_10"
-        android:background="@drawable/button_bg"
-        android:textColor="@color/white"
-        android:layout_gravity="center"
-        android:id="@+id/cod"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:text="Cash on Delivery"/>
+        <LinearLayout xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/padding_10"
+            tools:context=".CartSummaryActivity">
 
-</LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/ordercount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/dimen_5dp"
+                android:text="Order Summary - "
+                android:textColor="@color/Black"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/dimen_15dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pick-up Address"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="Change"
+                        android:textColor="@color/blue"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/seller_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Pick-up Address"
+                    android:textColor="@color/Black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableEnd="@drawable/iicon"
+                    android:drawablePadding="@dimen/padding_10"
+                    android:text="Delivery Process"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/dimen_15dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Billing Address"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/changeAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="Change"
+                        android:textColor="@color/blue" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/customer_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="customer Address"
+                    android:textColor="@color/Black" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:background="@drawable/border_bg"
+                android:orientation="vertical"
+                android:padding="@dimen/dimen_15dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Shipping Address"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/shippingAddressChange"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="Change"
+                        android:textColor="@color/blue" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/customer_shipping_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="customer Address"
+                    android:textColor="@color/Black" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/have_coupons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_10"
+                android:background="@drawable/button_bg"
+                android:text="I Have a Coupon"
+                android:textColor="@color/white" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/couponlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/apply_promo_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:weightSum="2">
+
+                <EditText
+                    android:id="@+id/promo_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/border_bg"
+                    android:hint="Enter Promo Code"
+                    android:padding="6dp"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/apply_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="center"
+                    android:text="Apply"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/promoLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/promo_result"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="@dimen/padding_10"
+                    android:textColor="@color/colorPrimary" />
+
+                <Button
+                    android:id="@+id/remove_promocode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/button_bg"
+                    android:text="Remove"
+                    android:textColor="@color/colorWhite" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/price_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/padding_10" />
+
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

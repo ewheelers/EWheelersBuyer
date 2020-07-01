@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -31,6 +32,7 @@ import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
 import com.ewheelers.eWheelersBuyers.ProductDetailActivity;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
+import com.ewheelers.eWheelersBuyers.TestDriveAndRentabike;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.ewheelers.eWheelersBuyers.ZoomingActivity;
 
@@ -160,8 +162,8 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                 holder.test.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(context, ProductDetailActivity.class);
-                        i.putExtra("test", "test");
+                        Intent i = new Intent(context, TestDriveAndRentabike.class);
+                        i.putExtra("typeoflayout", "test");
                         i.putExtra("productid", allebikesModelClasses.get(position).getProductid());
                         context.startActivity(i);
                     }
@@ -170,7 +172,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                     @Override
                     public void onClick(View v) {
                         Intent i = new Intent(context, ProductDetailActivity.class);
-                        i.putExtra("rent", "rent");
+                        i.putExtra("typeoflayout", "rent");
                         i.putExtra("productid", allebikesModelClasses.get(position).getProductid());
                         context.startActivity(i);
                     }
@@ -199,12 +201,19 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
 
                 if (allebikesModelClasses.get(position).getPrice().length() > 80) {
                     String brand_Shortdesc = allebikesModelClasses.get(position).getPrice().substring(0, 80) + "...";
+
+                    if(brand_Shortdesc.charAt(0) == '(')
+                        brand_Shortdesc = brand_Shortdesc.substring(brand_Shortdesc.indexOf(")") + 1).trim();
+
                     holder.branddescription.setText(Html.fromHtml(brand_Shortdesc + "<font color='blue'> <u>View More</u></font>"));
                     holder.branddescription.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             holder.brandviewmore.setVisibility(View.VISIBLE);
-                            holder.brandviewmore.setText(Html.fromHtml(allebikesModelClasses.get(position).getPrice() + "<font color='red'> <u>View Less</u></font>"));
+                            String shortdesc = allebikesModelClasses.get(position).getPrice();
+                            if(shortdesc.charAt(0) == '(')
+                                shortdesc = shortdesc.substring(shortdesc.indexOf(")") + 1).trim();
+                            holder.brandviewmore.setText(Html.fromHtml( shortdesc + "<font color='red'> <u>View Less</u></font>"));
                             holder.branddescription.setVisibility(View.GONE);
                         }
                     });
@@ -226,6 +235,7 @@ public class AllebikesAdapter extends RecyclerView.Adapter<AllebikesAdapter.Bike
                         Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                         intent.putExtra("brandid", allebikesModelClasses.get(position).getProductid());
                         intent.putExtra("brandname", allebikesModelClasses.get(position).getProductName());
+                        intent.putExtra("branddescription", allebikesModelClasses.get(position).getPrice());
                         context.startActivity(intent);
                     }
                 });

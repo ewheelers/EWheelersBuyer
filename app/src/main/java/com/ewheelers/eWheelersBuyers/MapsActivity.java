@@ -13,6 +13,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,7 +53,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
-    List<ServiceProvidersClass> serviceProvidersClassList;
+    List<ServiceProvidersClass> serviceProvidersClassList = new ArrayList<>();
     String iconType;
     BottomSheetDialog mBottomSheetDialog;
     TextView shop_Address, shop_Name, shopOwner_name, locate;
@@ -69,6 +71,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         serviceProvidersClassList = (List<ServiceProvidersClass>) getIntent().getSerializableExtra("chargelist");
+        if(serviceProvidersClassList==null){
+            Toast.makeText(this, "NO address are got some thing wrong", Toast.LENGTH_SHORT).show();
+        }
         iconType = getIntent().getStringExtra("icontype");
         mBottomSheetDialog = new BottomSheetDialog(this);
         View sheetView = getLayoutInflater().inflate(R.layout.navigation_layout, null);
@@ -117,7 +122,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mGoogleApiClient.connect();
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public void onConnected(Bundle bundle) {
 
@@ -173,7 +177,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.loction_icon);
             Bitmap b = bitmapdraw.getBitmap();
             Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-            if (iconType.equals("Charging Stations")) {
+            if (iconType.equals("Charge Stations")) {
                 markerOptions1.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 //  markerOptions1.icon(bitmapDescriptorFromVector(getApplicationContext(),R.drawable.loction_icon));
             } else {

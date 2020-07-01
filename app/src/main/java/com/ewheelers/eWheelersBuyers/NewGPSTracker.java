@@ -1,6 +1,7 @@
 package com.ewheelers.eWheelersBuyers;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
@@ -56,6 +57,7 @@ public class NewGPSTracker extends Service {
         getLocation();
     }
 
+    @SuppressLint("MissingPermission")
     public Location getLocation() {
         try {
 

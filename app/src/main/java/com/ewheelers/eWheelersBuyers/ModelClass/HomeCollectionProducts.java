@@ -16,6 +16,7 @@ public class HomeCollectionProducts implements Serializable {
     private JSONArray jsonArray;
 
     private int type;
+    private String collectionid;
        //products
     private String cartItems;
     private String is_in_any_wishlist;
@@ -48,6 +49,8 @@ public class HomeCollectionProducts implements Serializable {
     private String brandid;
     private String brandname;
     private String brandimageurl;
+    private String colbrandid;
+    private String colbranddescription;
 
     private String title_name;
 
@@ -69,6 +72,30 @@ public class HomeCollectionProducts implements Serializable {
     private String prodcategory_description;
     private String prodcategory_imageurl;
 
+
+    public String getCollectionid() {
+        return collectionid;
+    }
+
+    public void setCollectionid(String collectionid) {
+        this.collectionid = collectionid;
+    }
+
+    public String getColbrandid() {
+        return colbrandid;
+    }
+
+    public void setColbrandid(String colbrandid) {
+        this.colbrandid = colbrandid;
+    }
+
+    public String getColbranddescription() {
+        return colbranddescription;
+    }
+
+    public void setColbranddescription(String colbranddescription) {
+        this.colbranddescription = colbranddescription;
+    }
 
     public JSONArray getJsonArray() {
         return jsonArray;

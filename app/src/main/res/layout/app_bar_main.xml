@@ -2,10 +2,10 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/frame5"
-    android:background="@color/light_grey"
+    android:background="#00FFFFFF"
     tools:context=".NavAppBarActivity">
 
     <LinearLayout
@@ -14,41 +14,40 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:elevation="@dimen/padding_10"
-            android:paddingStart="@dimen/dimen_5dp"
-            android:paddingEnd="@dimen/dimen_5dp"
-            android:background="@color/white"
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:layout_marginTop="@dimen/padding_10"
             android:layout_marginLeft="@dimen/padding_10"
+            android:layout_marginTop="@dimen/padding_10"
             android:layout_marginRight="@dimen/padding_10"
+            android:background="@color/white"
+            android:elevation="@dimen/padding_10"
+            android:paddingStart="@dimen/dimen_5dp"
+            android:paddingEnd="@dimen/dimen_5dp"
             android:weightSum="2">
 
             <LinearLayout
-                android:layout_weight="0.5"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5">
 
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:id="@+id/showmenu"
-                android:layout_width="34dp"
-                android:layout_height="36dp"
-                app:srcCompat="@drawable/ic_menu" />
+                <ImageView
+                    android:id="@+id/showmenu"
+                    android:layout_width="34dp"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_menu" />
 
-            <ImageView
-                android:layout_gravity="center_vertical"
-                android:layout_width="36dp"
-                android:layout_height="32dp"
-                android:src="@mipmap/buyer_logo_foreground" />
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/buyer_logo_foreground" />
 
             </LinearLayout>
 
 
             <RelativeLayout
-                android:visibility="gone"
                 android:layout_width="160dp"
                 android:layout_height="32dp"
                 android:layout_gravity="center_vertical"
@@ -56,7 +55,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_weight="1"
                 android:background="@drawable/search_background"
-                android:padding="2dp">
+                android:padding="2dp"
+                android:visibility="gone">
 
                 <EditText
                     android:layout_width="150dp"
@@ -80,42 +80,42 @@
 
 
             <LinearLayout
-                android:gravity="end"
-                android:layout_weight="1.5"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="end">
 
                 <androidx.appcompat.widget.SearchView
-                    android:layoutDirection="rtl"
-                    android:layout_gravity="center_vertical"
                     android:id="@+id/searchview"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
                     android:inputType="text"
+                    android:layoutDirection="rtl"
                     app:queryHint="search here"
                     tools:targetApi="jelly_bean_mr1" />
 
                 <TextView
-                    android:singleLine="true"
                     android:id="@+id/fetch_location"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:text="location"
+                    android:layout_gravity="center_vertical"
+                    android:drawableEnd="@drawable/ic_findstore"
                     android:drawableRight="@drawable/ic_findstore"
-                    android:drawableEnd="@drawable/ic_findstore" />
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:text="location" />
 
                 <TextView
-                    android:textAlignment="textEnd"
-                    android:maxLength="4"
                     android:id="@+id/maincartcount"
-                    android:layout_gravity="center_vertical|end"
                     android:layout_width="wrap_content"
-                    android:text=""
-                    android:textColor="@color/colorPrimary"
                     android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/cart" />
+                    android:layout_gravity="center_vertical|end"
+                    android:drawableRight="@drawable/cart"
+                    android:maxLength="4"
+                    android:text=""
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
         </LinearLayout>
@@ -123,19 +123,23 @@
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:elevation="@dimen/padding_10"
-            android:background="@color/white"
-            android:id="@+id/static_menus"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/padding_10"
-            android:layout_marginLeft="@dimen/padding_10"
-            android:layout_marginRight="@dimen/padding_10" />
+            android:layout_height="match_parent">
 
-        <include layout="@layout/activity_bottomed_navigation" />
+            <include layout="@layout/activity_bottomed_navigation" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/static_menus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/padding_10"
+                android:layout_marginRight="@dimen/padding_10"
+                android:background="@drawable/gradient_bg"/>
+        </RelativeLayout>
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

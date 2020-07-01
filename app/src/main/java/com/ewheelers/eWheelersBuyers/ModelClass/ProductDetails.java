@@ -16,6 +16,8 @@ public class ProductDetails implements Parcelable {
     public static final int SIMILARPRODUCTS=4;
     public static final int BOTTOMEDBUTTONS = 5;
     public static final int DEALERSLISt = 6;
+    public static final int BANNERSLIST = 7;
+
 
     private int typeoflayout;
     private String selproductid;
@@ -109,6 +111,9 @@ public class ProductDetails implements Parcelable {
     private String shopstate;
     private String shopcountry;
 
+    private String detailspageBanners;
+    private String detailbannerurl;
+
 
     public ProductDetails(int typeoflayout, String offertitle, String offercaption, int imageicon) {
         this.offertitle = offertitle;
@@ -138,6 +143,23 @@ public class ProductDetails implements Parcelable {
 
     public ProductDetails() {
 
+    }
+
+
+    public String getDetailspageBanners() {
+        return detailspageBanners;
+    }
+
+    public void setDetailspageBanners(String detailspageBanners) {
+        this.detailspageBanners = detailspageBanners;
+    }
+
+    public String getDetailbannerurl() {
+        return detailbannerurl;
+    }
+
+    public void setDetailbannerurl(String detailbannerurl) {
+        this.detailbannerurl = detailbannerurl;
     }
 
     public String getSelproductid() {

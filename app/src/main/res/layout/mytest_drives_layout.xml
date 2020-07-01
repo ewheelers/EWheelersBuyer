@@ -114,16 +114,6 @@
 
         </LinearLayout>
 
-       <!-- <TextView
-            android:visibility="gone"
-            android:textSize="18sp"
-            android:textColor="@color/DarkGreen"
-            android:padding="@dimen/dimen_5dp"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Completed"
-            android:id="@+id/complete"/>-->
 
         <HorizontalScrollView
             android:layout_marginTop="@dimen/dimen_5dp"
@@ -147,15 +137,6 @@
                 android:layout_height="wrap_content"
                 android:text=" - " />
 
-            <!--<TextView
-                android:visibility=""
-                android:drawablePadding="@dimen/dimen_5dp"
-                android:drawableRight="@drawable/ic_info_black"
-                android:id="@+id/cancel"
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancelled" />-->
 
             <TextView
                 android:id="@+id/accepted"

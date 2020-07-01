@@ -13,6 +13,17 @@ public class SellerListModel {
     String SellerPrice;
     String SellerCod;
     String selproductid;
+    String distance;
+
+    String typeoflist;
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public int getTypeoflayout() {
         return typeoflayout;

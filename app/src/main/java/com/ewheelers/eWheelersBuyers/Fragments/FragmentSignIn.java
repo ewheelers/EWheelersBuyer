@@ -310,10 +310,10 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
                                 Intent intent = new Intent(getActivity(), NavAppBarActivity.class);
                                 startActivity(intent);
                                 getActivity().finish();
-                                Toast.makeText(getActivity(), "fcmtoken: " + message, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getActivity(), "fcmtoken: " + message, Toast.LENGTH_SHORT).show();
                                 //sendNotification(message);
                             } else {
-                                Toast.makeText(getActivity(), "tokenregfailed: " + message, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "FCM Token: " + message, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

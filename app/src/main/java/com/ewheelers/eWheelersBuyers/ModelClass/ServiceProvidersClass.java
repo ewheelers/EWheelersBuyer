@@ -1,8 +1,15 @@
 package com.ewheelers.eWheelersBuyers.ModelClass;
 
-import java.io.Serializable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class ServiceProvidersClass implements Serializable {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ServiceProvidersClass implements Serializable{
+    private String setuid;
+    private String uaidentifier;
     private String serviceProviderIs;
     private String serviceprovider_name;
     private String serviceprovider_shopname;
@@ -14,15 +21,107 @@ public class ServiceProvidersClass implements Serializable {
     private String serviceprovider_longitude;
     private String distance;
     private String city;
-
+    private ArrayList<String> strings;
+    private String opentime,closetime;
     private double currentlatitude;
     private double currentlongitude;
+    private String imageurl;
+    private String logo;
+    private String shopid;
+
+    JSONObject jsonServiceObject;
+
 
     public static final int CHARGELAY=0;
     public static final int OTHERLAY=1;
     public static final int PARKING=2;
 
     private int typeofLayout;
+
+    private String openstatus;
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public JSONObject getJsonServiceObject() {
+        return jsonServiceObject;
+    }
+
+    public void setJsonServiceObject(JSONObject jsonServiceObject) {
+        this.jsonServiceObject = jsonServiceObject;
+    }
+
+    public ArrayList<String> getStrings() {
+        return strings;
+    }
+
+    public void setStrings(ArrayList<String> strings) {
+        this.strings = strings;
+    }
+
+    public String getShopid() {
+        return shopid;
+    }
+
+    public void setShopid(String shopid) {
+        this.shopid = shopid;
+    }
+
+    public String getUaidentifier() {
+        return uaidentifier;
+    }
+
+    public void setUaidentifier(String uaidentifier) {
+        this.uaidentifier = uaidentifier;
+    }
+
+    public String getImageurl() {
+        return imageurl;
+    }
+
+    public void setImageurl(String imageurl) {
+        this.imageurl = imageurl;
+    }
+
+    public String getSetuid() {
+        return setuid;
+    }
+
+    public void setSetuid(String setuid) {
+        this.setuid = setuid;
+    }
+
+    public String getOpenstatus() {
+        return openstatus;
+    }
+
+    public void setOpenstatus(String openstatus) {
+        this.openstatus = openstatus;
+    }
+
+
+
+    public String getOpentime() {
+        return opentime;
+    }
+
+    public void setOpentime(String opentime) {
+        this.opentime = opentime;
+    }
+
+    public String getClosetime() {
+        return closetime;
+    }
+
+    public void setClosetime(String closetime) {
+        this.closetime = closetime;
+    }
+
 
     public String getCity() {
         return city;

@@ -1,138 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_grey"
-    android:orientation="vertical"
+    android:background="@color/white"
     tools:context=".ShowServiceProvidersActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:padding="@dimen/padding_10">
-
-        <ImageView
-            android:id="@+id/lefticon"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/titile"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="0.75"
-            android:paddingLeft="@dimen/padding_10"
-            android:paddingRight="@dimen/padding_10"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/clrelay"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/mapview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/map" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Map View"
-                android:textColor="@color/colorPrimary" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <HorizontalScrollView
-        android:id="@+id/chipgroup"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.chip.ChipGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:singleLine="true">
-            <!-- Chips can be declared here, or added dynamically. -->
-            <com.google.android.material.chip.Chip
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:id="@+id/chargeandgo"
-                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
-                app:chipBackgroundColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                app:rippleColor="@color/colorPrimary"
-                android:text="Charge &amp; Go" />
-            <com.google.android.material.chip.Chip
-                android:textColor="@color/colorPrimary"
-                app:rippleColor="@color/colorPrimary"
-                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
-                app:chipBackgroundColor="@color/white"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Park &amp; Charge" />
-            <com.google.android.material.chip.Chip
-                android:textColor="@color/colorPrimary"
-                app:rippleColor="@color/colorPrimary"
-                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
-                app:chipBackgroundColor="@color/white"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Shop &amp; Charge" />
-            <com.google.android.material.chip.Chip
-                android:textColor="@color/colorPrimary"
-                app:rippleColor="@color/colorPrimary"
-                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
-                app:chipBackgroundColor="@color/white"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Eat &amp; Charge" />
-            <com.google.android.material.chip.Chip
-                android:textColor="@color/colorPrimary"
-                app:rippleColor="@color/colorPrimary"
-                app:checkedIcon="@drawable/ic_check_circle_black_24dp"
-                app:chipBackgroundColor="@color/white"
-                style="@style/Widget.MaterialComponents.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Community Charge" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+            android:background="@color/white"
+            android:padding="@dimen/dimen_5dp">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_marginLeft="@dimen/padding_10"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:layout_marginRight="@dimen/padding_10"
-        android:background="@color/white"
-        app:iconifiedByDefault="false"
-        app:queryHint="Enter city" />
+            <ImageView
+                android:id="@+id/lefticon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center_vertical" />
 
-    <ProgressBar
-        android:id="@+id/progress"
+            <TextView
+                android:id="@+id/titile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0.75"
+                android:paddingLeft="@dimen/padding_10"
+                android:paddingRight="@dimen/padding_10"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/mapview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/map" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Map View"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_marginLeft="@dimen/padding_10"
+            android:layout_marginRight="@dimen/padding_10"
+            android:background="@color/white"
+            app:iconifiedByDefault="false"
+            app:queryHint="Enter city" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+              <!--  <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="75dp"
+                    android:layout_margin="@dimen/dimen_5dp"
+                    android:src="@drawable/scan_bg" />
+-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/allchip"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/chargefilters"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/spinners_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/dimen_20sp"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_10"
+                    android:text="Not available."
+                    android:textColor="@color/colorPrimary"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/serviceProviders_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/clrelay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:visibility="gone" />
+        android:layout_alignParentBottom="true"
+        android:elevation="@dimen/dimen_16sp"
+        android:visibility="visible">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/serviceProviders_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        <ImageView
+            android:id="@+id/closereqbtn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_closetest" />
+
+        <Button
+            android:id="@+id/reqtestdrive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/closereqbtn"
+            android:background="@drawable/button_bg"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
