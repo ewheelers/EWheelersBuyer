@@ -38,7 +38,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -57,6 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     String iconType;
     BottomSheetDialog mBottomSheetDialog;
     TextView shop_Address, shop_Name, shopOwner_name, locate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,12 +73,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        serviceProvidersClassList = (List<ServiceProvidersClass>) getIntent().getSerializableExtra("chargelist");
-        if(serviceProvidersClassList==null){
-            Toast.makeText(this, "NO address are got some thing wrong", Toast.LENGTH_SHORT).show();
-        }
+        String carListAsString = getIntent().getStringExtra("chargelist");
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<ServiceProvidersClass>>(){}.getType();
+        serviceProvidersClassList = gson.fromJson(carListAsString, type);
+        //serviceProvidersClassList = (List<ServiceProvidersClass>) getIntent().getSerializableExtra("chargelist");
         iconType = getIntent().getStringExtra("icontype");
+
         mBottomSheetDialog = new BottomSheetDialog(this);
         View sheetView = getLayoutInflater().inflate(R.layout.navigation_layout, null);
         shop_Name = sheetView.findViewById(R.id.ShopName);
@@ -203,9 +208,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     locate.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?q=loc:%f,%f", Float.parseFloat(serviceProvidersClassList.get(position).getServiceprovider_latitude()), Float.parseFloat(serviceProvidersClassList.get(position).getServiceprovider_longitude()));
-                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" + serviceProvidersClassList.get(position).getCurrentlatitude() + "," + serviceProvidersClassList.get(position).getCurrentlongitude() + "&daddr=" + serviceProvidersClassList.get(position).getServiceprovider_latitude() + "," + serviceProvidersClassList.get(position).getServiceprovider_longitude()));
+                            intent.setPackage("com.google.android.apps.maps");
                             startActivity(intent);
+                           /* String uri = String.format(Locale.ENGLISH, "http://maps.google.com/maps?q=loc:%f,%f", Float.parseFloat(serviceProvidersClassList.get(position).getServiceprovider_latitude()), Float.parseFloat(serviceProvidersClassList.get(position).getServiceprovider_longitude()));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                            startActivity(intent);*/
                         }
                     });
                 }
@@ -216,7 +224,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
-
 
     }
 

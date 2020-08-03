@@ -5,18 +5,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -29,15 +42,20 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.eWheelersBuyers.Adapters.PaymentGatewayAdapter;
 import com.ewheelers.eWheelersBuyers.Interface.ItemClickListener;
+import com.ewheelers.eWheelersBuyers.ModelClass.CartListClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.PaymentGatewaysModel;
 import com.ewheelers.eWheelersBuyers.ModelClass.PriceDetailsClass;
+import com.ewheelers.eWheelersBuyers.ModelClass.ServiceProvidersClass;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.payumoney.core.PayUmoneyConstants;
 import com.payumoney.core.PayUmoneySdkInitializer;
 import com.payumoney.core.entity.TransactionResponse;
@@ -47,6 +65,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -55,16 +77,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.view.View.GONE;
+import static com.android.volley.Request.*;
 import static com.ewheelers.eWheelersBuyers.Dialogs.ShowAlerts.showfailedDialog;
 
 
-public class StartPaymentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,View.OnClickListener {
+public class StartPaymentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
     PayUmoneySdkInitializer.PaymentParam.Builder builder = new PayUmoneySdkInitializer.PaymentParam.Builder();
     PayUmoneySdkInitializer.PaymentParam paymentParam = null;
     String TAG = "mainActivity", uniqueID, amount, phone = "7793960952",
             prodname = "Speed Glyd Testing", firstname = "ravi", email = "ceo@ewheelers.in",
             merchantId = "6837052", merchantkey = "OsTqEn5B", salt = "wOSX4BGnle";
-
     TextView textViewNetpay;
     String tokenvalue;
     String productkey;
@@ -73,19 +96,28 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
     List<PaymentGatewaysModel> paymentGatewaysModelsList = new ArrayList<>();
     PaymentGatewayAdapter paymentGatewayAdapter;
     RecyclerView recyclerView;
-    TextView rewardText,descriptiontxt;
+    TextView rewardText, descriptiontxt;
     CheckBox walletbal;
     EditText userReward;
-    Button applyReward,confirmOrder,removeReward,walletPayment;
-    String pmid,orderid,ordertype;
-    LinearLayout linearLayoutGateway,linearLayoutWallet;
-    TextView tobepay,walamt,remainbal;
+    Button applyReward, confirmOrder, removeReward, walletPayment;
+    String pmid, orderid, ordertype;
+    LinearLayout linearLayoutGateway, linearLayoutWallet;
+    TextView tobepay, walamt, remainbal;
+    Dialog fulldialog;
+    View sheetView;
+    ImageView close_img;
+    String carListAsString;
+    String orderidIs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_payment);
         tokenvalue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
+        carListAsString = getIntent().getStringExtra("cartdata");
+        orderidIs = getIntent().getStringExtra("");
         progressBar = findViewById(R.id.progress);
+        close_img = findViewById(R.id.close_img);
         linearLayoutGateway = findViewById(R.id.gateway_layout);
         linearLayoutWallet = findViewById(R.id.wallet_layout);
         tobepay = findViewById(R.id.tobepaid);
@@ -101,6 +133,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         confirmOrder = findViewById(R.id.confirm_order);
         descriptiontxt = findViewById(R.id.descript);
         removeReward = findViewById(R.id.removereward);
+        close_img.setOnClickListener(this);
         removeReward.setOnClickListener(this);
         confirmOrder.setOnClickListener(this);
         applyReward.setOnClickListener(this);
@@ -108,13 +141,14 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         uniqueID = UUID.randomUUID().toString();
         //amount = getIntent().getStringExtra("netamount");
 
-       // Toast.makeText(this, "amount"+amount, Toast.LENGTH_SHORT).show();
+
+        // Toast.makeText(this, "amount"+amount, Toast.LENGTH_SHORT).show();
         walletbal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     paymentsummary("1");
-                }else {
+                } else {
                     paymentsummary("0");
                 }
             }
@@ -134,7 +168,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         progressBar.setVisibility(View.VISIBLE);
         String url_link = Apis.shippingsummary;
         final RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -147,7 +181,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObjectProducts = jsonArray.getJSONObject(i);
                             productkey = jsonObjectProducts.getString("productKey");
-                           // Log.d("prodkey", productkey);
+                            // Log.d("prodkey", productkey);
                             subjsonobject.put("shipping_type", 3);
                             subjsonobject.put("shipping_locations", 0);
                             jsonObjectnew.put(productkey, subjsonobject);
@@ -192,14 +226,14 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
     public void setupshippingmethod(String resultjson) {
         String tokenvalue = new SessionStorage().getStrings(StartPaymentActivity.this, SessionStorage.tokenvalue);
         String Login_url = Apis.setupshippingmethod;
-        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            Log.i("setupsipment",response);
+                            //Log.i("setupsipment",response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
@@ -211,13 +245,12 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                                 String balance = jsonObjectrewarddetails.getString("balance");
                                 String convertedvalue = jsonObjectrewarddetails.getString("convertedValue");
 
-                                rewardText.setText(canbeused+" of "+balance+" Reward Points Available For This Order (" +convertedvalue + ")");
-
+                                rewardText.setText(canbeused + " of " + balance + " Reward Points Available For This Order (" + convertedvalue + ")");
                                 paymentsummary("0");
                                 /*Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                 mySnackbar.show();*/
                             } else {
-                                progressBar.setVisibility(View.GONE);
+                                progressBar.setVisibility(GONE);
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                 mySnackbar.show();
                             }
@@ -242,7 +275,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
 
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
-               // Log.e("resjson", resultjson.toString());
+                // Log.e("resjson", resultjson.toString());
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("data", resultjson);
                 return data3;
@@ -254,10 +287,11 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
     }
 
     private void paymentsummary(String walletpaymentId) {
+        progressBar.setVisibility(View.VISIBLE);
         paymentGatewaysModelsList.clear();
         String tokenvalue = new SessionStorage().getStrings(StartPaymentActivity.this, SessionStorage.tokenvalue);
         String Login_url = Apis.paymentsummary;
-        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -267,7 +301,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
-                                progressBar.setVisibility(View.GONE);
+                                progressBar.setVisibility(GONE);
                                 applyReward.setEnabled(true);
                                 applyReward.setBackground(getResources().getDrawable(R.drawable.button_bg));
                                 applyReward.setTextColor(Color.WHITE);
@@ -283,27 +317,42 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                                 String applycredits = dataJsonObject.getString("walletCharged");
                                 String remainingbal = dataJsonObject.getString("displayRemainingWalletBalance");
                                 amount = dataJsonObject.getString("orderNetAmount");
-                                if(walletpaymentId.equals("0")) {
-                                    walletbal.setVisibility(View.VISIBLE);
-                                    walletbal.setText("Apply Wallet Credits : " + displaywalletbalnce);
-                                    linearLayoutGateway.setVisibility(View.VISIBLE);
-                                    linearLayoutWallet.setVisibility(View.GONE);
-                                }else {
-                                    walletbal.setVisibility(View.VISIBLE);
-                                    walletbal.setText("Applied Wallet Credits : " + applycredits);
-                                    linearLayoutGateway.setVisibility(View.GONE);
-                                    linearLayoutWallet.setVisibility(View.VISIBLE);
-                                    walamt.setText("Amount in your wallet\n\n"+displaywalletbalnce);
-                                    tobepay.setText("Payment to be Made\n\n"+applycredits);
-                                    remainbal.setText("Remaining Wallet Balance "+remainingbal);
-                                }
-
-                                Log.i("orderid",orderid);
-
+                                String amountbal = dataJsonObject.getString("orderPaymentGatewayCharges");
                                 JSONObject jsonObjectNet = dataJsonObject.getJSONObject("netPayable");
                                 String netpay = jsonObjectNet.getString("key");
                                 String value = jsonObjectNet.getString("value");
-                                textViewNetpay.setText(netpay+" : " + value);
+                                //textViewNetpay.setText(netpay+" : " + value);
+                                //textViewNetpay.setText(value);
+
+                                if (walletpaymentId.equals("0")) {
+                                    textViewNetpay.setText("\u20B9 " + Double.parseDouble(amountbal));
+                                    walletbal.setVisibility(View.VISIBLE);
+                                    walletbal.setText("Apply Wallet Credits :   " + displaywalletbalnce);
+                                    walletbal.setTextColor(Color.parseColor("#9C3C34"));
+                                    linearLayoutGateway.setVisibility(View.VISIBLE);
+                                    linearLayoutWallet.setVisibility(GONE);
+                                    textViewNetpay.setText(value);
+                                } else {
+                                    textViewNetpay.setText("\u20B9 " + Double.parseDouble(amountbal));
+                                    walletbal.setVisibility(View.VISIBLE);
+                                    walletbal.setText("Applied Wallet Credits :    " + applycredits);
+                                    walletbal.setTextColor(Color.parseColor("#008000"));
+                                    if (amountbal.equals("0")) {
+                                        linearLayoutGateway.setVisibility(GONE);
+                                        linearLayoutWallet.setVisibility(View.VISIBLE);
+                                        walletPayment.setVisibility(View.VISIBLE);
+                                    } else {
+                                        linearLayoutGateway.setVisibility(View.VISIBLE);
+                                        linearLayoutWallet.setVisibility(View.VISIBLE);
+                                        walletPayment.setVisibility(GONE);
+                                    }
+                                    walamt.setText(displaywalletbalnce);
+                                    tobepay.setText(applycredits);
+                                    remainbal.setText(remainingbal);
+                                }
+
+                                Log.i("orderid", orderid);
+
 
                                 JSONArray jsonArraypaymentmethods = dataJsonObject.getJSONArray("paymentMethods");
                                 for (int i = 0; i < jsonArraypaymentmethods.length(); i++) {
@@ -321,12 +370,12 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                                     paymentGatewaysModel.setImage(pmeth_img);
                                     paymentGatewaysModelsList.add(paymentGatewaysModel);
                                 }
-                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(StartPaymentActivity.this, RecyclerView.VERTICAL,false);
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(StartPaymentActivity.this, RecyclerView.VERTICAL, false);
                                 recyclerView.setLayoutManager(linearLayoutManager);
                                 paymentGatewayAdapter = new PaymentGatewayAdapter(StartPaymentActivity.this, paymentGatewaysModelsList, new ItemClickListener() {
                                     @Override
-                                    public void description(String pid,String code, String description) {
-                                        descriptiontxt.setText(code+"\n\n"+description);
+                                    public void description(String pid, String code, String description) {
+                                        descriptiontxt.setText(code + "\n\n" + description);
                                         pmid = pid;
 
                                     }
@@ -360,10 +409,12 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
             @Override
             public Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> data3 = new HashMap<String, String>();
-                if(walletpaymentId.equals("1")) {
+                if (walletpaymentId.equals("1")) {
                     data3.put("payFromWallet", "1");
-                }else {
+                    data3.put("orderId", "");
+                } else {
                     data3.put("payFromWallet", "0");
+                    data3.put("orderId", "");
                 }
                 return data3;
 
@@ -485,26 +536,25 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
+            case R.id.close_img:
+                onBackPressed();
+                break;
             case R.id.wallet_confirm:
-                payfromWallet(v,orderid);
+                payfromWallet(v, orderid, ordertype);
+                //confirmOrderMethod(ordertype, orderid, "4", v);
                 break;
             case R.id.confirm_order:
                 if (pmid != null) {
-                    if(pmid.equals("4")){
-                        confirmOrderMethod(ordertype,orderid,pmid,v);
-                    }
-                    if(pmid.equals("7")) {
-                        startpay();
-                    }
-                }else {
+                    confirmOrderGetwayMethod(ordertype, orderid, "7", v);
+                } else {
                     Toast.makeText(this, "Select any Payment Method", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.applyreward:
-                if(userReward.getText().toString().isEmpty()){
+                if (userReward.getText().toString().isEmpty()) {
                     userReward.setError("Enter reward points");
-                }else {
+                } else {
                     useRewardpoints();
                 }
                 break;
@@ -514,20 +564,82 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         }
     }
 
-    private void payfromWallet(View v,String orderid) {
-        String url_link = Apis.walletpayment+orderid;
+    private void confirmOrderGetwayMethod(String ordertype, String orderid, String pmid, View v) {
+        progressBar.setVisibility(View.VISIBLE);
+        String tokenvalue = new SessionStorage().getStrings(StartPaymentActivity.this, SessionStorage.tokenvalue);
+        String Login_url = Apis.confirmorder;
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                progressBar.setVisibility(GONE);
+                                JSONObject jsonObject1 = jsonObject.getJSONObject("data");
+                                String orderpayment = jsonObject1.getString("orderPayment");
+                                Intent intent = new Intent(StartPaymentActivity.this, PaymentWebView.class);
+                                intent.putExtra("payurl", orderpayment);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                progressBar.setVisibility(GONE);
+                                showfailedDialog(StartPaymentActivity.this, v, message);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("order_type", ordertype);
+                data3.put("order_id", orderid);
+                data3.put("pmethod_id", pmid);
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    private void payfromWallet(View v, String orderid, String ordertype) {
+        progressBar.setVisibility(View.VISIBLE);
+        String url_link = Apis.walletpayment + orderid;
         final RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
-                    Log.i("walpay",response);
+                    Log.i("walpay", response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
                     if (status.equals("1")) {
+                        //progressBar.setVisibility(GONE);
+                        confirmOrderMethod(ordertype, orderid, "4", v);
 
-                        ViewGroup viewGroup = v.findViewById(android.R.id.content);
+                      /*  ViewGroup viewGroup = v.findViewById(android.R.id.content);
                         final View dialogView = LayoutInflater.from(StartPaymentActivity.this).inflate(R.layout.success_layout, viewGroup, false);
                         TextView textView = dialogView.findViewById(R.id.message);
                         Button button = dialogView.findViewById(R.id.buttonOk);
@@ -536,19 +648,24 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                         builder.setView(dialogView);
                         final AlertDialog alertDialog = builder.create();
                         alertDialog.show();
+                        alertDialog.setCancelable(false);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Intent i = new Intent(StartPaymentActivity.this,MyOrdersActivity.class);
+                                 confirmOrderMethod(ordertype, orderid, "4", v);
+                               *//* Intent i = new Intent(StartPaymentActivity.this, MyOrdersActivity.class);
+                                i.putExtra("orderid",orderid);
                                 startActivity(i);
                                 finish();
+                                alertDialog.dismiss();*//*
                                 alertDialog.dismiss();
                             }
-                        });
+                        });*/
 
-                        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), msg, Snackbar.LENGTH_SHORT);
-                        mySnackbar.show();
-                    }else {
+                       /* Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), msg, Snackbar.LENGTH_SHORT);
+                        mySnackbar.show();*/
+                    } else {
+                        progressBar.setVisibility(GONE);
                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), msg, Snackbar.LENGTH_SHORT);
                         mySnackbar.show();
                     }
@@ -561,6 +678,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -588,7 +706,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
     private void removeRewardMethod() {
         String url_link = Apis.removerewardpoints;
         final RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
@@ -596,13 +714,13 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
                     if (status.equals("1")) {
-                        removeReward.setVisibility(View.GONE);
+                        removeReward.setVisibility(GONE);
                         applyReward.setVisibility(View.VISIBLE);
                         userReward.setVisibility(View.VISIBLE);
                         paymentsummary("0");
                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), msg, Snackbar.LENGTH_SHORT);
                         mySnackbar.show();
-                    }else {
+                    } else {
                         Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), msg, Snackbar.LENGTH_SHORT);
                         mySnackbar.show();
                     }
@@ -639,10 +757,11 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         queue.add(stringRequest);
     }
 
-    private void confirmOrderMethod(String ordertype, String orderid, String pmid,View v) {
+    private void confirmOrderMethod(String ordertype, String orderid, String pmid, View v) {
+        //progressBar.setVisibility(View.VISIBLE);
         String tokenvalue = new SessionStorage().getStrings(StartPaymentActivity.this, SessionStorage.tokenvalue);
         String Login_url = Apis.confirmorder;
-        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -652,7 +771,16 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
-                                ViewGroup viewGroup = v.findViewById(android.R.id.content);
+                                progressBar.setVisibility(GONE);
+                                if (carListAsString != null) {
+                                    generateBarCode(carListAsString, orderid);
+                                } else {
+                                    Intent i = new Intent(StartPaymentActivity.this, MyOrdersDetails.class);
+                                    i.putExtra("orderid", orderid);
+                                    startActivity(i);
+                                    finish();
+                                }
+                               /* ViewGroup viewGroup = v.findViewById(android.R.id.content);
                                 View dialogView = LayoutInflater.from(StartPaymentActivity.this).inflate(R.layout.success_layout, viewGroup, false);
                                 TextView textView = dialogView.findViewById(R.id.message);
                                 Button button = dialogView.findViewById(R.id.buttonOk);
@@ -665,12 +793,23 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                                     @Override
                                     public void onClick(View v) {
                                         alertDialog.dismiss();
-                                        Intent i = new Intent(StartPaymentActivity.this,MyOrdersActivity.class);
-                                        startActivity(i);
-                                        finish();
+                                        if (carListAsString != null) {
+                                           *//* Intent i = new Intent(StartPaymentActivity.this, MyOrdersDetails.class);
+                                            i.putExtra("cartdata", carListAsString);
+                                            i.putExtra("orderid", orderid);
+                                            startActivity(i);
+                                            finish();*//*
+                                            generateBarCode(carListAsString, orderid);
+                                        } else {
+                                            Intent i = new Intent(StartPaymentActivity.this, MyOrdersDetails.class);
+                                            i.putExtra("orderid", orderid);
+                                            startActivity(i);
+                                            finish();
+                                        }
                                     }
-                                });
+                                });*/
                             } else {
+                                progressBar.setVisibility(GONE);
                                 showfailedDialog(StartPaymentActivity.this, v, message);
                             }
                         } catch (JSONException e) {
@@ -680,6 +819,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
                 VolleyLog.d("Main", "Error :" + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }
@@ -706,10 +846,161 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
 
+    private void generateBarCode(String cartData, String orderId) {
+        //Log.e("cartdaata",cartData);
+        //RequestQueue requestQueue = Volley.newRequestQueue(this);
+        fulldialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        sheetView = getLayoutInflater().inflate(R.layout.barcode_park_layout, null);
+        TextView sta_name = sheetView.findViewById(R.id.nameAddress);
+        TextView sta_address = sheetView.findViewById(R.id.address);
+        TextView prod_name = sheetView.findViewById(R.id.productname);
+        TextView vehiclno = sheetView.findViewById(R.id.vehic_no);
+        TextView vehiclmodel = sheetView.findViewById(R.id.vehic_model);
+        TextView timings = sheetView.findViewById(R.id.park_time);
+        TextView hours = sheetView.findViewById(R.id.no_hrs);
+        TextView order_Id = sheetView.findViewById(R.id.orderid);
+        Button gotomypass = sheetView.findViewById(R.id.save_btn);
+
+        fulldialog.setCancelable(false);
+        final ImageView imageView = sheetView.findViewById(R.id.barcode_image);
+        //cartData replaced in url by orderId
+        String Login_url = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + orderId;
+        final ImageRequest imageRequest = new ImageRequest(Login_url, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                imageView.setImageBitmap(response);
+                try {
+                    JSONArray jsonArray = new JSONArray(cartData);
+                    JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+                    String vehNo = jsonObject1.getString("vehicleno");
+                    String vehModel = jsonObject1.getString("vehiclemodel");
+                    String timingsAre = jsonObject1.getString("timing");
+                    String hrsAre = jsonObject1.getString("product_qty");
+                    String stationAddress = jsonObject1.getString("stationAddress");
+                    String stationName = jsonObject1.getString("stationname");
+                    String productname = jsonObject1.getString("productName");
+                    postDataInExcel(orderId, vehNo, vehModel, timingsAre,stationAddress);
+                    order_Id.setText(orderId);
+                    sta_name.setText(stationName);
+                    sta_address.setText(stationAddress);
+                    prod_name.setText(productname);
+                    if(vehNo.isEmpty()){
+                        vehiclno.setText("----");
+                    }else {
+                        vehiclno.setText(vehNo);
+                    }
+                    if(vehModel.isEmpty()){
+                        vehiclmodel.setText("----");
+                    }else {
+                        vehiclmodel.setText(vehModel);
+                    }
+                    timings.setText(timingsAre);
+                    hours.setText(hrsAre);
+                    gotomypass.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //postDataInExcel(orderId, vehNo, vehModel, timingsAre,stationAddress);
+                            Intent i = new Intent(StartPaymentActivity.this, QRPasses.class);
+                            startActivity(i);
+                            finish();
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+               /* ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+                File directory = contextWrapper.getDir("imageDir", Context.MODE_PRIVATE);
+                // Create imageDir
+                File mypath = new File(directory, 0+".png");
+
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(mypath);
+                    response.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                    fos.close();
+                    Log.v("Directory", directory.getAbsolutePath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+
+                }
+
+                File filePath = new File(getApplicationContext().getDir("imageDir", Context.MODE_PRIVATE), 0+".png");
+                try{
+                    FileInputStream fi = new FileInputStream(filePath);
+                    Log.v("URL", filePath.getAbsolutePath());
+                    Bitmap thumbnail = BitmapFactory.decodeStream(fi);
+                    imageView.setImageBitmap(thumbnail);
+                    fi.close();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+            }
+        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(StartPaymentActivity.this, "Some Thing Goes Wrong", Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+
+            }
+        });
+
+        imageRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(StartPaymentActivity.this).addToRequestQueue(imageRequest);
+        //requestQueue.add(imageRequest);
+        fulldialog.setContentView(sheetView);
+        fulldialog.show();
+    }
+
+    private void postDataInExcel(String orderId, String vehno, String vehmodel, String timings, String stationAddress) {
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = "https://script.google.com/macros/s/AKfycbwkodQMENroU69dvKNTNkSqRzE2zcKd3Ocn0-QuPxGIUTk3i7E/exec";
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        /*Intent i = new Intent(StartPaymentActivity.this, QRPasses.class);
+                        startActivity(i);
+                        finish();*/
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            /*@Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }*/
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("orderid", orderId);
+                data3.put("vehno", vehno);
+                data3.put("vehmodel", vehmodel);
+                data3.put("timing", timings);
+                data3.put("address", stationAddress);
+                data3.put("id", "1B-KGwHWX6kUlWcf7-eoPwfS0Wb24aYIZpNE7TtQDcq8");
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+
     private void useRewardpoints() {
+        progressBar.setVisibility(View.VISIBLE);
         String tokenvalue = new SessionStorage().getStrings(StartPaymentActivity.this, SessionStorage.tokenvalue);
         String Login_url = Apis.userewardpoints;
-        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+        StringRequest strRequest = new StringRequest(Method.POST, Login_url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -719,13 +1010,15 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
+                                progressBar.setVisibility(GONE);
                                 removeReward.setVisibility(View.VISIBLE);
-                                applyReward.setVisibility(View.GONE);
-                                userReward.setVisibility(View.GONE);
+                                applyReward.setVisibility(GONE);
+                                userReward.setVisibility(GONE);
                                 paymentsummary("0");
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                 mySnackbar.show();
                             } else {
+                                progressBar.setVisibility(GONE);
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.linear_layout), message, Snackbar.LENGTH_SHORT);
                                 mySnackbar.show();
                             }
@@ -736,6 +1029,7 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
                 VolleyLog.d("Main", "Error :" + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }
@@ -759,5 +1053,21 @@ public class StartPaymentActivity extends AppCompatActivity implements AdapterVi
         };
         strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
     }
 }

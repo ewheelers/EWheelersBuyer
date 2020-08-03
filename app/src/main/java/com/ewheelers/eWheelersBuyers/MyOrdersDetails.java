@@ -4,9 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -16,40 +19,82 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.eWheelersBuyers.Adapters.AddCartServiceAdapter;
+import com.ewheelers.eWheelersBuyers.Adapters.CartListingAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.OrderDetailsAdapter;
+import com.ewheelers.eWheelersBuyers.ModelClass.CartListClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.OrderDetailModelclass;
+import com.ewheelers.eWheelersBuyers.ModelClass.ServiceProvidersClass;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyOrdersDetails extends AppCompatActivity {
-String tokenValue,orderId;
-TextView billingAddress,shippingAddress;
-List<OrderDetailModelclass> orderDetailModelclassList = new ArrayList<>();
-OrderDetailsAdapter orderDetailsAdapter;
-RecyclerView recyclerView;
+public class MyOrdersDetails extends AppCompatActivity implements View.OnClickListener {
+    String tokenValue, orderId, vehcleno;
+    TextView billingAddress, shippingAddress, headerTxt, myorders, homebutton;
+    List<OrderDetailModelclass> orderDetailModelclassList = new ArrayList<>();
+    OrderDetailsAdapter orderDetailsAdapter;
+    RecyclerView recyclerView;
+    TextView orderBilltext;
+   /* String jsonData,carListAsString;
+    List<CartListClass> cartListClassList = new ArrayList<>();
+    AddCartServiceAdapter cartListingAdapter;*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_orders_details);
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
         orderId = getIntent().getStringExtra("orderid");
+        vehcleno = getIntent().getStringExtra("vehicleno");
+        //jsonData = getIntent().getStringExtra("jsondata");
+        //carListAsString = getIntent().getStringExtra("cartdata");
+        orderBilltext = findViewById(R.id.orderbilladdress);
+        headerTxt = findViewById(R.id.header);
         billingAddress = findViewById(R.id.biladd);
         shippingAddress = findViewById(R.id.ordershippingaddress);
         recyclerView = findViewById(R.id.orderdetails_list);
+        myorders = findViewById(R.id.myorders);
+        homebutton = findViewById(R.id.homebtn);
+        headerTxt.setText("Order Id: " + orderId);
+
+        homebutton.setOnClickListener(this);
+        myorders.setOnClickListener(this);
+
         getOrderDetails();
+
+      /*  if(carListAsString==null){
+            getOrderDetails();
+        }else {
+           *//* Gson gson = new Gson();
+            Type type = new TypeToken<List<ServiceProvidersClass>>() {}.getType();
+            cartListClassList = gson.fromJson(carListAsString, type);*//*
+            shippingAddress.setText(carListAsString);
+            try {
+                JSONArray jsonArray = new JSONArray(carListAsString);
+                JSONObject jsonObject1 = jsonArray.getJSONObject(0);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }*/
+
     }
 
-    public void getOrderDetails(){
+    public void getOrderDetails() {
         orderDetailModelclassList.clear();
-        String url_link = Apis.vieworderdetails+orderId;
+        String url_link = Apis.vieworderdetails + orderId;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
@@ -58,7 +103,7 @@ RecyclerView recyclerView;
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    if(status.equals("1")){
+                    if (status.equals("1")) {
                         JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
                         JSONObject jsonObjectOrderdetails = jsonObjectdata.getJSONObject("orderDetail");
                         JSONObject jsonobjectbillingaddress = jsonObjectOrderdetails.getJSONObject("billingAddress");
@@ -70,20 +115,25 @@ RecyclerView recyclerView;
                         String bcontry = jsonobjectbillingaddress.getString("oua_country");
                         String bzip = jsonobjectbillingaddress.getString("oua_zip");
                         String bphone = jsonobjectbillingaddress.getString("oua_phone");
-                        billingAddress.setText(bname+"\n"+badd1+"\n"+badd2+"\n"+bcity+", "+bstate+", "+bcontry+" - "+bzip+"\n"+bphone);
+                        billingAddress.setText(bname + "\n" + badd1 + badd2 + "\n" + bcity + ", " + bstate + ", " + bcontry + " - " + bzip + "\n" + bphone);
                         JSONObject jsonobjectshippingaddress = jsonObjectOrderdetails.getJSONObject("shippingAddress");
-                        String sname = jsonobjectshippingaddress.getString("oua_name");
-                        String sadd1 = jsonobjectshippingaddress.getString("oua_address1");
-                        String sadd2 = jsonobjectshippingaddress.getString("oua_address2");
-                        String scity = jsonobjectshippingaddress.getString("oua_city");
-                        String sstate = jsonobjectshippingaddress.getString("oua_state");
-                        String scontry = jsonobjectshippingaddress.getString("oua_country");
-                        String szip = jsonobjectshippingaddress.getString("oua_zip");
-                        String sphone = jsonobjectshippingaddress.getString("oua_phone");
-                        shippingAddress.setText(sname+"\n"+sadd1+"\n"+sadd2+"\n"+scity+", "+sstate+", "+scontry+" - "+szip+"\n"+sphone);
-
+                        if (jsonobjectshippingaddress.length()==0){
+                            orderBilltext.setVisibility(View.GONE);
+                            shippingAddress.setText("Vehicle Number : "+vehcleno);
+                        }else {
+                            String sname = jsonobjectshippingaddress.getString("oua_name");
+                            String sadd1 = jsonobjectshippingaddress.getString("oua_address1");
+                            String sadd2 = jsonobjectshippingaddress.getString("oua_address2");
+                            String scity = jsonobjectshippingaddress.getString("oua_city");
+                            String sstate = jsonobjectshippingaddress.getString("oua_state");
+                            String scontry = jsonobjectshippingaddress.getString("oua_country");
+                            String szip = jsonobjectshippingaddress.getString("oua_zip");
+                            String sphone = jsonobjectshippingaddress.getString("oua_phone");
+                            orderBilltext.setVisibility(View.VISIBLE);
+                            shippingAddress.setText(sname + "\n" + sadd1 + sadd2 + "\n" + scity + ", " + sstate + ", " + scontry + " - " + szip + "\n" + sphone);
+                        }
                         JSONArray jsonarraydetail = jsonObjectdata.getJSONArray("childOrderDetail");
-                        for(int i=0;i<jsonarraydetail.length();i++){
+                        for (int i = 0; i < jsonarraydetail.length(); i++) {
                             JSONObject jsonObjectorder = jsonarraydetail.getJSONObject(i);
                             String orderid = jsonObjectorder.getString("op_order_id");
                             String orderinvoiceno = jsonObjectorder.getString("op_invoice_number");
@@ -115,9 +165,9 @@ RecyclerView recyclerView;
                             String amount = jsonObjectAmount.getString("value");
                         }
 
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyOrdersDetails.this,RecyclerView.VERTICAL,false);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyOrdersDetails.this, RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(linearLayoutManager);
-                        orderDetailsAdapter = new OrderDetailsAdapter(MyOrdersDetails.this,orderDetailModelclassList);
+                        orderDetailsAdapter = new OrderDetailsAdapter(MyOrdersDetails.this, orderDetailModelclassList);
                         recyclerView.setAdapter(orderDetailsAdapter);
                         orderDetailsAdapter.notifyDataSetChanged();
                         //linear
@@ -153,5 +203,22 @@ RecyclerView recyclerView;
         // Add the realibility on the connection.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.myorders:
+                onBackPressed();
+                /*Intent i = new Intent(MyOrdersDetails.this, MyOrdersActivity.class);
+                startActivity(i);
+                finish();*/
+                break;
+            case R.id.homebtn:
+                Intent i = new Intent(MyOrdersDetails.this, NavAppBarActivity.class);
+                startActivity(i);
+                finish();
+                break;
+        }
     }
 }

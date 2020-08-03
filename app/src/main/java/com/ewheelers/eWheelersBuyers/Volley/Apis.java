@@ -22,6 +22,7 @@ public class Apis {
     public static String getCountries = base+"home/countries";
     public static String getStates = base+"home/states/";
     public static String getcities = base+"home/cities/";
+    public static String validcoupons = base + "checkout/get-valid-discount-coupons";
     public static String offerslisting = base+"buyer/search-offers";
     public static String setupAddress = base+"addresses/set-up-address";
     public static String getaddresses = base+"account/search-addresses";

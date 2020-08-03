@@ -1,6 +1,7 @@
 package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,10 @@ public class PricedetailAdapter extends RecyclerView.Adapter<PricedetailAdapter.
     public void onBindViewHolder(@NonNull PriceDetailholder holder, int position) {
         holder.key.setText(priceDetailsClasses.get(position).getKey());
         holder.value.setText(priceDetailsClasses.get(position).getValue());
+        if(holder.key.getText().toString().equals("Discount")){
+            holder.key.setTextColor(Color.parseColor("#00B300"));
+            holder.value.setTextColor(Color.parseColor("#00B300"));
+        }
     }
 
     @Override

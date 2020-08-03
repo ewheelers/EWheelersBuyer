@@ -1,5 +1,8 @@
 package com.ewheelers.eWheelersBuyers.ModelClass;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceProvidersClass implements Serializable{
+public class ServiceProvidersClass implements Serializable {
     private String setuid;
     private String uaidentifier;
     private String serviceProviderIs;
@@ -29,7 +32,7 @@ public class ServiceProvidersClass implements Serializable{
     private String logo;
     private String shopid;
 
-    JSONObject jsonServiceObject;
+    private JSONObject jsonServiceObject;
 
 
     public static final int CHARGELAY=0;
@@ -39,6 +42,11 @@ public class ServiceProvidersClass implements Serializable{
     private int typeofLayout;
 
     private String openstatus;
+
+
+    public ServiceProvidersClass() {
+
+    }
 
     public String getLogo() {
         return logo;
@@ -235,4 +243,5 @@ public class ServiceProvidersClass implements Serializable{
     public void setServiceprovider_longitude(String serviceprovider_longitude) {
         this.serviceprovider_longitude = serviceprovider_longitude;
     }
+
 }

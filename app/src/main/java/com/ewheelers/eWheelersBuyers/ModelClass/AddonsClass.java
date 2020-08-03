@@ -11,6 +11,25 @@ public class AddonsClass {
     private String uaname;
     private String uaddress;
     private String serviceprovider;
+    private String distance;
+
+    private String ua_id;
+
+    public String getUa_id() {
+        return ua_id;
+    }
+
+    public void setUa_id(String ua_id) {
+        this.ua_id = ua_id;
+    }
+
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
 
     public String getServiceprovider() {
         return serviceprovider;

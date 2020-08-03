@@ -22,18 +22,21 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.ewheelers.eWheelersBuyers.ModelClass.ServiceProvidersClass;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.SPProductsListActivity;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolders> {
     private Context context;
     private List<ServiceProvidersClass> serviceProvidersClassList;
+
     public OtherServices(Context context, List<ServiceProvidersClass> serviceProvidersClassList) {
         this.context = context;
         this.serviceProvidersClassList = serviceProvidersClassList;
@@ -78,24 +81,26 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
             @Override
             public void onClick(View v) {
                 //openWhatsApp(serviceProvidersClassList.get(position).getServiceprovider_phone_number());
-                Intent intent = new Intent(context, SPProductsListActivity.class);
-                //intent.putExtra("uaid", serviceProvidersClassList.get(position).getSetuid());
-                intent.putExtra("name", serviceProvidersClassList.get(position).getServiceprovider_shopname());
-                //intent.putExtra("identifier", serviceProvidersClassList.get(position).getUaidentifier());
-                intent.putExtra("shopid", serviceProvidersClassList.get(position).getShopid());
-                intent.putExtra("distance", serviceProvidersClassList.get(position).getDistance());
-                //if(serviceProvidersClassList.get(position).getServiceProviderIs().equals("Repair")){}
-                intent.putExtra("producttype", "4");
-                intent.putExtra("options", serviceProvidersClassList.get(position).getJsonServiceObject().toString());
-                intent.putExtra("serviceprovider", serviceProvidersClassList.get(position).getServiceProviderIs());
-                context.startActivity(intent);
+                if (!serviceProvidersClassList.isEmpty()||serviceProvidersClassList!=null) {
+                    Intent intent = new Intent(context, SPProductsListActivity.class);
+                    //intent.putExtra("uaid", serviceProvidersClassList.get(position).getSetuid());
+                    intent.putExtra("name", serviceProvidersClassList.get(position).getServiceprovider_shopname());
+                    //intent.putExtra("identifier", serviceProvidersClassList.get(position).getUaidentifier());
+                    intent.putExtra("shopid", serviceProvidersClassList.get(position).getShopid());
+                    intent.putExtra("distance", serviceProvidersClassList.get(position).getDistance());
+                    //if(serviceProvidersClassList.get(position).getServiceProviderIs().equals("Repair")){}
+                    intent.putExtra("producttype", "4");
+                    intent.putExtra("options", serviceProvidersClassList.get(position).getJsonServiceObject().toString());
+                    intent.putExtra("serviceprovider", serviceProvidersClassList.get(position).getServiceProviderIs());
+                    context.startActivity(intent);
+                }
             }
         });
 
         holder.locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr="+serviceProvidersClassList.get(position).getCurrentlatitude()+","+serviceProvidersClassList.get(position).getCurrentlongitude()+"&daddr="+serviceProvidersClassList.get(position).getServiceprovider_latitude()+","+serviceProvidersClassList.get(position).getServiceprovider_longitude()));
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?saddr=" + serviceProvidersClassList.get(position).getCurrentlatitude() + "," + serviceProvidersClassList.get(position).getCurrentlongitude() + "&daddr=" + serviceProvidersClassList.get(position).getServiceprovider_latitude() + "," + serviceProvidersClassList.get(position).getServiceprovider_longitude()));
                 intent.setPackage("com.google.android.apps.maps");
                 context.startActivity(intent);
 
@@ -114,7 +119,7 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
 
     public class OtherHolders extends RecyclerView.ViewHolder {
         NetworkImageView netImage;
-        TextView shop_Name, shop_Address, shopOwner_name, locate,contactno;
+        TextView shop_Name, shop_Address, shopOwner_name, locate, contactno;
         Button mail;
         ImageView call;
 

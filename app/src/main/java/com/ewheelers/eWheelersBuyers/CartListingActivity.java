@@ -105,7 +105,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    Log.i("responsecartlist:", "status = " + status + "message " + msg + "status code" + mStatusCode);
+                    //Log.i("responsecartlist:", "status = " + status + "message " + msg + "status code" + mStatusCode);
                     JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                     String cartcount = dataJsonObject.getString("cartItemsCount");
                     //  String netpayble = dataJsonObject.getString("netPayable");

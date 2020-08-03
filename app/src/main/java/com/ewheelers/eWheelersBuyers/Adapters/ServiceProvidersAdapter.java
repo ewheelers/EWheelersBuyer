@@ -89,9 +89,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
         this.context = context;
         this.serviceProvidersClassList = serviceProvidersClassList;
         classeFilter = new ArrayList<>(serviceProvidersClassList);
-
     }
-
 
     @NonNull
     @Override
@@ -411,6 +409,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
 
                 if (typetitle.equals("Charge")) {
                     Intent intent = new Intent(context, SPProductsListActivity.class);
+                    intent.putExtra("serviceprovider", serviceProvidersClassList.get(position).getServiceProviderIs());
                     intent.putExtra("uaid", serviceProvidersClassList.get(position).getSetuid());
                     intent.putExtra("name", serviceProvidersClassList.get(position).getServiceprovider_name());
                     intent.putExtra("identifier", serviceProvidersClassList.get(position).getUaidentifier());
@@ -420,6 +419,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
                     context.startActivity(intent);
                 } else {
                     Intent intent = new Intent(context, SPProductsListActivity.class);
+                    intent.putExtra("serviceprovider", serviceProvidersClassList.get(position).getServiceProviderIs());
                     intent.putExtra("uaid", serviceProvidersClassList.get(position).getSetuid());
                     intent.putExtra("name", serviceProvidersClassList.get(position).getServiceprovider_name());
                     intent.putExtra("identifier", serviceProvidersClassList.get(position).getUaidentifier());
@@ -428,7 +428,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
                     if(serviceProvidersClassList.get(position).getJsonServiceObject()!=null) {
                         intent.putExtra("options", serviceProvidersClassList.get(position).getJsonServiceObject().toString());
                     }else {
-                        Toast.makeText(context, "options are not loaded please wait", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(context, "options are not loaded please wait", Toast.LENGTH_SHORT).show();
                     }
                     intent.putExtra("producttype", "4");
                     context.startActivity(intent);

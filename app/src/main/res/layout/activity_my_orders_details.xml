@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,58 +7,121 @@
     tools:context=".MyOrdersDetails">
 
     <TextView
-        android:textStyle="bold"
-        android:textSize="18sp"
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/dimen_5dp"
-        android:text="Order Details"
-        android:textColor="@color/Black" />
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:text="Billing Address"
-        android:textColor="@color/Black" />
+        android:background="@color/colorAccent"
+        android:drawableLeft="@drawable/ic_success"
+        android:drawablePadding="@dimen/dimen_20sp"
+        android:gravity="center_vertical"
+        android:padding="@dimen/padding_10"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/biladd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:paddingLeft="@dimen/dimen_5dp"
-        android:paddingRight="@dimen/dimen_5dp" />
 
-    <TextView
-        android:id="@+id/orderbilladdress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:padding="@dimen/dimen_5dp"
-        android:text="Shipping Address"
-        android:textColor="@color/Black" />
-
-    <TextView
-        android:id="@+id/ordershippingaddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/dimen_5dp"
-        android:paddingLeft="@dimen/dimen_5dp"
-        android:paddingRight="@dimen/dimen_5dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orderdetails_list"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/dimen_5dp" />
+        android:layout_above="@+id/bottom_buttons"
+        android:layout_below="@+id/header">
+
+        <LinearLayout
+            android:padding="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/orderdetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Order Details"
+                android:textColor="@color/Black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Billing Address"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/biladd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:paddingLeft="@dimen/dimen_5dp"
+                android:paddingRight="@dimen/dimen_5dp" />
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/orderbilladdress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Shipping Address"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/ordershippingaddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_5dp"
+                android:paddingLeft="@dimen/dimen_5dp"
+                android:paddingRight="@dimen/dimen_5dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/orderdetails_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dimen_5dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/homebtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_10"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:drawableLeft="@drawable/ic_home_black_24dp"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_10"
+            android:text="Home"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/myorders"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/padding_10"
+            android:layout_weight="1"
+            android:background="@drawable/button_bg"
+            android:drawableLeft="@drawable/ic_myorders"
+            android:gravity="center_vertical"
+            android:padding="@dimen/padding_10"
+            android:text="Back"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+
+</RelativeLayout>

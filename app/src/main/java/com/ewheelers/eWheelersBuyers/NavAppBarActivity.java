@@ -139,6 +139,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     private long lastBackPressTime = 0;
     private String[] permissions = {"android.hardware.camera.flash", "android.permission.FLASHLIGHT", "android.permission.CAMERA", "android.hardware.camera.autofocus", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
     int requestCode = 200;
+    TextView passes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +151,14 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         }
 
         getuser_location = findViewById(R.id.fetch_location);
+        passes = findViewById(R.id.passes);
+        passes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),QRPasses.class);
+                startActivity(i);
+            }
+        });
 
         searchView = findViewById(R.id.searchview);
         list = findViewById(R.id.listview);
@@ -249,16 +258,17 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         String location = new SessionStorage().getStrings(this, SessionStorage.location);
         if (location != null) {
             getuser_location.setText(location);
-            getuser_location.setOnClickListener(new View.OnClickListener() {
+           /* getuser_location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //setcityDialog();
                     Intent i = new Intent(getApplicationContext(), SelectCityActivity.class);
                     startActivity(i);
                 }
-            });
+            });*/
         }
-        if (getuser_location.getText().toString().equals("location")) {
+
+       /* if (getuser_location.getText().toString().equals("location")) {
             final TourGuide mTourGuideHandler = TourGuide.init(this).with(TourGuide.Technique.Click).setPointer(new Pointer()).setToolTip(new ToolTip().setTitle("Choose location!").setDescription("Click on Get Started to begin...")).setOverlay(new Overlay()).playOn(getuser_location);
             getuser_location.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -269,7 +279,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     startActivity(i);
                 }
             });
-        }
+        }*/
 
        /* String cityname = new SessionStorage().getStrings(this,SessionStorage.location);
         if(cityname.isEmpty()){
@@ -340,7 +350,8 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                             //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
                             //donator_addre.setEnabled(false);
                             //city.setText(str1);
-                            Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
+                            getuser_location.setText(str3);
 
                         } else {
                             Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
@@ -350,7 +361,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                     }
                 }else {
 
-                    Toast.makeText(NavAppBarActivity.this, "No fetched current location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(NavAppBarActivity.this, "Not fetched current location", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 // Can't get location.
@@ -482,7 +493,8 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                                 //Toast.makeText(getApplicationContext(), str1, Toast.LENGTH_SHORT).show();
                                 //donator_addre.setEnabled(false);
                                 //city.setText(str1);
-                                Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
+                                //Toast.makeText(getApplicationContext(), "Your Location is -" + str3, Toast.LENGTH_LONG).show();
+                                getuser_location.setText(str3);
 
                             } else {
                                 Toast.makeText(this, "Unable to find Geocoder", Toast.LENGTH_SHORT).show();
@@ -554,7 +566,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         homeMenuIcon.add(new HomeMenuIcons(R.drawable.ic_waterwash, "Bike Wash"));
         return homeMenuIcon;
     }
-
 
     public void getProfileattributes() {
         String url_link = Apis.sellerprofileattributes;

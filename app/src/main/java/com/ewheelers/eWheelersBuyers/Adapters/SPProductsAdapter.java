@@ -2,6 +2,7 @@ package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ import java.util.List;
 public class SPProductsAdapter extends RecyclerView.Adapter<SPProductsAdapter.ProductHolder> {
     Context context;
     private List<AddonsClass> addonsClasses;
-
+    int index_row=-1;
     public SPProductsAdapter(Context context, List<AddonsClass> addonsClasses) {
         this.context = context;
         this.addonsClasses = addonsClasses;
@@ -50,15 +51,29 @@ public class SPProductsAdapter extends RecyclerView.Adapter<SPProductsAdapter.Pr
         holder.bookbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                index_row=position;
+                notifyDataSetChanged();
                 Intent i = new Intent(context, ChargeDetailPage.class);
                 i.putExtra("productid",addonsClasses.get(position).getButwithselectedProductId());
                 i.putExtra("productname",addonsClasses.get(position).getBuywithproductname());
                 i.putExtra("uaname",addonsClasses.get(position).getUaname());
                 i.putExtra("stationaddress",addonsClasses.get(position).getUaddress());
                 i.putExtra("provider",addonsClasses.get(position).getServiceprovider());
+                i.putExtra("distance",addonsClasses.get(position).getDistance());
+                i.putExtra("productamount",addonsClasses.get(position).getBuywithproductprice());
+                i.putExtra("uaid",addonsClasses.get(position).getUa_id());
                 context.startActivity(i);
             }
         });
+
+
+        if(index_row==position){
+            holder.bookbtn.setBackground(context.getResources().getDrawable(R.drawable.button_bg));
+            holder.bookbtn.setTextColor(Color.WHITE);
+        }else {
+            holder.bookbtn.setBackground(context.getResources().getDrawable(R.drawable.button_bg_redtransperent));
+            holder.bookbtn.setTextColor(Color.BLACK);
+        }
     }
 
     @Override

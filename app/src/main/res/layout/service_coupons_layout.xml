@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_10"
+    android:layout_margin="@dimen/dimen_5dp"
+    app:cardElevation="@dimen/padding_10">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/padding_10"
+            android:weightSum="1">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/coupon_img"
+                android:layout_width="96dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/border_bg"
+                android:padding="@dimen/dimen_5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/couponcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/padding_10"
+                    android:background="@drawable/border_bg"
+                    android:paddingLeft="@dimen/padding_10"
+                    android:paddingTop="@dimen/dimen_5dp"
+                    android:paddingRight="@dimen/padding_10"
+                    android:paddingBottom="@dimen/dimen_5dp"
+                    android:text="Park20"
+                    android:textAllCaps="true"
+                    android:textColor="@color/Black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_10"
+                    android:text="Get 20% off"
+                    android:textColor="@color/Black"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/to_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="@dimen/padding_10"
+                    android:layout_marginRight="@dimen/padding_10"
+                    android:text="Expires on : 2020/07/15"
+                    android:textColor="@color/Black" />
+                <TextView
+                    android:id="@+id/min_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="@dimen/padding_10"
+                    android:layout_marginRight="@dimen/padding_10"
+                    android:text="Minimum Order :"
+                    android:textColor="@color/Black" />
+                <TextView
+                    android:id="@+id/max_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="@dimen/padding_10"
+                    android:layout_marginRight="@dimen/padding_10"
+                    android:text="Maximum Discount :"
+                    android:textColor="@color/Black" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_marginBottom="@dimen/dimen_5dp"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:layout_marginLeft="@dimen/padding_10"
+            android:layout_marginRight="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/view_offers"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Offer details"
+                android:gravity="center"
+                android:textColor="@color/blue"
+                android:padding="@dimen/dimen_5dp"/>
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_up_arrow"
+                android:id="@+id/closedesc"/>
+
+            <TextView
+                android:id="@+id/applycoupons"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:text="Apply"
+                android:textAllCaps="true"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <TextView
+            android:visibility="gone"
+            android:layout_marginLeft="@dimen/padding_10"
+            android:layout_marginRight="@dimen/padding_10"
+            android:layout_marginBottom="@dimen/dimen_5dp"
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_5dp"
+            android:text="dexcrtpkv" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

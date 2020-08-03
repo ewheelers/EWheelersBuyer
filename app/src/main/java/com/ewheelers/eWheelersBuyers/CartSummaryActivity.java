@@ -115,6 +115,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
     }
 
     public void cartListing() {
+        cartListClassList.clear();
         priceDetailsClasses.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.cartListing;
@@ -214,6 +215,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         String u_phone = jsonObjectBillAddress.getString("ua_phone");
                         String u_autocomplete = jsonObjectBillAddress.getString("ua_auto_complete");
                         customerAddress.setText(customername + "\n" + u_autocomplete + "\n" + u_address1 + " Phone " + u_phone);
+                        customerAddress.setTextColor(Color.BLACK);
                         //customerAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_city + u_phone);
                     }
 
@@ -230,6 +232,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         String u_autocomplete = jsonObjectCartShipping.getString("ua_auto_complete");
                         customerShippingAddress.setText(customername + "\n" + u_autocomplete + "\n" + u_address1 + " Phone " + u_phone);
                         //customerShippingAddress.setText(customername + "," + u_address1 + "," + ua_address2 + "," + u_phone);
+                        customerShippingAddress.setTextColor(Color.BLACK);
                     }
                    /* JSONArray jsonArrayProduct = dataJsonObject.getJSONArray("products");
                     for (int i = 0; i < jsonArrayProduct.length(); i++) {
@@ -336,7 +339,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
 
     private void showCoupons() {
         promoCodesModels.clear();
-        String url_link = Apis.offerslisting;
+        String url_link = Apis.validcoupons;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
@@ -347,7 +350,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                     String msg = jsonObject.getString("msg");
                     Toast.makeText(CartSummaryActivity.this, msg, Toast.LENGTH_SHORT).show();
                     JSONObject jsonObjectData = jsonObject.getJSONObject("data");
-                    JSONArray jsonArray = jsonObjectData.getJSONArray("offers");
+                    JSONArray jsonArray = jsonObjectData.getJSONArray("couponsList");
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject1 = jsonArray.getJSONObject(i);
                         String coupon = jsonObject1.getString("coupon_code");
@@ -400,7 +403,6 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         try {
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");

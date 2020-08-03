@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,11 +48,13 @@ public class SPProductsListActivity extends AppCompatActivity {
     TextView hubtitle, empty_view;
     ImageView networkImageView;
     String tokenValue, uaid, uaid2, name, identifier2, identifier, shopId, producttype, distance, serviceProvider;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spproducts_list);
+        progressBar = findViewById(R.id.progress);
         recyclerViewProd = findViewById(R.id.productsList);
         hubtitle = findViewById(R.id.hubtitle);
         networkImageView = findViewById(R.id.netwrkimg);
@@ -69,28 +74,34 @@ public class SPProductsListActivity extends AppCompatActivity {
         //Toast.makeText(this, "uaid:"+uaid, Toast.LENGTH_SHORT).show();
 
         if (uaid != null) {
-            hubtitle.setText(name + " (" + distance + ")");
+            //hubtitle.setText(name + " (" + distance + ")");
             if (jsonObject != null) {
+                //Toast.makeText(this, "havejson:" + serviceProvider, Toast.LENGTH_SHORT).show();
+
                 try {
                     JSONObject jsonObject1 = new JSONObject(jsonObject);
                     Iterator iterator = jsonObject1.keys();
                     while (iterator.hasNext()) {
                         String key = (String) iterator.next();
                         if (jsonObject1.getString(key).equals("Parking")) {
-                            loadspProducts(uaid, identifier, shopId, producttype, key);
+                            loadspProducts(uaid, identifier, shopId, producttype, key, serviceProvider);
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             } else {
-                loadspProducts(uaid, identifier, shopId, producttype, "");
+                //Toast.makeText(this, "nojson:" + serviceProvider, Toast.LENGTH_SHORT).show();
+
+                loadspProducts(uaid, identifier, shopId, producttype, "", serviceProvider);
             }
             //loadspProducts(uaid,"","","");
         } else {
 
             if (identifier2 != null) {
-                loadspProducts("", identifier2, "", "", "");
+                //Toast.makeText(this, "scanserv:" + serviceProvider + "identifier:" + identifier2, Toast.LENGTH_SHORT).show();
+                loadspProducts("", identifier2, "", "", "", serviceProvider);
+
                /* try {
                     JSONObject jsonObject1 = new JSONObject(identifier2);
                     String identity = jsonObject1.getString("identifier");
@@ -105,8 +116,8 @@ public class SPProductsListActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }*/
             } else {
-
-                hubtitle.setText(name + " (" + distance + ")");
+               // Toast.makeText(this, "otherserv:" + serviceProvider, Toast.LENGTH_SHORT).show();
+                //hubtitle.setText(name + " (" + distance + ")");
                 try {
                     assert jsonObject != null;
                     JSONObject jsonObject1 = new JSONObject(jsonObject);
@@ -114,13 +125,13 @@ public class SPProductsListActivity extends AppCompatActivity {
                     while (iterator.hasNext()) {
                         String key = (String) iterator.next();
                         if (serviceProvider.equals(jsonObject1.getString(key))) {
-                            loadspProducts("", "", shopId, producttype, key);
+                            loadspProducts("", "", shopId, producttype, key, serviceProvider);
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-               // Toast.makeText(this, serviceProvider, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, serviceProvider, Toast.LENGTH_SHORT).show();
                 //loadspProducts("", "", shopId, producttype, "");
             }
         }
@@ -133,8 +144,11 @@ public class SPProductsListActivity extends AppCompatActivity {
         });
     }
 
-    private void loadspProducts(String hubid, String identifier, String shopid, String producttype, String options) {
+    private void loadspProducts(String hubid, String identifier, String shopid, String producttype, String options, String serviceProvider) {
+        progressBar.setVisibility(View.VISIBLE);
         addonsClasses.clear();
+        double latitude = new NavAppBarActivity().setlatitude();
+        double longitude = new NavAppBarActivity().setlongitude();
         String Login_url = Apis.spproductslist;
         StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
                 new Response.Listener<String>() {
@@ -146,6 +160,8 @@ public class SPProductsListActivity extends AppCompatActivity {
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
+                                progressBar.setVisibility(View.GONE);
+
                                 JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                                 String shopurl = jsonObject1.getString("shop_banner_url");
                                 String baseurl = "https://ewheelers.in" + shopurl;
@@ -154,7 +170,17 @@ public class SPProductsListActivity extends AppCompatActivity {
                                 /*ImageLoader imageLoaderbaner = VolleySingleton.getInstance(SPProductsListActivity.this).getImageLoader();
                                 imageLoaderbaner.get(baseurl, ImageLoader.getImageListener(networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
                                 networkImageView.setImageUrl(baseurl, imageLoaderbaner);*/
-
+                                String stationname = jsonObject1.getString("stationName");
+                                String stationAddress = jsonObject1.getString("stationAddress");
+                                String stationdistance = jsonObject1.getString("stationDistance");
+                                String rounded = "";
+                                if (!stationdistance.equals("")) {
+                                    double dis = Double.parseDouble(stationdistance);
+                                    DecimalFormat df = new DecimalFormat("0.00");
+                                    df.setRoundingMode(RoundingMode.HALF_UP);
+                                    rounded = df.format(dis);
+                                    hubtitle.setText(stationname + "(" + rounded + " km )");
+                                }
                                 JSONArray jsonArray = jsonObject1.getJSONArray("result");
 
                                 for (int i = 0; i < jsonArray.length(); i++) {
@@ -168,6 +194,8 @@ public class SPProductsListActivity extends AppCompatActivity {
                                     String stationaddress = jsonObject2.getString("station_address");
 
                                     AddonsClass addonsClass = new AddonsClass();
+                                    addonsClass.setUa_id(hubid);
+                                    addonsClass.setDistance(" (" + rounded + " km )");
                                     addonsClass.setLogo(logo);
                                     addonsClass.setBuywithimageurl(shopurl);
                                     addonsClass.setButwithselectedProductId(proid);
@@ -201,6 +229,8 @@ public class SPProductsListActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+
                 VolleyLog.d("Main", "Error :" + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }
@@ -220,9 +250,11 @@ public class SPProductsListActivity extends AppCompatActivity {
                 data3.put("ua_identifier", identifier);
                 data3.put("product_type", producttype);
                 data3.put("shop_id", shopid);
-                /*data3.put("latitude", "");
-                data3.put("longitude", "");*/
+                data3.put("latitude", String.valueOf(latitude));
+                data3.put("longitude", String.valueOf(longitude));
                 data3.put("options", options);
+                data3.put("pageSize", "1000");
+                data3.put("page", "1");
                 return data3;
             }
         };

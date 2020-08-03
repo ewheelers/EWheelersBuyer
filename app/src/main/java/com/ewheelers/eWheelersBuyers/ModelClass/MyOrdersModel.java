@@ -1,6 +1,15 @@
 package com.ewheelers.eWheelersBuyers.ModelClass;
 
+import android.graphics.Bitmap;
+
 public class MyOrdersModel {
+    Bitmap bitmap;
+    String title;
+    String timings;
+    String vehicleno;
+    String vehiclemodel;
+    String statAddress;
+
     String selprod_product_id;
     String order_id;
     String order_user_id;
@@ -30,6 +39,54 @@ public class MyOrdersModel {
     String op_is_booking;
     String opd_sold_or_rented;
     String product_image_url;
+
+    public String getStatAddress() {
+        return statAddress;
+    }
+
+    public void setStatAddress(String statAddress) {
+        this.statAddress = statAddress;
+    }
+
+    public String getVehicleno() {
+        return vehicleno;
+    }
+
+    public void setVehicleno(String vehicleno) {
+        this.vehicleno = vehicleno;
+    }
+
+    public String getVehiclemodel() {
+        return vehiclemodel;
+    }
+
+    public void setVehiclemodel(String vehiclemodel) {
+        this.vehiclemodel = vehiclemodel;
+    }
+
+    public String getTimings() {
+        return timings;
+    }
+
+    public void setTimings(String timings) {
+        this.timings = timings;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getSelprod_product_id() {
         return selprod_product_id;

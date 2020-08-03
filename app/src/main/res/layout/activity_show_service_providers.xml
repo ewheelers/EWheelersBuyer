@@ -37,6 +37,51 @@
                 android:textSize="16sp" />
 
             <LinearLayout
+                android:elevation="@dimen/padding_10"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                android:id="@+id/mypasses"
+                android:layout_width="0dp"
+                android:layout_marginRight="@dimen/dimen_5dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:background="@color/light_grey"
+                android:orientation="vertical">
+
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Parking Passes"
+                    android:padding="5dp"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/seperatorders"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_myorderscolored" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Orders"
+                    android:layout_marginTop="3dp"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/mapview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -53,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="Map View"
+                    android:text="Map"
                     android:textColor="@color/colorPrimary" />
             </LinearLayout>
         </LinearLayout>

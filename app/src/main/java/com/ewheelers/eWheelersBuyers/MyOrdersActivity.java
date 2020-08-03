@@ -45,6 +45,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
     SwipeRefreshLayout mSwipeRefreshLayout;
     LinearLayout linearLayout;
     Button buttonshopnow;
+    String service_optionid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
         buttonshopnow = findViewById(R.id.shop_now);
         searchView = findViewById(R.id.searchview);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
-
+        service_optionid = getIntent().getStringExtra("servicetype");
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -64,8 +65,11 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
                                      @Override
                                      public void run() {
                                          mSwipeRefreshLayout.setRefreshing(true);
-
-                                         getOrderslist("");
+                                         if (service_optionid != null) {
+                                             getOrderslist("", service_optionid);
+                                         } else {
+                                             getOrderslist("", "");
+                                         }
                                      }
                                  }
         );
@@ -86,7 +90,11 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public boolean onQueryTextSubmit(String query) {
                 if (query != null) {
-                    getOrderslist(query);
+                    if (service_optionid != null) {
+                        getOrderslist(query, service_optionid);
+                    } else {
+                        getOrderslist(query, "");
+                    }
                 }
                 return false;
             }
@@ -95,19 +103,27 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
             public boolean onQueryTextChange(String newText) {
                 // myOrdersAdapter.getFilter().filter(newText);
                 if (newText.length() > 1) {
-                    getOrderslist(newText);
+                    if (service_optionid != null) {
+                        getOrderslist(newText, service_optionid);
+                    } else {
+                        getOrderslist(newText, "");
+
+                    }
                 } else {
-                    getOrderslist("");
+                    if (service_optionid != null) {
+                        getOrderslist("", service_optionid);
+                    } else {
+                        getOrderslist("", "");
+                    }
                 }
                 return false;
             }
         });
     }
 
-    public void getOrderslist(String keyword) {
+    public void getOrderslist(String keyword, String serviceTypeid) {
         mSwipeRefreshLayout.setRefreshing(true);
-
-        // myOrdersModelList.clear();
+        myOrdersModelList.clear();
         String url_link = Apis.orderslist;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_link, new com.android.volley.Response.Listener<String>() {
@@ -117,7 +133,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
-                    if(status.equals("1")) {
+                    if (status.equals("1")) {
                         JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                         JSONArray jsonArrayorders = jsonObjectData.getJSONArray("orders");
                         for (int i = 0; i < jsonArrayorders.length(); i++) {
@@ -147,6 +163,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
                         }
                         if (myOrdersModelList.isEmpty()) {
                             linearLayout.setVisibility(View.VISIBLE);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         } else {
                             linearLayout.setVisibility(View.GONE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyOrdersActivity.this, RecyclerView.VERTICAL, false);
@@ -160,7 +177,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
                             myOrdersAdapter.notifyDataSetChanged();
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
-                    }else {
+                    } else {
                         linearLayout.setVisibility(View.VISIBLE);
                     }
 
@@ -190,6 +207,7 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
             public Map<String, String> getParams() {
                 Map<String, String> data3 = new HashMap<String, String>();
                 data3.put("keyword", keyword);
+                data3.put("options", serviceTypeid);
                 return data3;
             }
 
@@ -208,6 +226,10 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        getOrderslist("");
+        if (service_optionid != null) {
+            getOrderslist("", service_optionid);
+        } else {
+            getOrderslist("", "");
+        }
     }
 }

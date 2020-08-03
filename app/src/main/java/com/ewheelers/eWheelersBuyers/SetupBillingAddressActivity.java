@@ -145,6 +145,10 @@ public class SetupBillingAddressActivity extends AppCompatActivity {
                         if(shipid==null) {
                             data3.put("billing_address_id", billid);
                             data3.put("shipping_address_id", "");
+                        }
+                        else if(billid==null){
+                            data3.put("billing_address_id", "");
+                            data3.put("shipping_address_id", shipid);
                         }else {
                             data3.put("billing_address_id", billid);
                             data3.put("shipping_address_id", shipid);

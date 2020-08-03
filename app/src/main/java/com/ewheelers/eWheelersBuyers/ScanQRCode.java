@@ -15,6 +15,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,33 +26,58 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ewheelers.eWheelersBuyers.ModelClass.ServiceProvidersClass;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ScanQRCode extends AppCompatActivity implements View.OnClickListener {
-    ImageView flashOff;
+    ImageView flashOff, scan_image;
     TextView textView;
     BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
     private SurfaceView cameraView;
     boolean flashmode = false;
     private Camera camera = null;
+    String service_type;
+    List<ServiceProvidersClass> serviceProvidersClassList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qrcode);
+        service_type = getIntent().getStringExtra("icontype");
+        //Toast.makeText(this, service_type, Toast.LENGTH_SHORT).show();
         flashOff = findViewById(R.id.flash_off);
         cameraView = findViewById(R.id.surfaceView);
-        textView = findViewById(R.id.txtBarcodeValue);
+        scan_image = findViewById(R.id.scanByImage);
+        textView = findViewById(R.id.scanbyText);
         flashOff.setOnClickListener(this);
-        assert getSupportActionBar() != null;   //null check
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //       assert getSupportActionBar() != null;   //null check
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initialiseDetectorsAndSources();
+        String carListAsString = getIntent().getStringExtra("chargelist");
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<ServiceProvidersClass>>() {
+        }.getType();
+        serviceProvidersClassList = gson.fromJson(carListAsString, type);
+
+        if (service_type.equals("Parking")) {
+            textView.setText("Scan parking hub QR Code to book parking");
+            scan_image.setImageResource(R.drawable.parking);
+        } else if (service_type.equals("Charge")) {
+            textView.setText("Scan QR code displayed on the charging hub");
+            scan_image.setImageResource(R.drawable.ic_electric_charge);
+        }
     }
 
     @Override
@@ -187,10 +213,18 @@ public class ScanQRCode extends AppCompatActivity implements View.OnClickListene
                         public void run() {
                             //textView.setText(barcodes.valueAt(0).displayValue);
                             //textView.setTextColor(getResources().getColor(R.color.colorPrimary));
-                            Intent i = new Intent(getApplicationContext(), SPProductsListActivity.class);
-                            i.putExtra("identifier2",barcodes.valueAt(0).displayValue);
-                            startActivity(i);
-                            finish();
+                            String identifier = null;
+                            for (int i = 0; i < serviceProvidersClassList.size(); i++) {
+                                identifier = serviceProvidersClassList.get(i).getUaidentifier();
+                                if (barcodes.valueAt(0).displayValue.equals(identifier)) {
+                                    Intent intent = new Intent(getApplicationContext(), SPProductsListActivity.class);
+                                    intent.putExtra("identifier2", barcodes.valueAt(0).displayValue);
+                                    intent.putExtra("serviceprovider", service_type);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+
                         }
                     });
                 }

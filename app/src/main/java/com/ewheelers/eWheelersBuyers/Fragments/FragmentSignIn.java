@@ -246,7 +246,7 @@ public class FragmentSignIn extends Fragment implements View.OnClickListener {
 
 
                                 sendRegistrationToServer(token, firetoken);
-
+                                SessionStorage.saveString(getActivity(), SessionStorage.user_id, userId);
                                 SessionStorage.saveString(getActivity(), SessionStorage.tokenvalue, token);
                                 /*Intent intent = new Intent(getActivity(), NavAppBarActivity.class);
                                 startActivity(intent);

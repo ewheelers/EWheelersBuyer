@@ -2,15 +2,20 @@ package com.ewheelers.eWheelersBuyers;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.renderscript.Double2;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -19,7 +24,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -37,6 +44,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ewheelers.eWheelersBuyers.Adapters.AddonsAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.CategoriesFilterAdapter;
+import com.ewheelers.eWheelersBuyers.Adapters.HrsAdpater;
 import com.ewheelers.eWheelersBuyers.Adapters.PaymentGatewayAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.ProductdetailsAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.SPProductsAdapter;
@@ -60,7 +68,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +79,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static android.view.View.GONE;
 
@@ -105,10 +117,18 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
     SpinnerFiltersAdapter spinnerFiltersAdapter;
     NetworkImageView networkImageViewdialog;
     Button buttonapplyCoupon;
-    String tokenvalue,product_name,uaName,stationaddress,service_provider;
-    TextView textViewAmount,perunitcharge;
-    String productprice;
-    TextView netamount,productName,hrsTitle;
+    String tokenvalue, product_name, uaName, stationaddress, service_provider, distanceIs, productAMount, hubid;
+    TextView textViewAmount, perunitcharge;
+    String productprice, selproductid;
+    TextView netamount, productName, hrsTitle, noteTxt, select_time, tot_hrs, totalAmount, choose_coupons;
+    String typeOfhrs;
+    RecyclerView recyclerViewhrs;
+    HrsAdpater hrsAdpater;
+    ProgressBar progressBar;
+    int noOfqtyasTime;
+    EditText vehicle_no, vehicle_model;
+    LinearLayout linearLayout_no;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,12 +139,26 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
         uaName = getIntent().getStringExtra("uaname");
         stationaddress = getIntent().getStringExtra("stationaddress");
         service_provider = getIntent().getStringExtra("provider");
+        distanceIs = getIntent().getStringExtra("distance");
+        productAMount = getIntent().getStringExtra("productamount");
+        hubid = getIntent().getStringExtra("uaid");
+        //typeOfhrs = findViewById(R.id.type_of_hours);
+        // choose_coupons = findViewById(R.id.choosecoupons);
+        linearLayout_no = findViewById(R.id.vehicleno_layout);
+        vehicle_model = findViewById(R.id.vehicleModel);
+        vehicle_no = findViewById(R.id.vehicleno);
+        progressBar = findViewById(R.id.progress);
+        totalAmount = findViewById(R.id.tot_amount);
+        tot_hrs = findViewById(R.id.totalhrs);
+        select_time = findViewById(R.id.selecttime);
+        noteTxt = findViewById(R.id.note);
+        recyclerViewhrs = findViewById(R.id.hrs_list);
         productName = findViewById(R.id.productname);
         hrsTitle = findViewById(R.id.hours_title);
         perunitcharge = findViewById(R.id.perunit);
         textViewAmount = findViewById(R.id.amount);
-        buttonapplyCoupon = findViewById(R.id.applycoupon);
-        buttonapplyCoupon.setOnClickListener(this);
+        //buttonapplyCoupon = findViewById(R.id.applycoupon);
+        //buttonapplyCoupon.setOnClickListener(this);
         recyclerViewSpinners = findViewById(R.id.options_recyclerview);
         hours = findViewById(R.id.hours);
         minus = findViewById(R.id.minus);
@@ -159,13 +193,95 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
         stopcharge.setOnClickListener(this);
         mBottomSheetDialog3.setContentView(sheetView);
 
-        brand_name.setText(uaName);
+        brand_name.setText(uaName + distanceIs);
         brand_address.setText(stationaddress);
         productName.setText(product_name);
-        Toast.makeText(this, "provider:"+service_provider, Toast.LENGTH_SHORT).show();
+        if (service_provider.equals("Parking")) {
+            //hrsTitle.setText("Select Time");
+            if (product_name.contains("Cycle")) {
+                linearLayout_no.setVisibility(GONE);
+            }
+            if (product_name.contains("Hourly")) {
+                //typeOfhrs ="hour(s)";
+                select_time.setText("Select Hours");
+                noteTxt.setText("Note : select daily Parking for more than 7 Hours");
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+                hrsAdpater = new HrsAdpater(this, strings());
+                recyclerViewhrs.setLayoutManager(gridLayoutManager);
+                recyclerViewhrs.setAdapter(hrsAdpater);
 
+            } else if (product_name.contains("Daily")) {
+                //typeOfhrs = "day(s)";
+                select_time.setText("Select Days");
+                noteTxt.setText("Note : select Weekly Parking for more than 6 Days");
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+                hrsAdpater = new HrsAdpater(this, stringsDays());
+                recyclerViewhrs.setLayoutManager(gridLayoutManager);
+                recyclerViewhrs.setAdapter(hrsAdpater);
+
+            } else if (product_name.contains("Weekly")) {
+                //typeOfhrs = "day(s)";
+                select_time.setText("Select Weeks");
+                noteTxt.setText("Note : select Weekly Parking for more than 6 Days");
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+                hrsAdpater = new HrsAdpater(this, stringsWeek());
+                recyclerViewhrs.setLayoutManager(gridLayoutManager);
+                recyclerViewhrs.setAdapter(hrsAdpater);
+            } else if (product_name.contains("Month")) {
+                //typeOfhrs = "day(s)";
+                select_time.setText("Selected Month");
+                //noteTxt.setText("Note : select Weekly Parking for more than 6 Days");
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+                hrsAdpater = new HrsAdpater(this, stringsMonth());
+                recyclerViewhrs.setLayoutManager(gridLayoutManager);
+                recyclerViewhrs.setAdapter(hrsAdpater);
+            }
+
+        }
+        //Toast.makeText(this, "provider:"+service_provider, Toast.LENGTH_SHORT).show();
+        //getProductDetails(product_id);
 
     }
+
+
+    public List<String> strings() {
+        List<String> strings = new ArrayList<>();
+        strings.add("1 H");
+        strings.add("2 H");
+        strings.add("3 H");
+        strings.add("4 H");
+        strings.add("5 H");
+        strings.add("6 H");
+        strings.add("7 H");
+        return strings;
+    }
+
+    public List<String> stringsDays() {
+        List<String> strings = new ArrayList<>();
+        strings.add("1 D");
+        strings.add("2 D");
+        strings.add("3 D");
+        strings.add("4 D");
+        strings.add("5 D");
+        strings.add("6 D");
+        return strings;
+    }
+
+    public List<String> stringsWeek() {
+        List<String> strings = new ArrayList<>();
+        strings.add("1 W");
+        strings.add("2 W");
+        strings.add("3 W");
+        strings.add("4 W");
+        return strings;
+    }
+
+    public List<String> stringsMonth() {
+        List<String> strings = new ArrayList<>();
+        strings.add("1 M");
+        return strings;
+    }
+
 
     public void getProductDetails(String productid) {
         optionsList.clear();
@@ -228,7 +344,7 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
-                    String selproductid = jsonObjectdata.getString("selprod_id");
+                    selproductid = jsonObjectdata.getString("selprod_id");
                     String productname = jsonObjectdata.getString("product_name");
                     productprice = jsonObjectdata.getString("selprod_price");
                     String productmodel = jsonObjectdata.getString("product_model");
@@ -237,9 +353,8 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
                     String brand_Name = jsonObjectdata.getString("brand_name");
                     String brand_Shortdesc = jsonObjectdata.getString("brand_short_description");
                     String offerstobuyer = jsonObjectdata.getString("selprodComments");
-
-                    textViewAmount.setText("\u20B9 "+productprice);
-                    perunitcharge.setText("( \u20B9 "+productprice+ " / hour )");
+                    textViewAmount.setText("\u20B9 " + productprice);
+                    //perunitcharge.setText("( \u20B9 "+productprice+ " / hour )");
                     netamount.setText(textViewAmount.getText().toString());
 
                     selectedOptionValues = jsonObjectdata.getJSONObject("selectedOptionValues");
@@ -304,19 +419,76 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
         queue.add(stringRequest);
     }
 
+
+    public void setTimeofHrs(int numberInHr) {
+        totalAmount = findViewById(R.id.tot_amount);
+        textViewAmount = findViewById(R.id.amount);
+        tot_hrs = findViewById(R.id.totalhrs);
+        if (product_name.contains("Hourly")) {
+            tot_hrs.setText(numberInHr + " Hour(s)");
+            double amount = Double.parseDouble(String.valueOf(numberInHr)) * Double.parseDouble(productAMount);
+            textViewAmount.setText("\u20B9 " + amount);
+            totalAmount.setText("\u20B9 " + amount);
+            Calendar cal = Calendar.getInstance();
+            Date date = cal.getTime();
+            cal.add(Calendar.HOUR_OF_DAY, +numberInHr);
+            String strDateFormat = "dd-MM-yyyy hh:mm aa";
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat(strDateFormat);
+            perunitcharge.setText("Parking Time from - " + sdf.format(date) + " To " + sdf.format(cal.getTime()));
+            noOfqtyasTime = numberInHr;
+        } else if (product_name.contains("Daily")) {
+            tot_hrs.setText(numberInHr + " Day(s)");
+            double amount = Double.parseDouble(String.valueOf(numberInHr)) * Double.parseDouble(productAMount);
+            textViewAmount.setText("\u20B9 " + amount);
+            totalAmount.setText("\u20B9 " + amount);
+            Calendar cal = Calendar.getInstance();
+            Date date = cal.getTime();
+            cal.add(Calendar.DATE, +numberInHr);
+            String strDateFormat = "dd-MM-yyyy hh:mm aa";
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat(strDateFormat);
+            perunitcharge.setText("Parking Time from - " + sdf.format(date) + " To " + sdf.format(cal.getTime()));
+            noOfqtyasTime = numberInHr;
+        } else if (product_name.contains("Weekly")) {
+            tot_hrs.setText(numberInHr + " Week(s)");
+            double amount = Double.parseDouble(String.valueOf(numberInHr)) * Double.parseDouble(productAMount);
+            textViewAmount.setText("\u20B9 " + amount);
+            totalAmount.setText("\u20B9 " + amount);
+            Calendar cal = Calendar.getInstance();
+            Date date = cal.getTime();
+            cal.add(Calendar.WEEK_OF_YEAR, +numberInHr);
+            String strDateFormat = "dd-MM-yyyy hh:mm aa";
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat(strDateFormat);
+            perunitcharge.setText("Parking Time from - " + sdf.format(date) + " To " + sdf.format(cal.getTime()));
+            noOfqtyasTime = numberInHr;
+
+        } else if ((product_name.contains("Month"))) {
+            tot_hrs.setText(numberInHr + " Month(s)");
+            double amount = Double.parseDouble(String.valueOf(numberInHr)) * Double.parseDouble(productAMount);
+            textViewAmount.setText("\u20B9 " + amount);
+            totalAmount.setText("\u20B9 " + amount);
+            Calendar cal = Calendar.getInstance();
+            Date date = cal.getTime();
+            cal.add(Calendar.MONTH, +numberInHr);
+            String strDateFormat = "dd-MM-yyyy hh:mm aa";
+            SimpleDateFormat sdf;
+            sdf = new SimpleDateFormat(strDateFormat);
+            perunitcharge.setText("Parking Time from - " + sdf.format(date) + " To " + sdf.format(cal.getTime()));
+            noOfqtyasTime = numberInHr;
+
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.applycoupon:
-                try {
-                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    assert imm != null;
-                    imm.hideSoftInputFromWindow(Objects.requireNonNull(getCurrentFocus()).getWindowToken(), 0);
-                } catch (Exception e) {
-                    // TODO: handle exception
-                }
-                //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                break;
+            /* case R.id.choosecoupons:
+             *//* Intent intent = new Intent(ChargeDetailPage.this, AddCartfromServices.class);
+                intent.putExtra("productid",selproductid);
+                startActivity(intent);*//*
+                break;*/
             case R.id.stop:
                 AlertDialog alert = new AlertDialog.Builder(this)
                         .create();
@@ -342,14 +514,14 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
             case R.id.minus:
                 if (i > 1)
                     i--;
-                hours.setText(i + " hours(s)");
-                textViewAmount.setText("\u20B9 "+i*Integer.parseInt(productprice));
+                hours.setText(i + typeOfhrs);
+                textViewAmount.setText("\u20B9 " + i * Integer.parseInt(productprice));
                 netamount.setText(textViewAmount.getText().toString());
                 break;
             case R.id.plus:
                 i++;
-                hours.setText(i + " hours(s)");
-                textViewAmount.setText("\u20B9 "+i*Integer.parseInt(productprice));
+                hours.setText(i + typeOfhrs);
+                textViewAmount.setText("\u20B9 " + i * Integer.parseInt(productprice));
                 netamount.setText(textViewAmount.getText().toString());
                 break;
             case R.id.confirm_order:
@@ -359,7 +531,19 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
                 mBottomSheetDialog2.dismiss();
                 break;
             case R.id.okbtn:
-                mBottomSheetDialog2.show();
+                //mBottomSheetDialog2.show();
+                /*Intent inte = new Intent(ChargeDetailPage.this,AddCartfromServices.class);
+                startActivities(inte);*/
+                if(linearLayout_no.getVisibility()==View.VISIBLE){
+                    if (vehicle_no.getText().toString().isEmpty() || vehicle_model.getText().toString().isEmpty()) {
+                        Toast.makeText(this, "Enter Vehicle details", Toast.LENGTH_SHORT).show();
+                    } else {
+                        clearCart(product_id, noOfqtyasTime);
+                    }
+                }else {
+                    clearCart(product_id, noOfqtyasTime);
+                }
+
                 break;
             case R.id.back:
                 onBackPressed();
@@ -389,6 +573,138 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
                 }
                 break;*/
         }
+    }
+
+    public void clearCart(String product_id, int noOfqtyasTime) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        String Login_url = Apis.removecartItems;
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                progressBar.setVisibility(GONE);
+                                addTocart(product_id, noOfqtyasTime, hubid);
+                            } else {
+                                Toast.makeText(ChargeDetailPage.this, message, Toast.LENGTH_SHORT).show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
+
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put("key", "all");
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(ChargeDetailPage.this).addToRequestQueue(strRequest);
+
+    }
+
+    public void addTocart(String productid, int qtyasTime, String addressid) {
+        ok_btn.setVisibility(GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = Apis.addtocart;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+
+                            if (getStatus.equals("1")) {
+                                progressBar.setVisibility(GONE);
+                                ok_btn.setVisibility(View.VISIBLE);
+
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+                                Intent intent = new Intent(ChargeDetailPage.this, AddCartfromServices.class);
+                                intent.putExtra("productid", selproductid);
+                                intent.putExtra("tottime", tot_hrs.getText().toString());
+                                intent.putExtra("vehicleno", vehicle_no.getText().toString());
+                                intent.putExtra("vehiclemodel", vehicle_model.getText().toString());
+                                intent.putExtra("stationaddress", stationaddress);
+                                intent.putExtra("productname", product_name);
+                                intent.putExtra("stationname", uaName);
+                                intent.putExtra("timings", perunitcharge.getText().toString());
+                                startActivity(intent);
+                                /*Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_LONG);
+                                mySnackbar.show();*/
+                            } else {
+                                progressBar.setVisibility(GONE);
+                                ok_btn.setVisibility(View.VISIBLE);
+
+                                Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), message, Snackbar.LENGTH_LONG);
+                                mySnackbar.show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(GONE);
+                ok_btn.setVisibility(View.VISIBLE);
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                //params.put("Content-Type", "application/json");
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() {
+
+                Map<String, String> data3 = new HashMap<String, String>();
+
+                data3.put("selprod_id", productid);
+                data3.put("quantity", String.valueOf(qtyasTime));
+                data3.put("station_address", addressid);
+                return data3;
+
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
 
     public void showNoFlashmsg(int i) {

@@ -8,18 +8,20 @@
     tools:context=".ScanQRCode">
 
     <RelativeLayout
+        android:layout_marginTop="@dimen/dimen_16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <SurfaceView
+            android:layout_centerHorizontal="true"
             android:id="@+id/surfaceView"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="300dp"
             android:layout_gravity="center_horizontal"></SurfaceView>
 
         <FrameLayout
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="200dp"
+            android:layout_height="220dp"
             android:layout_centerInParent="true"
             android:background="@drawable/scan_bg" />
     </RelativeLayout>
@@ -35,18 +37,6 @@
         android:padding="@dimen/padding_10"
         app:srcCompat="@drawable/ic_flash_off" />
 
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/txtBarcodeValue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/edit_bg_white"
-        android:drawableTop="@drawable/ic_scan"
-        android:drawablePadding="@dimen/dimen_16sp"
-        android:gravity="center"
-        android:text="Scan charging hub QR code"
-        android:textColor="@android:color/black" />
 
     <TextView
         android:visibility="gone"
@@ -72,12 +62,12 @@
             android:layout_marginRight="@dimen/padding_10">
 
             <ImageView
+                android:id="@+id/scanByImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:background="@drawable/border_bg"
-                android:padding="@dimen/padding_10"
-                app:srcCompat="@drawable/ic_electric_charge" />
+                android:padding="@dimen/padding_10"/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -90,6 +80,7 @@
         </RelativeLayout>
 
         <TextView
+            android:id="@+id/scanbyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -97,7 +88,6 @@
             android:drawableTop="@drawable/ic_scan"
             android:layout_gravity="center_vertical"
             android:padding="@dimen/padding_10"
-            android:text="Scan QR code displayed on the charging hub"
             android:textColor="@color/Black" />
     </LinearLayout>
 

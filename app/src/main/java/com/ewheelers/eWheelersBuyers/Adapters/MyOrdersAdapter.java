@@ -26,11 +26,12 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
     List<MyOrdersModel> myOrdersModels;
     //List<MyOrdersModel> ordersFilter;
 
-    int index_row=-1;
+    int index_row = -1;
+
     public MyOrdersAdapter(Context context, List<MyOrdersModel> myOrdersModels) {
         this.context = context;
         this.myOrdersModels = myOrdersModels;
-       // ordersFilter = new ArrayList<>(myOrdersModels);
+        // ordersFilter = new ArrayList<>(myOrdersModels);
     }
 
     @NonNull
@@ -42,12 +43,19 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
 
     @Override
     public void onBindViewHolder(@NonNull MyOrdersAdapter.OrdersHolder holder, int position) {
-        holder.orderid.setText("Order Id - "+myOrdersModels.get(position).getOrder_id());
-        holder.orderamount.setText("\u20B9 " +myOrdersModels.get(position).getOrdernetamount());
+        holder.orderid.setText("Order Id - " + myOrdersModels.get(position).getOrder_id());
+        holder.orderamount.setText("\u20B9 " + myOrdersModels.get(position).getOrdernetamount());
         holder.orderdate.setText(myOrdersModels.get(position).getOrderdateadded());
         holder.orderoptions.setText(myOrdersModels.get(position).getOp_selprod_options());
         holder.orderprodname.setText(myOrdersModels.get(position).getOp_product_name());
         holder.orderstatus.setText(myOrdersModels.get(position).getOrderstatus_name());
+       /* if (myOrdersModels.get(position).getOrderstatus_name().equals("Payment Pending")) {
+            holder.orderstatus.setTextColor(Color.DKGRAY);
+            holder.payagain.setVisibility(View.VISIBLE);
+        } else {
+            holder.orderstatus.setTextColor(Color.GREEN);
+            holder.payagain.setVisibility(View.GONE);
+        }*/
         holder.ordertitle.setText(myOrdersModels.get(position).getOp_selprod_title());
         ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();
         imageLoader.get(myOrdersModels.get(position).getProduct_image_url(), ImageLoader.getImageListener(holder.networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
@@ -55,15 +63,15 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                index_row=position;
+                index_row = position;
                 notifyDataSetChanged();
                 Intent i = new Intent(context, MyOrdersDetails.class);
-                i.putExtra("orderid",myOrdersModels.get(position).getOrder_id());
+                i.putExtra("orderid", myOrdersModels.get(position).getOrder_id());
                 context.startActivity(i);
             }
         });
 
-        if(index_row==position){
+        if (index_row == position) {
             holder.linearLayout.setBackgroundColor(Color.parseColor("#9C3C34"));
             holder.orderid.setTextColor(Color.WHITE);
             holder.orderamount.setTextColor(Color.WHITE);
@@ -72,9 +80,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
             holder.orderprodname.setTextColor(Color.WHITE);
             holder.orderstatus.setTextColor(Color.WHITE);
             holder.ordertitle.setTextColor(Color.WHITE);
-        }
-        else
-        {
+        } else {
             holder.linearLayout.setBackgroundColor(Color.parseColor("#ffffff"));
             holder.orderid.setTextColor(Color.BLACK);
             holder.orderamount.setTextColor(Color.BLACK);
@@ -124,9 +130,10 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
 
 
     public class OrdersHolder extends RecyclerView.ViewHolder {
-        TextView orderid, orderdate, orderprodname, ordertitle, orderoptions, orderstatus, orderamount;
+        TextView orderid, orderdate, orderprodname, ordertitle, orderoptions, orderstatus, orderamount, payagain;
         NetworkImageView networkImageView;
         CardView linearLayout;
+
         public OrdersHolder(@NonNull View itemView) {
             super(itemView);
             orderid = itemView.findViewById(R.id.orderid);
@@ -138,6 +145,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.Orders
             orderamount = itemView.findViewById(R.id.amount);
             networkImageView = itemView.findViewById(R.id.orderimage);
             linearLayout = itemView.findViewById(R.id.linear);
+            payagain = itemView.findViewById(R.id.pay);
         }
     }
 }

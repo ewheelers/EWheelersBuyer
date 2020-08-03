@@ -81,8 +81,7 @@
             android:paddingRight="@dimen/dimen_5dp"
             android:paddingLeft="@dimen/dimen_5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:layout_height="wrap_content">
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
@@ -92,11 +91,20 @@
                 android:id="@+id/amount"
                 android:textColor="@color/Black"/>
             <TextView
-                android:textColor="@color/colorPrimary"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:layout_height="wrap_content"
                 android:id="@+id/orderstatus"/>
+            <TextView
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:textColor="@color/blue"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:text="PAY"
+                android:textAlignment="center"
+                android:layout_height="wrap_content"
+                android:id="@+id/pay"/>
 
         </LinearLayout>
     </LinearLayout>

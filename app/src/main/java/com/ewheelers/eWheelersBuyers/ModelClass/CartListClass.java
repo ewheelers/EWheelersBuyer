@@ -5,7 +5,11 @@ import java.util.ArrayList;
 public class CartListClass {
     public static final int ADDONLAYOUT=0;
     public static final int MAINPRODUCT=1;
-
+    private String timing;
+    private String stationname;
+    private String stationAddress;
+    private String vehicleno;
+    private String vehiclemodel;
     private String productid;
     private String imageurl;
     private String productName;
@@ -31,6 +35,46 @@ public class CartListClass {
     public String rentEnddate;
 
     private String sellerAddress;
+
+    public String getTiming() {
+        return timing;
+    }
+
+    public void setTiming(String timing) {
+        this.timing = timing;
+    }
+
+    public String getStationname() {
+        return stationname;
+    }
+
+    public void setStationname(String stationname) {
+        this.stationname = stationname;
+    }
+
+    public String getStationAddress() {
+        return stationAddress;
+    }
+
+    public void setStationAddress(String stationAddress) {
+        this.stationAddress = stationAddress;
+    }
+
+    public String getVehicleno() {
+        return vehicleno;
+    }
+
+    public void setVehicleno(String vehicleno) {
+        this.vehicleno = vehicleno;
+    }
+
+    public String getVehiclemodel() {
+        return vehiclemodel;
+    }
+
+    public void setVehiclemodel(String vehiclemodel) {
+        this.vehiclemodel = vehiclemodel;
+    }
 
     public String getProductid() {
         return productid;

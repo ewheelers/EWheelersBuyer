@@ -21,6 +21,7 @@
     <string name="todo">TODO</string>
     <string name="share">share</string>
     <string name="cancel"><u>Cancel</u></string>
+    <string name="read_terms_amp_conditions"><![CDATA[Read Terms & Conditions]]></string>
     <string-array name="list">
         <item>MON - 09:00AM - 10:00AM</item>
         <item>TUE - 09:00AM - 10:00AM</item>

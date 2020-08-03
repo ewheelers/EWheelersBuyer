@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,6 +47,7 @@ import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
+import com.google.gson.Gson;
 import com.kinda.alert.KAlertDialog;
 
 import org.json.JSONArray;
@@ -78,7 +80,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     boolean isLoading = false;
     String tokenValue;
     NewGPSTracker newgps;
-    LinearLayout imageView;
+    LinearLayout imageView, separate_orders;
     ImageView leftImg;
     TextView textView;
     //ProgressBar progressBar;
@@ -99,7 +101,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     CategoriesFilterAdapter spinnerFiltersAdapter;
     RecyclerView spinnerlist;
     JSONObject jsonObjectServicetype;
-
+    LinearLayout linearLayoutPasses;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,9 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
        /* linearLayout = findViewById(R.id.layoutspinner);
         type_spinner = findViewById(R.id.type_spinner);
         charge_spinner = findViewById(R.id.charge_spinner);*/
+        linearLayoutPasses = findViewById(R.id.mypasses);
+        linearLayoutPasses.setOnClickListener(this);
+        separate_orders = findViewById(R.id.seperatorders);
         spinnerlist = findViewById(R.id.spinners_list);
         empty_view = findViewById(R.id.emptyView);
         chipall = findViewById(R.id.allchip);
@@ -125,6 +130,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
         leftImg = findViewById(R.id.lefticon);
         textView = findViewById(R.id.titile);
         //chip = findViewById(R.id.chargeandgo);
+        separate_orders.setOnClickListener(this);
         imageView.setOnClickListener(this);
         scanQr.setOnClickListener(this);
         imageViewclose.setOnClickListener(this);
@@ -187,6 +193,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             }
             getChipFilters("3");
         } else if (provider_is.equals("Parking")) {
+            linearLayoutPasses.setVisibility(View.VISIBLE);
             scanQr.setText("Scan Parking Hub QR Code to buy Parking Pass");
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
@@ -393,10 +400,8 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                             if (provider_is.equals(values)) {
 //                                getItems(keys);
                                 getOtherServices(keys);
-                                //pDialog.dismiss();
-                            } else if (values.equals("EV Battery Services")) {
+                           } else if (values.equals("EV Battery Services")) {
                                 getOtherServices(keys);
-                                //pDialog.dismiss();
                             } else {
                                 pDialog.dismiss();
                             }
@@ -504,7 +509,6 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
         chipall.setChecked(true);
         chipall.setTextColor(Color.parseColor("#9C3C34"));
     }
-
 
     public void getChargeStations(String zipcode, String options, String chargeVal, String parkVal) {
         pDialog.show();
@@ -649,6 +653,8 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 data3.put("charging_station", chargeVal);
                 data3.put("service_station", parkVal);
                 data3.put("options", options);
+                data3.put("pageSize", "1000");
+                data3.put("page", "1");
                 return data3;
             }
         };
@@ -875,15 +881,45 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.mapview:
-                Intent in = new Intent(getApplicationContext(), MapsActivity.class);
-                in.putExtra("chargelist", (Serializable) serviceProvidersClassesList);
-                in.putExtra("icontype", provider_is);
-                startActivity(in);
+            case R.id.mypasses:
+                Intent i = new Intent(getApplicationContext(),QRPasses.class);
+                startActivity(i);
+                break;
+            case R.id.seperatorders:
+                if (jsonObjectServicetype != null) {
+                    Iterator iterator = jsonObjectServicetype.keys();
+                    while (iterator.hasNext()) {
+                        String key = (String) iterator.next();
+                        try {
+                            String value = jsonObjectServicetype.getString(key);
+                            if (provider_is.equals(value)) {
+                                //Toast.makeText(ShowServiceProvidersActivity.this, "idis:" + key, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(ShowServiceProvidersActivity.this, MyOrdersActivity.class);
+                                intent.putExtra("servicetype", key);
+                                startActivity(intent);
+                            }
 
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
+            case R.id.mapview:
+                //Log.i("serivicelist", serviceProvidersClassesList.toString());
+                Gson gson = new Gson();
+                String jsonCars = gson.toJson(serviceProvidersClassesList);
+                Intent intent = new Intent(ShowServiceProvidersActivity.this, MapsActivity.class);
+                intent.putExtra("chargelist", jsonCars);
+                intent.putExtra("icontype", provider_is);
+                startActivity(intent);
                 break;
             case R.id.reqtestdrive:
-                Intent i = new Intent(getApplicationContext(), ScanQRCode.class);
+                gson = new Gson();
+                jsonCars = gson.toJson(serviceProvidersClassesList);
+                i = new Intent(ShowServiceProvidersActivity.this, ScanQRCode.class);
+                i.putExtra("chargelist", jsonCars);
+                i.putExtra("icontype", provider_is);
                 startActivity(i);
                 break;
             case R.id.closereqbtn:
@@ -891,6 +927,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 break;
         }
     }
+
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
