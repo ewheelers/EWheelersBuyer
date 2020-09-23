@@ -154,6 +154,7 @@ public class QRPasses extends AppCompatActivity {
                             String op_selprod_options = jsonObjectOrder.getString("op_selprod_options");
                             String op_brand_name = jsonObjectOrder.getString("op_brand_name");
                             String op_qty = jsonObjectOrder.getString("op_qty");
+                            String opId = jsonObjectOrder.getString("op_id");
                             String orderstatus_name = jsonObjectOrder.getString("orderstatus_name");
                             String product_image_url = jsonObjectOrder.getString("product_image_url");
                             if (orderstatus_name.equals("Payment Confirmed")) {
@@ -167,6 +168,7 @@ public class QRPasses extends AppCompatActivity {
                                 myOrdersModel.setOrderstatus_name(orderstatus_name);
                                 myOrdersModel.setProduct_image_url(product_image_url);
                                 myOrdersModel.setOp_qty(op_qty);
+                                myOrdersModel.setOp_id(opId);
                                 generateBarCode(myOrdersModel);
                             }
 
@@ -211,11 +213,10 @@ public class QRPasses extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-
     private void generateBarCode(MyOrdersModel myOrdersModel) {
         List<MyOrdersModel> stringsOrders = new ArrayList<>();
         stringsOrders.add(myOrdersModel);
-        String Login_url = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + myOrdersModel.getOrder_id();
+        String Login_url = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + myOrdersModel.getOp_id();
         final ImageRequest imageRequest = new ImageRequest(Login_url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
@@ -302,7 +303,6 @@ public class QRPasses extends AppCompatActivity {
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
     }
-
 
     public void QRPass(Bitmap bitmap, String order_id, String text) {
         Dialog fulldialog = new Dialog(QRPasses.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);

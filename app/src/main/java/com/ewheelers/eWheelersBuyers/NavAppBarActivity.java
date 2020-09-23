@@ -196,6 +196,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                 return false;
             }
         });
+
        /* FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {

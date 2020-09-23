@@ -57,7 +57,7 @@ public class QrListAdapter extends RecyclerView.Adapter<QrListAdapter.QrHolder> 
     public void onBindViewHolder(@NonNull QrHolder holder, int position) {
         //holder.imageView.setImageBitmap(qrImages.get(position).getBitmap());
         holder.bookedOn.setText("Booked On : " + qrImages.get(position).getOrderdateadded());
-        holder.orderId.setText(qrImages.get(position).getOrder_id());
+        holder.orderId.setText(qrImages.get(position).getOrder_id()+"/"+qrImages.get(position).getOp_id());
         holder.orderId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

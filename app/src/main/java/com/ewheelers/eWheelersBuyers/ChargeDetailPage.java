@@ -537,7 +537,11 @@ public class ChargeDetailPage extends AppCompatActivity implements View.OnClickL
                 if(linearLayout_no.getVisibility()==View.VISIBLE){
                     if (vehicle_no.getText().toString().isEmpty() || vehicle_model.getText().toString().isEmpty()) {
                         Toast.makeText(this, "Enter Vehicle details", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else if(vehicle_no.getText().toString().length()<10){
+                        Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout), "Vehicle number not less than 10 digits, Temporary Registration numbers not allowed", Snackbar.LENGTH_LONG);
+                                mySnackbar.show();
+                    }
+                    else {
                         clearCart(product_id, noOfqtyasTime);
                     }
                 }else {
