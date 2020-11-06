@@ -17,7 +17,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_gravity="center"
+                android:textStyle="bold"
                 android:padding="@dimen/padding_10"
                 android:text="Customer Details"
                 android:textColor="@color/Black" />
@@ -135,13 +136,14 @@
             <ImageView
                 android:id="@+id/update_img"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_margin="@dimen/padding_10" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
+                android:layout_gravity="center"
+                android:textStyle="bold"
                 android:padding="@dimen/padding_10"
                 android:text="Vehicle Details"
                 android:textColor="@color/Black" />

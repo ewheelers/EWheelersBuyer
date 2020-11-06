@@ -30,6 +30,16 @@
             app:snap="false" />
     </RelativeLayout>
 
+    <Button
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_10"
+        android:text="Sell / Exchange Vehicle"
+        android:id="@+id/sell_veh"
+        android:textColor="@color/white"
+        android:background="@drawable/button_bg"/>
+
     <LinearLayout
         android:id="@+id/buttonslay"
         android:layout_width="match_parent"
@@ -97,7 +107,6 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
         android:visibility="gone" />
-
 
     <LinearLayout
         android:id="@+id/collection_lay"

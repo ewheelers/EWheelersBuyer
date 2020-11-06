@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -31,6 +32,7 @@ import com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeModelClass;
 import com.ewheelers.eWheelersBuyers.R;
+import com.ewheelers.eWheelersBuyers.SellProductActivity;
 import com.ewheelers.eWheelersBuyers.ShowAlleBikesActivity;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
@@ -86,9 +88,18 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
 
         if (position == 0) {
             holder.relativeLayout.setVisibility(View.VISIBLE);
+            holder.sell_vehicle.setVisibility(View.VISIBLE);
+            holder.sell_vehicle.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(context, SellProductActivity.class);
+                    context.startActivity(i);
+                }
+            });
         }
         else {
             holder.relativeLayout.setVisibility(View.GONE);
+            holder.sell_vehicle.setVisibility(View.GONE);
         }
 
         if(position==1){
@@ -310,6 +321,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
     }*/
 
     public class HomeHolder extends RecyclerView.ViewHolder {
+        Button sell_vehicle;
         TextView title;
         RecyclerView recyclerlist;
         TextView showall;
@@ -327,6 +339,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
 
         public HomeHolder(@NonNull View itemView) {
             super(itemView);
+            sell_vehicle = itemView.findViewById(R.id.sell_veh);
             topbanner = itemView.findViewById(R.id.topbannerimage);
             recyclerlist = itemView.findViewById(R.id.recycl);
             title = itemView.findViewById(R.id.collection_title);
