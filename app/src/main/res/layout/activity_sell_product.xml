@@ -134,6 +134,7 @@
             </LinearLayout>
 
             <ImageView
+                android:background="@color/AntiqueWhite"
                 android:id="@+id/update_img"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,10 +13,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -24,20 +40,47 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static android.view.View.GONE;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.ADD_USER_URL;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_ACTION;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_BRAND;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_CITY;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_ID;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_IMAGE;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_MANUFACTYR;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_MODEL;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_PHONE;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_PINCODE;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_REGYR;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_STATE;
 
 public class SellProductActivity extends AppCompatActivity {
-    Button take_pic;
+    Button take_pic,saveDetails;
     ImageView imageView;
     private static final String TAG = SellProductActivity.class.getSimpleName();
     private int REQUEST_CAMERA = 100;
     private String userChoosenTask;
+    EditText phNo,cityName,stateName,pinCode,brand,model,manyr,regYr;
+    String userImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sell_product);
+        saveDetails = findViewById(R.id.save_details);
         imageView = findViewById(R.id.update_img);
         take_pic = findViewById(R.id.take_pic);
+        phNo = findViewById(R.id.ph_no);
+        cityName = findViewById(R.id.city_name);
+        stateName = findViewById(R.id.state_name);
+        pinCode = findViewById(R.id.pin_code);
+        brand = findViewById(R.id.brand);
+        model = findViewById(R.id.model);
+        manyr = findViewById(R.id.man_yr);
+        regYr = findViewById(R.id.reg_yr);
         ImagePickerActivity.clearCache(this);
         take_pic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +108,59 @@ public class SellProductActivity extends AppCompatActivity {
 
             }
         });
+        saveDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postDataInExcel();
+            }
+        });
+    }
+
+    private void postDataInExcel() {
+        final ProgressDialog loading = ProgressDialog.show(this,"Uploading...","Please wait...",false,false);
+        StringRequest strRequest = new StringRequest(Request.Method.POST, ADD_USER_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        loading.dismiss();
+                        Log.e("resp",response);
+                        Toast.makeText(SellProductActivity.this,response,Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                loading.dismiss();
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                String phone = phNo.getText().toString();
+                String city = cityName.getText().toString();
+                String state = stateName.getText().toString();
+                String pincode = pinCode.getText().toString();
+                String brandIs = brand.getText().toString();
+                String modelIs = model.getText().toString();
+                String man_yr = manyr.getText().toString();
+                String reg_yr = regYr.getText().toString();
+                Map<String, String> data3 = new HashMap<String, String>();
+                data3.put(KEY_ID,"123456");
+                data3.put(KEY_PHONE,phone);
+                data3.put(KEY_IMAGE,userImage);
+                data3.put(KEY_CITY,city);
+                data3.put(KEY_STATE,state);
+                data3.put(KEY_PINCODE,pincode);
+                data3.put(KEY_BRAND,brandIs);
+                data3.put(KEY_MODEL,modelIs);
+                data3.put(KEY_MANUFACTYR,man_yr);
+                data3.put(KEY_REGYR,reg_yr);
+                data3.put("id", "1tIq1mSOiDRn-JORShYAPzl7EY_FH45yxra8KcFYn1VA");
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
 
     private void showImagePickerOptions() {
@@ -162,11 +258,20 @@ public class SellProductActivity extends AppCompatActivity {
                     // You can update this bitmap to your server
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(SellProductActivity.this.getContentResolver(), filePath);
                     imageView.setImageBitmap(bitmap);
+                    userImage = getStringImage(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public String getStringImage(Bitmap bmp) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
     }
 
     public byte[] getFileDataFromDrawable(Bitmap bitmap) {
