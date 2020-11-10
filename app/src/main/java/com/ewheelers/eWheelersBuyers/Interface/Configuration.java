@@ -15,6 +15,7 @@ public class Configuration {
     public  static final String KEY_MODEL = "Model";
     public  static final String KEY_MANUFACTYR = "ManufacturingYear";
     public  static final String KEY_REGYR = "RegistrationYear";
+    public static final String KEY_POSTEDON = "PostedOn";
     public  static final String KEY_ACTION = "action";
     public static final String KEY_USERS = "records";
 }

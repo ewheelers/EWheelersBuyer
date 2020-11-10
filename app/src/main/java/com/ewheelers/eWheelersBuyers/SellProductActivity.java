@@ -40,6 +40,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +59,7 @@ import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_MANUFACT
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_MODEL;
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_PHONE;
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_PINCODE;
+import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_POSTEDON;
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_REGYR;
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_STATE;
 
@@ -144,8 +149,18 @@ public class SellProductActivity extends AppCompatActivity {
                 String modelIs = model.getText().toString();
                 String man_yr = manyr.getText().toString();
                 String reg_yr = regYr.getText().toString();
+                String dateIs;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDateTime now = LocalDateTime.now();
+                    dateIs = dtf.format(now);
+                }else {
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    Date date = new Date();
+                    dateIs = formatter.format(date);
+                }
                 Map<String, String> data3 = new HashMap<String, String>();
-                data3.put(KEY_ID,"123456");
+                data3.put(KEY_ID,new SessionStorage().getStrings(SellProductActivity.this,SessionStorage.user_id));
                 data3.put(KEY_PHONE,phone);
                 data3.put(KEY_IMAGE,userImage);
                 data3.put(KEY_CITY,city);
@@ -155,6 +170,7 @@ public class SellProductActivity extends AppCompatActivity {
                 data3.put(KEY_MODEL,modelIs);
                 data3.put(KEY_MANUFACTYR,man_yr);
                 data3.put(KEY_REGYR,reg_yr);
+                data3.put(KEY_POSTEDON,dateIs);
                 data3.put("id", "1tIq1mSOiDRn-JORShYAPzl7EY_FH45yxra8KcFYn1VA");
                 return data3;
             }
