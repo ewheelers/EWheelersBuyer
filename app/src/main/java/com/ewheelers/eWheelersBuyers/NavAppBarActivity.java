@@ -649,6 +649,10 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
             Intent i = new Intent(this, MyOrdersActivity.class);
             startActivity(i);
         }
+        if(id == R.id.nav_my_checklist){
+            Intent i = new Intent(getApplicationContext(),MyCheckList.class);
+            startActivity(i);
+        }
         if (id == R.id.nav_logout) {
            /* SessionStorage.clearString(NavAppBarActivity.this,SessionStorage.tokenvalue);
             Intent i = new Intent(getApplicationContext(),LoginActivity.class);

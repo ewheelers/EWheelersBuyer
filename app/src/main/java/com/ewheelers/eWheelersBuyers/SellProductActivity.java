@@ -2,12 +2,14 @@ package com.ewheelers.eWheelersBuyers;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,9 +42,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,13 +68,14 @@ import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_REGYR;
 import static com.ewheelers.eWheelersBuyers.Interface.Configuration.KEY_STATE;
 
 public class SellProductActivity extends AppCompatActivity {
-    Button take_pic,saveDetails;
+    Button take_pic, saveDetails;
     ImageView imageView;
     private static final String TAG = SellProductActivity.class.getSimpleName();
     private int REQUEST_CAMERA = 100;
     private String userChoosenTask;
-    EditText phNo,cityName,stateName,pinCode,brand,model,manyr,regYr;
+    EditText phNo, cityName, stateName, pinCode, brand, model, manyr, regYr;
     String userImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,20 +121,70 @@ public class SellProductActivity extends AppCompatActivity {
         saveDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postDataInExcel();
+                String phone = phNo.getText().toString();
+                String city = cityName.getText().toString();
+                String state = stateName.getText().toString();
+                String pincode = pinCode.getText().toString();
+                String brandIs = brand.getText().toString();
+                String modelIs = model.getText().toString();
+                String man_yr = manyr.getText().toString();
+                String reg_yr = regYr.getText().toString();
+                if (phone.isEmpty() || city.isEmpty() || state.isEmpty() || pincode.isEmpty() || brandIs.isEmpty() || modelIs.isEmpty() || man_yr.isEmpty() || reg_yr.isEmpty()) {
+                    Toast.makeText(SellProductActivity.this, "All fileds are mandatory!...", Toast.LENGTH_SHORT).show();
+                } else {
+                    postDataInExcel();
+                }
             }
         });
     }
 
     private void postDataInExcel() {
-        final ProgressDialog loading = ProgressDialog.show(this,"Uploading...","Please wait...",false,false);
+        final ProgressDialog loading = ProgressDialog.show(this, "Uploading...", "Please wait...", false, false);
         StringRequest strRequest = new StringRequest(Request.Method.POST, ADD_USER_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         loading.dismiss();
-                        Log.e("resp",response);
-                        Toast.makeText(SellProductActivity.this,response,Toast.LENGTH_SHORT).show();
+                        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(SellProductActivity.this);
+                        builder.create();
+                        builder.setIcon(R.drawable.ewheelerspartner_logo);
+                        builder.setTitle("Uploaded Successfully");
+                        builder.setMessage("Can Go Back or continue or Check the details");
+                        builder.setCancelable(false);
+                        builder.setNeutralButton("Go Back", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                onBackPressed();
+                            }
+                        });
+                        builder.setPositiveButton("Check", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //dialog.cancel();
+                                Intent i = new Intent(getApplicationContext(),MyCheckList.class);
+                                startActivity(i);
+                                finish();
+                            }
+                        });
+
+                        builder.setNegativeButton("Continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                phNo.setText("");
+                                cityName.setText("");
+                                stateName.setText("");
+                                pinCode.setText("");
+                                brand.setText("");
+                                model.setText("");
+                                manyr.setText("");
+                                regYr.setText("");
+                            }
+                        });
+                        builder.show();
+                        //Log.e("resp", response);
+                       //Toast.makeText(SellProductActivity.this, response, Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -154,23 +209,23 @@ public class SellProductActivity extends AppCompatActivity {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDateTime now = LocalDateTime.now();
                     dateIs = dtf.format(now);
-                }else {
+                } else {
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                     Date date = new Date();
                     dateIs = formatter.format(date);
                 }
                 Map<String, String> data3 = new HashMap<String, String>();
-                data3.put(KEY_ID,new SessionStorage().getStrings(SellProductActivity.this,SessionStorage.user_id));
-                data3.put(KEY_PHONE,phone);
-                data3.put(KEY_IMAGE,userImage);
-                data3.put(KEY_CITY,city);
-                data3.put(KEY_STATE,state);
-                data3.put(KEY_PINCODE,pincode);
-                data3.put(KEY_BRAND,brandIs);
-                data3.put(KEY_MODEL,modelIs);
-                data3.put(KEY_MANUFACTYR,man_yr);
-                data3.put(KEY_REGYR,reg_yr);
-                data3.put(KEY_POSTEDON,dateIs);
+                data3.put(KEY_ID, new SessionStorage().getStrings(SellProductActivity.this, SessionStorage.user_id));
+                data3.put(KEY_PHONE, phone);
+                data3.put(KEY_IMAGE, userImage);
+                data3.put(KEY_CITY, city);
+                data3.put(KEY_STATE, state);
+                data3.put(KEY_PINCODE, pincode);
+                data3.put(KEY_BRAND, brandIs);
+                data3.put(KEY_MODEL, modelIs);
+                data3.put(KEY_MANUFACTYR, man_yr);
+                data3.put(KEY_REGYR, reg_yr);
+                data3.put(KEY_POSTEDON, dateIs);
                 data3.put("id", "1tIq1mSOiDRn-JORShYAPzl7EY_FH45yxra8KcFYn1VA");
                 return data3;
             }
@@ -192,6 +247,7 @@ public class SellProductActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(SellProductActivity.this);
         builder.setTitle(getString(R.string.dialog_permission_title));
@@ -212,6 +268,7 @@ public class SellProductActivity extends AppCompatActivity {
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }
+
     private void selectImage() {
         final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(SellProductActivity.this);

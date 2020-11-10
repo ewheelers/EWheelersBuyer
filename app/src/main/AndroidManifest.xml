@@ -43,7 +43,9 @@
         android:theme="@style/AppThemeMaterial"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup,android:usesCleartextTraffic">
-        <activity android:name=".ImagePickerActivity"></activity>
+        <activity android:name=".MyCheckList"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity android:name=".ImagePickerActivity" />
         <activity
             android:name=".QRPasses"
             android:label="Parking Passes" />
@@ -291,8 +293,10 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".SellProductActivity"
-            android:theme="@style/NoActionBar"/>
+        <activity
+            android:name=".SellProductActivity"
+            android:theme="@style/NoActionBar" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

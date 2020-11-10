@@ -46,8 +46,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         imageView.setOnClickListener(this);
     }
 
-
-
     public void call_action() {
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + "9010500076"));
