@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -18,10 +19,10 @@ public class BuyerGuideActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* setContentView(R.layout.activity_buyer_guide);
-        webView = findViewById(R.id.webview);//https://ewheelers.in/blog
-        webView.loadUrl("https://ewheelers.in/blog");*/
-        Toast.makeText(this, "Loading ... Please wait", Toast.LENGTH_LONG).show();
+        setContentView(R.layout.activity_buyer_guide);
+        mWebview = findViewById(R.id.webview);
+        //mWebview.loadUrl("https://ewheelers.in/blog");
+        //Toast.makeText(this, "Loading ... Please wait", Toast.LENGTH_LONG).show();
         String getText = getIntent().getStringExtra("opens");
         String geturlas = getIntent().getStringExtra("openurl");
         String bottomurl = getIntent().getStringExtra("openurlbottom");
@@ -60,20 +61,12 @@ public class BuyerGuideActivity extends AppCompatActivity {
             }
         }
 
-      /*  assert getText != null;
-        if (getText.equals("openshort")) {
-            url = "https://ewheelers.in/about-us";
-        } else if (getText.equals("howworks")) {
-            url = "https://ewheelers.in/service-process";
-        } else if (getText.equals("terms")) {
-            url = "https://ewheelers.in/terms-conditions";
-        } else if (getText.equals("support")) {
-            url = "https://ewheelers.in/ev-store-near-you";
-        } else {
-            url = "https://ewheelers.in/blog";
-        }*/
-        mWebview = new WebView(this);
+        mWebview.loadUrl(url);
+        mWebview.canGoBack();
+        mWebview.canGoForward();
+        mWebview.getSettings().setJavaScriptEnabled(true);
 
+     /*   mWebview = new WebView(this);
         mWebview.getSettings().setJavaScriptEnabled(true); // enable javascript
 
         final Activity activity;
@@ -86,7 +79,7 @@ public class BuyerGuideActivity extends AppCompatActivity {
                 Toast.makeText(activity, description, Toast.LENGTH_SHORT).show();
             }
 
-            @TargetApi(android.os.Build.VERSION_CODES.M)
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
                 // Redirect to deprecated method, so you can use it in all SDK versions
@@ -96,7 +89,7 @@ public class BuyerGuideActivity extends AppCompatActivity {
 
         mWebview.loadUrl(url);
         setContentView(mWebview);
-
+*/
 
     }
 }

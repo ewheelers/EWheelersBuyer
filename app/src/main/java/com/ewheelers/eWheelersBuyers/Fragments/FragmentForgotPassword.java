@@ -1,5 +1,6 @@
 package com.ewheelers.eWheelersBuyers.Fragments;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -67,18 +68,29 @@ public class FragmentForgotPassword extends Fragment implements View.OnClickList
         editText = v.findViewById(R.id.usernameoremail);
         appCompatButton.setOnClickListener(this);
 
-
-        try {
+        hideKeyboard(getActivity());
+        /*try {
             imm = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         pDialog = new KAlertDialog(getActivity(), KAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
         return v;
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

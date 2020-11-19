@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -33,12 +34,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.eWheelersBuyers.Utilities.VolleyMultipartRequest;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
+import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,7 +81,7 @@ public class SellProductActivity extends AppCompatActivity {
     private String userChoosenTask;
     EditText phNo, cityName, stateName, pinCode, brand, model, manyr, regYr;
     String userImage;
-
+    Bitmap bitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +127,7 @@ public class SellProductActivity extends AppCompatActivity {
         saveDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //postInMangoDB();
                 String phone = phNo.getText().toString();
                 String city = cityName.getText().toString();
                 String state = stateName.getText().toString();
@@ -329,7 +336,7 @@ public class SellProductActivity extends AppCompatActivity {
                 Uri filePath = data.getParcelableExtra("path");
                 try {
                     // You can update this bitmap to your server
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(SellProductActivity.this.getContentResolver(), filePath);
+                    bitmap = MediaStore.Images.Media.getBitmap(SellProductActivity.this.getContentResolver(), filePath);
                     imageView.setImageBitmap(bitmap);
                     userImage = getStringImage(bitmap);
                 } catch (IOException e) {
@@ -351,6 +358,71 @@ public class SellProductActivity extends AppCompatActivity {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 80, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+
+    private void postInMangoDB() {
+        String url = "http://192.168.0.10:8080/ImageController/saveImages";
+        VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
+                new Response.Listener<NetworkResponse>() {
+                    @Override
+                    public void onResponse(NetworkResponse response) {
+                        String resultResponse = new String(response.data);
+                        Log.e("imageresponse",resultResponse);
+                        /* try {
+                            JSONObject jsonObject = new JSONObject(resultResponse);
+                            String status = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if(status.equals("1")){
+                                progressDialog.dismiss();
+                                Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+
+                            }else{
+                                progressDialog.dismiss();
+                                Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //progressDialog.dismiss();
+                        Toast.makeText(SellProductActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                        Log.e("GotError", "" + error.getMessage());
+                    }
+                }) {
+
+           /* @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenValue);
+                return params;
+            }*/
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("customerId",new SessionStorage().getStrings(SellProductActivity.this,SessionStorage.user_id));
+                return params;
+            }
+
+            @Override
+            protected Map<String, DataPart> getByteData() {
+                Map<String, DataPart> params = new HashMap<>();
+                long imagename = System.currentTimeMillis();
+                params.put("images", new DataPart(imagename + ".jpg", getFileDataFromDrawable(bitmap)));
+                return params;
+            }
+        };
+
+        //adding the request to volley
+        volleyMultipartRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        Volley.newRequestQueue(SellProductActivity.this).add(volleyMultipartRequest);
     }
 
 }
