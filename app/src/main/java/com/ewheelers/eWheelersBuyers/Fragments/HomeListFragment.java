@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -86,8 +87,8 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
     private JSONArray jsonArrayProducts, jsonArrayProductscat, jsonArrayProductsbrand, jsonArrayProductsshop;
     private List<HomeCollectionProducts> homeCollectionSliderList = new ArrayList<HomeCollectionProducts>();
     ProgressBar progressBar;
-   /* private String[] permissions = {"android.permission.FLASHLIGHT","android.permission.CAMERA","android.hardware.camera.autofocus","android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
-    int requestCode = 200;*/
+    /* private String[] permissions = {"android.permission.FLASHLIGHT","android.permission.CAMERA","android.hardware.camera.autofocus","android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
+     int requestCode = 200;*/
     Button mFloatingActionButton;
     NestedScrollView nestedScrollView;
 
@@ -111,6 +112,7 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
             requestPermissions(permissions, requestCode);
         }
 */
+        hideKeyboard(getActivity());
         ConnectionStateMonitor connectionStateMonitor = new ConnectionStateMonitor(getActivity());
         connectionStateMonitor.observe(this, new Observer<Boolean>() {
             @Override
@@ -128,7 +130,7 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
         });
 
         gethomecollections();
-      /*  recyclerView.getViewTreeObserver()
+        /*recyclerView.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
@@ -152,6 +154,17 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
                     }
                 });
         return v;
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public void gethomecollections() {

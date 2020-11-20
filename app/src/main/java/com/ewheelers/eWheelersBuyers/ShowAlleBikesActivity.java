@@ -74,7 +74,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     RecyclerView recyclerView;
     AllebikesAdapter allebikesAdapter;
     List<AllebikesModelClass> allebikelist = new ArrayList<>();
-    TextView textView, title;
+    TextView textView, goback, title;
     String token;
     String collectionidbikes, collectionidcat, collectionidbrands, collectionidshops;
     String collectionid, tokenvalue, allproducts;
@@ -120,6 +120,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     Chip chipall;
     Button floatingactionbutton;
     NestedScrollView nestedScrollView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +132,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         phonenoshop = findViewById(R.id.phoneno_shop);
         title = findViewById(R.id.texttitle);
         textView = findViewById(R.id.titleTxt);
+        goback = findViewById(R.id.goback);
         recyclerView = findViewById(R.id.all_ebikeslist);
         textView_empty = findViewById(R.id.emptyView);
         linearLayoutEmpty = findViewById(R.id.empty_layout);
@@ -198,7 +200,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(newText!=null) {
+                if (newText != null) {
                     allebikesAdapter.getFilter().filter(newText);
                 }
                 return false;
@@ -622,7 +624,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
         }
 
 
-        textView.setOnClickListener(new View.OnClickListener() {
+        goback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
@@ -742,7 +744,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                 }
                                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, LinearLayoutManager.HORIZONTAL, false);
                                 recyclerViewchipfilter.setLayoutManager(linearLayoutManager);
-                                CategoriesFilterAdapter filtersAdapter = new CategoriesFilterAdapter(ShowAlleBikesActivity.this, filterListClassesCategory,null,"bikes");
+                                CategoriesFilterAdapter filtersAdapter = new CategoriesFilterAdapter(ShowAlleBikesActivity.this, filterListClassesCategory, null, "bikes");
                                 recyclerViewchipfilter.setAdapter(filtersAdapter);
                             }
                         } catch (JSONException e) {
@@ -1445,7 +1447,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                 } else {
 
                                     linearLayoutEmpty.setVisibility(View.VISIBLE);
-                                    if (shopphone.equals("0") || shopphone.equals(null)) {
+                                    if (shopphone.equals("0") || shopphone.isEmpty()) {
                                         phonenoshop.setVisibility(GONE);
                                     } else {
                                         phonenoshop.setVisibility(View.VISIBLE);
@@ -1671,7 +1673,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                 data3.put("producttype", prodType);
                 if (tdrive.equals("book")) {
                     data3.put("book", tdrive);
-                } else {
+                } else if (tdrive.equals("test_drive")) {
                     data3.put("tdrive", tdrive);
                 }
                 return data3;
@@ -1783,7 +1785,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                 data3.put("sortBy", sorting);
                 if (testing.equals("book")) {
                     data3.put("book", testing);
-                } else {
+                } else if(testing.equals("test_drive")){
                     data3.put("tdrive", testing);
                 }
                 return data3;

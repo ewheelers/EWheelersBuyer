@@ -214,7 +214,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                     Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                     intent.putExtra("allpopularbikes", homeCollectionProducts.get(position).getCollectionId());
                     intent.putExtra("instock", 1);
-                    intent.putExtra("type", "eBikes");
+                    intent.putExtra("type", homeCollectionProducts.get(position).getHeadcatTitle());
                     context.startActivity(intent);
                 }
             });
@@ -243,7 +243,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                     intent.putExtra("allcategories", homeCollectionProducts.get(position).getCollectionId());
-                    intent.putExtra("type", "Categories");
+                    intent.putExtra("type", homeCollectionProducts.get(position).getHeadcatTitle());
                     context.startActivity(intent);
                 }
             });
@@ -273,7 +273,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 public void onClick(View v) {
                     Intent intent = new Intent(context, ShowAlleBikesActivity.class);
                     intent.putExtra("allshops", homeCollectionProducts.get(position).getCollectionId());
-                    intent.putExtra("type", "Dealers");
+                    intent.putExtra("type", homeCollectionProducts.get(position).getHeadcatTitle());
                     context.startActivity(intent);
                 }
             });
@@ -301,7 +301,7 @@ public class HomeCollectionAdapter extends RecyclerView.Adapter<HomeCollectionAd
                 public void onClick(View v) {
                     Intent  intent = new Intent(context, ShowAlleBikesActivity.class);
                     intent.putExtra("allbrands", homeCollectionProducts.get(position).getCollectionId());
-                    intent.putExtra("type", "Brands");
+                    intent.putExtra("type", homeCollectionProducts.get(position).getHeadcatTitle());
                     context.startActivity(intent);
                 }
             });

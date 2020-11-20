@@ -77,13 +77,13 @@
         </LinearLayout>
 
         <ProgressBar
-            android:layout_marginTop="50dp"
+            android:id="@+id/progress"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:indeterminate="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/progress"
-            android:visibility="gone"/>
+            android:layout_marginTop="50dp"
+            android:indeterminate="true"
+            android:visibility="gone" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollview"
@@ -171,7 +171,7 @@
                                 android:textSize="14sp" />
                         </RelativeLayout>
 
-                        <TextView
+                        <!--<TextView
                             android:id="@+id/enterpincode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -179,6 +179,18 @@
                             android:padding="8dp"
                             android:text="find store"
                             android:textAlignment="center"
+                            android:textSize="14sp" />-->
+                        <TextView
+                            android:id="@+id/product_details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:drawableTop="@drawable/productdetails"
+                            android:drawablePadding="5dp"
+                            android:padding="5dp"
+                            android:text="Product\nDetails"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
                             android:textSize="14sp" />
 
                         <TextView
@@ -200,69 +212,96 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="1.8">
+                    android:weightSum="2">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/horizontal_view"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:layout_weight="1.5" />
 
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/card_guide"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
-                        android:background="@drawable/edit_bg"
-                        android:orientation="horizontal">
+                        android:layout_height="75dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_weight="0.5"
+                        app:cardElevation="5dp">
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/card_click"
-                            android:layout_width="75dp"
-                            android:layout_height="75dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="3dp"
-                            android:layout_marginRight="3dp"
-                            android:layout_marginBottom="3dp"
-                            app:cardElevation="5dp">
+                        <TextView
+                            android:id="@+id/buyer_guide"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:drawableTop="@drawable/buyerguide"
+                            android:drawablePadding="5dp"
+                            android:padding="5dp"
+                            android:text="Buyer\nGuide"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="14sp" />
+                    </androidx.cardview.widget.CardView>
 
-                            <TextView
-                                android:id="@+id/product_details"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:drawableTop="@drawable/productdetails"
-                                android:drawablePadding="5dp"
-                                android:padding="5dp"
-                                android:text="Product\nDetails"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="14sp" />
-                        </androidx.cardview.widget.CardView>
 
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/card_guide"
-                            android:layout_width="75dp"
-                            android:layout_height="75dp"
-                            android:layout_marginStart="3dp"
-                            android:layout_marginLeft="3dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="3dp"
-                            app:cardElevation="5dp">
+                    <!--
+                                        <LinearLayout
+                                            android:layout_width="75dp"
+                                            android:layout_height="wrap_content"
+                                            android:background="@drawable/edit_bg"
+                                            android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/buyer_guide"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:drawableTop="@drawable/buyerguide"
-                                android:drawablePadding="5dp"
-                                android:padding="5dp"
-                                android:text="Buyer\nGuide"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="14sp" />
-                        </androidx.cardview.widget.CardView>
-                    </LinearLayout>
+                                            <androidx.cardview.widget.CardView
+                                                android:id="@+id/card_click"
+                                                android:layout_width="75dp"
+                                                android:layout_height="75dp"
+                                                android:layout_marginTop="5dp"
+                                                android:layout_marginEnd="3dp"
+                                                android:layout_marginRight="3dp"
+                                                android:layout_marginBottom="3dp"
+                                                app:cardElevation="5dp">
+
+                                                <TextView
+                                                    android:id="@+id/product_details"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:drawableTop="@drawable/productdetails"
+                                                    android:drawablePadding="5dp"
+                                                    android:padding="5dp"
+                                                    android:text="Product\nDetails"
+                                                    android:textAlignment="center"
+                                                    android:textColor="@color/colorPrimary"
+                                                    android:textSize="14sp" />
+                                            </androidx.cardview.widget.CardView>
+
+                                            <androidx.cardview.widget.CardView
+                                                android:id="@+id/card_guide"
+                                                android:layout_width="75dp"
+                                                android:layout_height="75dp"
+                                                android:layout_marginStart="3dp"
+                                                android:layout_marginLeft="3dp"
+                                                android:layout_marginTop="5dp"
+                                                android:layout_marginBottom="3dp"
+                                                app:cardElevation="5dp">
+
+                                                <TextView
+                                                    android:id="@+id/buyer_guide"
+                                                    android:layout_width="wrap_content"
+                                                    android:layout_height="wrap_content"
+                                                    android:layout_gravity="center_horizontal"
+                                                    android:drawableTop="@drawable/buyerguide"
+                                                    android:drawablePadding="5dp"
+                                                    android:padding="5dp"
+                                                    android:text="Buyer\nGuide"
+                                                    android:textAlignment="center"
+                                                    android:textColor="@color/colorPrimary"
+                                                    android:textSize="14sp" />
+                                            </androidx.cardview.widget.CardView>
+                                        </LinearLayout>
+                    -->
 
                 </LinearLayout>
 
@@ -286,20 +325,34 @@
                     android:orientation="horizontal"
                     android:weightSum="1.10">
 
-                    <TextView
-                        android:id="@+id/brandName"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginRight="@dimen/dimen_5dp"
-                        android:layout_weight="0.35"
-                        android:background="@drawable/gray_button_background"
+                    <LinearLayout
+                        android:id="@+id/goto_shop"
                         android:padding="@dimen/dimen_5dp"
-                        android:text="Brand name"
-                        android:textAlignment="center"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:background="@drawable/gray_button_background"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.35"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/logo_img"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"/>
+                        <TextView
+                            android:id="@+id/brandName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/dimen_5dp"
+                            android:text="Brand name"
+                            android:textAlignment="center"
+                            android:textColor="@color/blue"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                     <LinearLayout
+                        android:gravity="center"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/dimen_5dp"
@@ -314,9 +367,11 @@
                             android:layout_height="wrap_content"
                             android:maxLines="3"
                             android:text="Brand Description"
-                            android:textAlignment="textStart" />
+                            android:textAlignment="center"
+                            android:textColor="@color/Black" />
 
                         <TextView
+                            android:layout_marginTop="@dimen/padding_10"
                             android:id="@+id/morebybrand"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -324,12 +379,15 @@
                             android:textAlignment="center"
                             android:textColor="@color/colorPrimary" />
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/padding_10"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_marginLeft="@dimen/padding_10"
+                    android:layout_marginRight="@dimen/padding_10"
                     android:padding="@dimen/dimen_5dp">
 
                     <LinearLayout
@@ -361,17 +419,6 @@
                                 android:gravity="center"
                                 android:textColor="@color/Black" />
 
-                            <TextView
-                                style="@style/Widget.MaterialComponents.Button"
-                                android:id="@+id/change_text"
-                                android:layout_width="150dp"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="@dimen/padding_10"
-                                android:gravity="center"
-                                android:padding="@dimen/dimen_5dp"
-                                android:text="Change Dealer"
-                                android:textColor="@color/colorPrimary" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -380,16 +427,16 @@
                             android:layout_weight="0.25"
                             android:gravity="center_horizontal"
                             android:orientation="vertical"
-                            android:weightSum="3">
+                            android:weightSum="2">
 
-                            <ImageView
+                           <!-- <ImageView
                                 android:id="@+id/call_seller"
                                 android:layout_width="wrap_content"
                                 android:layout_height="0dp"
                                 android:layout_margin="@dimen/padding_10"
                                 android:layout_weight="1"
                                 app:srcCompat="@drawable/ic_call_black_24dp"
-                                tools:ignore="NestedWeights" />
+                                tools:ignore="NestedWeights" />-->
 
                             <ImageView
                                 android:id="@+id/navigate_map"
@@ -398,6 +445,7 @@
                                 android:layout_margin="@dimen/padding_10"
                                 android:layout_weight="1"
                                 app:srcCompat="@drawable/ic_findstore" />
+
                             <TextView
                                 android:id="@+id/distant"
                                 android:layout_width="wrap_content"
@@ -408,6 +456,48 @@
                         </LinearLayout>
 
                     </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/change_text"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="@dimen/dimen_5dp"
+                        android:text="More Products From Dealer"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/enterpincode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/ic_pin"
+                        android:padding="8dp"
+                        android:text="Find More Dealers"
+                        android:textAlignment="center"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/call_seller"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:drawableTop="@drawable/ic_call_black_24dp"
+                        android:padding="8dp"
+                        android:text="Call Dealer"
+                        android:textAlignment="center"
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -601,25 +691,26 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_10"
                     android:textColor="@color/Black" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/colorGrey" />
 
                 <TextView
-                    android:visibility="gone"
                     android:id="@+id/buywithtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_10"
                     android:textColor="@color/colorBlack"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:visibility="visible"
                     android:id="@+id/autobanners"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:visibility="visible" />
 
                 <TextView
                     android:id="@+id/similarproductstxt"
@@ -658,15 +749,15 @@
                         android:orientation="horizontal">
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/payment_policy"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:text="Payment" />
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/delivery_policy"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:background="@color/colorWhite"
@@ -674,8 +765,8 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/refund_policy"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:background="@color/colorWhite"
@@ -683,8 +774,8 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/return_policy"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:background="@color/colorWhite"
@@ -692,8 +783,8 @@
                             android:textColor="@color/colorBlack" />
 
                         <Button
-                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:id="@+id/cancellation_policy"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="36dp"
                             android:background="@color/colorWhite"
@@ -885,14 +976,14 @@
             android:visibility="gone" />
 
         <RelativeLayout
-            android:visibility="gone"
             android:id="@+id/clrelay"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/round_button"
-            android:elevation="@dimen/dimen_16sp">
+            android:elevation="@dimen/dimen_16sp"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/closereqbtn"
@@ -903,16 +994,16 @@
                 app:srcCompat="@drawable/ic_closetest" />
 
             <Button
-                android:background="@android:color/transparent"
-                android:layout_below="@+id/closereqbtn"
                 android:id="@+id/reqtestdrive"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Request Test Drive"
-                android:textAllCaps="false"
+                android:layout_below="@+id/closereqbtn"
+                android:background="@android:color/transparent"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
+                android:text="Request Test Drive"
                 android:textAlignment="center"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:visibility="visible" />
@@ -937,17 +1028,15 @@
             app:rippleColor="@color/LightPink" />
 
         <ListView
+            android:id="@+id/searchAdapter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:id="@+id/searchAdapter"
+            android:layout_above="@+id/searchview"
             android:background="@color/white"
             android:elevation="@dimen/padding_10"
-            android:layout_above="@+id/searchview"/>
+            android:visibility="invisible" />
 
         <SearchView
-            android:iconifiedByDefault="false"
-            android:queryHint="Add Product to compare"
             android:id="@+id/searchview"
             android:layout_width="match_parent"
             android:layout_height="68dp"
@@ -957,8 +1046,10 @@
             android:layout_marginBottom="116dp"
             android:background="@drawable/actionbarwhitebg"
             android:elevation="20dp"
+            android:iconifiedByDefault="false"
             android:padding="8dp"
-            android:visibility="invisible"/>
+            android:queryHint="Add Product to compare"
+            android:visibility="invisible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

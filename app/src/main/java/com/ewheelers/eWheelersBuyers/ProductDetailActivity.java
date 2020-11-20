@@ -126,6 +126,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ImageLoader imageLoader;
     TextView textView_product_details, shareicon, offerstoshow;
     private InputMethodManager imm;
+    String shop_id,shop_name,shoplogo,shopbanner;
     String imageurls, productdescription, selproductid, productname, productprice, productmodel, isRent, testDriveEnable, booknowEnable, selbooknowEnable;
     String rentPrice, rentSecurity, bookPercentage, minrentduration;
     TextView brand, cost, totalreview, totalrating, buywithtit, similarproductTitle;
@@ -160,7 +161,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     String pro1, pro2, savedData, plength;
     SearchView editTextSearch;
     TextView changeTxt, addressdealer, moreby_brand;
-    String brand_Shortdesc, short_descript, brand_Name, brand_Id;
+    String brand_Shortdesc, short_descript, brand_Name, brand_Id, shop_Id , shop_Name;
     Button requestTestDrive;
     ExtendedFloatingActionButton extendedFloatingButton;
     Boolean isOpen = false;
@@ -180,10 +181,13 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     Context mContext;
     Geocoder geocoder;
     List<Address> addresses;
-    ImageView calltoseller, findaddress;
+    ImageView findaddress;
+    TextView calltoseller;
     String shoplatitude;
     String shoplogitude;
     String shopmobile, username;
+    LinearLayout goto_shop;
+    ImageView logoImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +200,9 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         mContext = this;
         calltoseller = findViewById(R.id.call_seller);
         findaddress = findViewById(R.id.navigate_map);
+        goto_shop = findViewById(R.id.goto_shop);
+        goto_shop.setOnClickListener(this);
+        logoImg = findViewById(R.id.logo_img);
         //Toast.makeText(this, "from: " + productId, Toast.LENGTH_SHORT).show();
         distantance = findViewById(R.id.distant);
         recyclerViewBanners = findViewById(R.id.autobanners);
@@ -269,6 +276,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         }
 
         brand_name = findViewById(R.id.brandName);
+        brand_name.setOnClickListener(this);
         brand_descr = findViewById(R.id.brandDescript);
         moreby_brand = findViewById(R.id.morebybrand);
         moreby_brand.setOnClickListener(this);
@@ -527,10 +535,13 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     rentSecurity = jsonObjectdata.getString("sprodata_rental_security");
                     minrentduration = jsonObjectdata.getString("sprodata_minimum_rental_duration");
                     brand_Id = jsonObjectdata.getString("brand_id");
+                    shop_Id = jsonObjectdata.getString("shop_id");
+                    shop_Name = jsonObjectdata.getString("shop_name");
                     brand_Name = jsonObjectdata.getString("brand_name");
                     brand_Shortdesc = jsonObjectdata.getString("brand_short_description");
                     String offerstobuyer = jsonObjectdata.getString("selprodComments");
-                    if (offerstobuyer.isEmpty() || offerstobuyer == null) {
+                    getShopProductsBanner(shop_Id);
+                    if (offerstobuyer.isEmpty() || offerstobuyer.equals(null)) {
                         offerstoshow.setText("No offers on this Product");
                     } else {
                         offerstoshow.setText(offerstobuyer);
@@ -556,7 +567,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     }
 
                     brand.setText("( " + productmodel + " ) " + productname);
-                    brand_name.setText(brand_Name);
+                    //brand_name.setText(brand_Name);
                     brand_descr.setText(brand_Shortdesc);
                     if (brand_Shortdesc.length() > 45) {
                         brand_Shortdesc = brand_Shortdesc.substring(0, 45) + "...";
@@ -1008,6 +1019,62 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     }
 
 
+    private void getShopProductsBanner(String shopid) {
+        progressBar.setVisibility(View.VISIBLE);
+        String Login_url = Apis.viewshopbyid + shopid;
+        StringRequest strRequest = new StringRequest(Request.Method.POST, Login_url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String getStatus = jsonObject.getString("status");
+                            String message = jsonObject.getString("msg");
+                            if (getStatus.equals("1")) {
+                                JSONObject jsonObjectData = jsonObject.getJSONObject("data");
+
+                                JSONObject jsonObjectShop = jsonObjectData.getJSONObject("shop");
+                                shop_id = jsonObjectShop.getString("shop_id");
+                                shop_name = jsonObjectShop.getString("shop_name");
+                                shoplogo = jsonObjectShop.getString("shop_logo");
+                                shopbanner = jsonObjectShop.getString("shop_banner");
+                                brand_name.setText(shop_name);
+                                Picasso.get().load(shoplogo).fit().into(logoImg);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d("Main", "Error :" + error.getMessage());
+                Log.d("Main", "" + error.getMessage() + "," + error.toString());
+                progressBar.setVisibility(GONE);
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("X-TOKEN", tokenvalue);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> data3 = new HashMap<String, String>();
+                return data3;
+            }
+        };
+        strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
+
+    }
+
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -1103,6 +1170,15 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                         .setCancelable(true)
                         .show();
 
+                break;
+            case R.id.goto_shop:
+                Intent intentIs = new Intent(ProductDetailActivity.this, ShowAlleBikesActivity.class);
+                intentIs.putExtra("shopid", shop_id);
+                intentIs.putExtra("shopname", shop_name);
+                intentIs.putExtra("shopphone", shopmobile);
+                intentIs.putExtra("shopaddress", addressdealer.getText().toString());
+                intentIs.putExtra("shopbanner", shopbanner);
+                startActivity(intentIs);
                 break;
             case R.id.morebybrand:
                 Intent intent = new Intent(ProductDetailActivity.this, ShowAlleBikesActivity.class);
