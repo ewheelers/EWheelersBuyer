@@ -34,6 +34,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import static android.view.View.GONE;
+
 public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.SellHolder> implements Filterable {
     Context context;
     List<SellerListModel> sellerListModels;
@@ -51,14 +53,13 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
     @NonNull
     @Override
     public SellHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.sellers_list_layout, parent, false);
-        return new SellHolder(v);    }
+        return new SellHolder(v);
+    }
 
     @Override
     public void onBindViewHolder(@NonNull SellHolder holder, int position) {
         holder.sellerName.setText(sellerListModels.get(position).getSellersname());
-
         //holder.sellerAddress.setText(sellerListModels.get(position).getSellersaddress());
         newgps = new NewGPSTracker(context,null);
         geocoder = new Geocoder(context, Locale.ENGLISH);
@@ -96,12 +97,12 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
 
         String sellerphone = sellerListModels.get(position).getSellersphoneno();
         holder.sellerPrice.setText("Selling Price \u20B9" + sellerListModels.get(position).getSellerPrice());
-        String codavail = sellerListModels.get(position).getSellerCod();
+        /*String codavail = sellerListModels.get(position).getSellerCod();
         if (codavail.equals("1")) {
             holder.sellerCod.setText("COD Available");
         } else {
             holder.sellerCod.setText("COD Not available");
-        }
+        }*/
 
         holder.sellerCall.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,8 +219,9 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
 
 
     public class SellHolder extends RecyclerView.ViewHolder {
-        TextView sellerName, sellerAddress, sellerPrice, sellerCod, viewdetails, diastnace;
-        ImageView sellerCall, sellerNavigate;
+        TextView sellerName, sellerAddress, sellerPrice, sellerCod, viewdetails, diastnace, sellerCall;
+        ImageView sellerNavigate;
+        TextView buy,book,test,rent;
 
         public SellHolder(@NonNull View itemView) {
             super(itemView);
@@ -228,9 +230,14 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
             sellerCall = itemView.findViewById(R.id.call_seller);
             sellerNavigate = itemView.findViewById(R.id.navigate_map);
             sellerPrice = itemView.findViewById(R.id.seller_price);
-            sellerCod = itemView.findViewById(R.id.seller_cod);
+            //sellerCod = itemView.findViewById(R.id.seller_cod);
             viewdetails = itemView.findViewById(R.id.seller_viewdetails);
             diastnace = itemView.findViewById(R.id.dist);
+            buy = itemView.findViewById(R.id.buy);
+            book = itemView.findViewById(R.id.book);
+            test = itemView.findViewById(R.id.test);
+            rent = itemView.findViewById(R.id.rent);
+
         }
     }
 }

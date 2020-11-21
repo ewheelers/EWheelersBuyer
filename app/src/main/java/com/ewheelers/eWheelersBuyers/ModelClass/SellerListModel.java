@@ -14,8 +14,26 @@ public class SellerListModel {
     String SellerCod;
     String selproductid;
     String distance;
+    String bookType;
+    String testType;
 
     String typeoflist;
+
+    public String getBookType() {
+        return bookType;
+    }
+
+    public void setBookType(String bookType) {
+        this.bookType = bookType;
+    }
+
+    public String getTestType() {
+        return testType;
+    }
+
+    public void setTestType(String testType) {
+        this.testType = testType;
+    }
 
     public String getDistance() {
         return distance;

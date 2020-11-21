@@ -1,119 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:elevation="@dimen/padding_10"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-<androidx.cardview.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardElevation="@dimen/padding_10"
-    android:padding="@dimen/dimen_5dp">
+    android:padding="@dimen/dimen_5dp"
+    app:cardElevation="@dimen/padding_10">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="1.5"
-        android:orientation="horizontal">
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1.25"
-        android:background="@color/white"
-        android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/seller_name"
-            android:textStyle="bold"
-            android:padding="@dimen/dimen_5dp"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Seller Name"
-            android:textColor="@color/Black"/>
-        <TextView
-            android:id="@+id/seller_address"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Seller Address"
-            android:textColor="@color/Black"/>
+
         <LinearLayout
-            android:layout_weight="2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:padding="@dimen/dimen_5dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:background="@color/white"
                 android:orientation="vertical">
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/seller_cod"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:layout_height="wrap_content"
-                android:text="COD Available"
-                android:textColor="@color/Black"/>
+
                 <TextView
-                    android:padding="@dimen/dimen_5dp"
-                    android:background="@drawable/button_bg_redtransperent"
-                    android:id="@+id/seller_viewdetails"
+                    android:id="@+id/seller_name"
                     android:layout_width="match_parent"
-                    android:gravity="center"
                     android:layout_height="wrap_content"
-                    android:text="Choose"
-                    android:textColor="@color/colorPrimary"/>
+                    android:gravity="center"
+                    android:padding="@dimen/dimen_5dp"
+                    android:text="Seller Name"
+                    android:textColor="@color/Black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/seller_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Seller Address"
+                    android:textColor="@color/Black" />
+
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/seller_price"
-                android:padding="@dimen/dimen_5dp"
+            <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:text="Selling Price"
-                android:textColor="@color/Black"/>
+                android:layout_weight="0.5"
+                app:cardElevation="@dimen/padding_10">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_margin="@dimen/dimen_5dp"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/navigate_map"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_margin="@dimen/padding_10"
+                        android:layout_weight="1"
+                        app:srcCompat="@drawable/ic_findstore" />
+
+                    <TextView
+                        android:id="@+id/dist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/colorAccent" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="0.25"
-        android:weightSum="3"
-        android:gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/call_seller"
-            android:layout_margin="@dimen/padding_10"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_call_black_24dp"
-            tools:ignore="NestedWeights" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:id="@+id/seller_viewdetails"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg_redtransperent"
+                android:textAlignment="center"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Choose"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:textColor="@color/colorPrimary" />
 
-        <ImageView
-            android:id="@+id/navigate_map"
-            android:layout_margin="@dimen/padding_10"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:srcCompat = "@drawable/ic_findstore"/>
-        <TextView
-            android:id="@+id/dist"
-            android:textColor="@color/colorAccent"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"/>
-    </LinearLayout>
+            <TextView
+                android:layout_margin="@dimen/dimen_5dp"
+                android:id="@+id/call_seller"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:padding="5dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/button_bg_redtransperent"
+                android:text="Call Dealer"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:layout_margin="@dimen/dimen_5dp"
+                android:id="@+id/seller_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Selling Price"
+                android:textColor="@color/Black" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="4">
+
+            <TextView
+                android:visibility="visible"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/buy"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Buy"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:textColor="@color/white"
+                android:background="@drawable/button_bg"/>
+
+            <TextView
+                android:visibility="visible"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:id="@+id/book"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:padding="5dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/button_bg"
+                android:text="Book"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:visibility="visible"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:id="@+id/test"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Test"
+                android:textColor="@color/white"
+                android:background="@drawable/button_bg"/>
+            <TextView
+                android:visibility="visible"
+                android:layout_margin="@dimen/dimen_5dp"
+                android:id="@+id/rent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/dimen_5dp"
+                android:text="Rent"
+                android:textColor="@color/white"
+                android:background="@drawable/button_bg" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-</LinearLayout>

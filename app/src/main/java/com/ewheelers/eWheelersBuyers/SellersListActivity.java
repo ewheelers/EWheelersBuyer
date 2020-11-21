@@ -290,6 +290,8 @@ public class SellersListActivity extends AppCompatActivity {
                     if (status.equals("1")) {
                         JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                         JSONObject jsonObjectProduct = jsonObjectData.getJSONObject("product");
+                        String booknow = jsonObjectProduct.getString("selprod_book_now_enable");
+                        String testnow = jsonObjectProduct.getString("selprod_test_drive_enable");
                         JSONArray jsonArray = jsonObjectProduct.getJSONArray("moreSellersArr");
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject address = jsonArray.getJSONObject(i);
@@ -404,7 +406,7 @@ public class SellersListActivity extends AppCompatActivity {
                                 textView.setVisibility(View.VISIBLE);
                             } else {
 
-                              /*  Collections.sort(sellerListModelList, new Comparator<SellerListModel>() {
+                                /*Collections.sort(sellerListModelList, new Comparator<SellerListModel>() {
                                     @Override
                                     public int compare(SellerListModel o1, SellerListModel o2) {
                                         return o1.getDistance().compareTo(o2.getDistance());

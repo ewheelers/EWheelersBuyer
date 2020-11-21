@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -133,8 +134,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     //WebView productName;
     String optionname1, attTitle;
 
-    TextView rentavailbility, findstore, booknowTxt, testAvailtxt;
-
+    TextView rentavailbility, booknowTxt, testAvailtxt;
+    CardView findstore;
     String paymetnpolicy, deliverpolicy, refundpolicy, shopname, countryname, statename, city, shopuserid;
     FrameLayout frameLayout;
     Button butn_payPolicy, delivery_policy, refund_policy, return_policy, cancellation_policy;
@@ -181,8 +182,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     Context mContext;
     Geocoder geocoder;
     List<Address> addresses;
-    ImageView findaddress;
-    TextView calltoseller;
+    CardView findaddress;
+    CardView calltoseller;
     String shoplatitude;
     String shoplogitude;
     String shopmobile, username;
@@ -1254,7 +1255,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 addTocart(selproductid, "addcart");
                 break;
             case R.id.plus_img:
-
                 quantity++;
                 editqty.setText(String.valueOf(quantity));
                 break;

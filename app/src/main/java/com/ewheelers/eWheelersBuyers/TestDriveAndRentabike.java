@@ -95,28 +95,35 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
     Button submitforRent;
     LinearLayout linearLayouttest, linearLayoutrenting;
     float daysBetween;
-    TextView totalPayment, minRentduration, rentalPrice, test_drive;
+    TextView totalPayment, minRentduration,minduration, lease_pday,rentalPrice, test_drive;
     NewGPSTracker newgps;
     Context mContext;
     Geocoder geocoder;
     List<Address> addresses;
-    TextView deliveryprocess;
-    String deliverpolicy;
+    TextView deliveryprocess,short_descr, rentsecurity;
+    WebView prod_descript;
+    String deliverpolicy,selproductid;
+    TextView changepickaddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_drive_and_rentabike);
+        changepickaddress = findViewById(R.id.changepickaddress);
+        changepickaddress.setOnClickListener(this);
         test_drive = findViewById(R.id.TestDrive);
-
+        prod_descript = findViewById(R.id.prod_descript);
+        short_descr = findViewById(R.id.short_descr);
         deliveryprocess = findViewById(R.id.delivery);
         linearLayoutrenting = findViewById(R.id.linearrent);
         linearLayouttest = findViewById(R.id.lineardrive);
+        rentsecurity = findViewById(R.id.rentSecurity);
 
         rentalPrice = findViewById(R.id.rent_price);
         totalPayment = findViewById(R.id.total_payment);
         minRentduration = findViewById(R.id.min_rent_duration);
-
+        lease_pday = findViewById(R.id.lease_pday);
+        minduration = findViewById(R.id.minduration);
         startDateImg = findViewById(R.id.startdate_image);
         endDateImg = findViewById(R.id.enddate_image);
         start_date_edt = findViewById(R.id.startdate);
@@ -531,7 +538,11 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
-                    String selproductid = jsonObjectdata.getString("selprod_id");
+                    String profDescription = jsonObjectdata.getString("product_description");
+                    String shortDescription = jsonObjectdata.getString("brand_short_description");
+                    prod_descript.loadData(profDescription,"text/html","UTF-8");
+                    short_descr.setText(shortDescription);
+                    selproductid = jsonObjectdata.getString("selprod_id");
                     String productname = jsonObjectdata.getString("product_name");
                     String productprice = jsonObjectdata.getString("selprod_price");
                     String productmodel = jsonObjectdata.getString("product_model");
@@ -543,7 +554,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
 
                     JSONObject jsonObjectpolicies = dataJsonObject.getJSONObject("shop");
                     deliverpolicy = jsonObjectpolicies.getString("shop_delivery_policy");
-
+                    deliveryprocess.setText(deliverpolicy);
                     JSONArray jsonArrayCollections = dataJsonObject.getJSONArray("productImagesArr");
                     JSONObject jsonObjectProductdetail = jsonArrayCollections.getJSONObject(0);
                     String imageurls = jsonObjectProductdetail.getString("product_image_url");
@@ -568,9 +579,12 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                         test_drive.setText("Requesting Test Drive");
 
                     } else {
+                        rentsecurity.setText("\u20B9 " + rentSecurity);
+                        minduration.setText(minrentduration+ " Day(s)");
                         test_drive.setText("Rent a Bike");
-                        minRentduration.setText("Retail Security : \u20B9 " + rentSecurity + "\nMinimum Rental Duration : " + minrentduration + " Day(s)");
-                        rentalPrice.setText("Rental Price: \u20B9 " + rentPrice + " + Rental Security \u20B9 " + rentSecurity);
+                        lease_pday.setText("\u20B9 " + rentPrice + " + Rental Security \u20B9 " + rentSecurity);
+                        //minRentduration.setText("Retail Security : \u20B9 " + rentSecurity + "\nMinimum Rental Duration : " + minrentduration + " Day(s)");
+                        //rentalPrice.setText("Rental Price: \u20B9 " + rentPrice + " + Rental Security \u20B9 " + rentSecurity);
                         totalPayment.setText("Total Payment : \u20B9 " + (Double.parseDouble(rentPrice) + Double.parseDouble(rentSecurity)));
                         linearLayouttest.setVisibility(View.GONE);
                         linearLayoutrenting.setVisibility(View.VISIBLE);
@@ -680,6 +694,13 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.changepickaddress:
+                Intent inten = new Intent(getApplicationContext(), SellersListActivity.class);
+                inten.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                inten.putExtra("fromactivity", "details");
+                inten.putExtra("selproductid", selproductid);
+                startActivity(inten);
+                break;
             case R.id.submitButton:
                 if (location.getText().toString().isEmpty()) {
                     location.setError("Enter Location");
@@ -724,14 +745,14 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
                 }
                 break;
-            case R.id.delivery:
+           /* case R.id.delivery:
                 Tooltip tooltip = new Tooltip.Builder(v)
                         .setText(deliverpolicy)
                         .setTextColor(Color.WHITE)
                         .setBackgroundColor(Color.parseColor("#9c3c34"))
                         .setCancelable(true)
                         .show();
-                break;
+                break;*/
         }
     }
 
