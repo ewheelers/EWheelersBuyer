@@ -17,6 +17,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.ewheelers.eWheelersBuyers.ModelClass.AddonsClass;
 import com.ewheelers.eWheelersBuyers.ProductDetailActivity;
 import com.ewheelers.eWheelersBuyers.R;
+import com.ewheelers.eWheelersBuyers.TestDriveAndRentabike;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 
 import org.json.JSONException;
@@ -30,10 +31,12 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
     private int quantity = 1;
     JSONObject jsonObject1 = new JSONObject();;
     String selbuywithprodid;
+    String typeOfClick;
 
-    public AddonsAdapter(Context context, List<AddonsClass> addonsClasses) {
+    public AddonsAdapter(Context context, List<AddonsClass> addonsClasses,String typeOfClick) {
         this.context = context;
         this.addonsClasses = addonsClasses;
+        this.typeOfClick = typeOfClick;
     }
 
     @NonNull
@@ -96,8 +99,12 @@ public class AddonsAdapter extends RecyclerView.Adapter<AddonsAdapter.ViewHolder
                 }
 
                 //Log.i("jsonObjectList", jsonObject1.toString());
-                String addons = jsonObject1.toString();
-                ((ProductDetailActivity) context).jsonaddons(addons);
+                    String addons = jsonObject1.toString();
+                if(typeOfClick.equals("book")) {
+                    ((ProductDetailActivity) context).jsonaddons(addons);
+                }else {
+                    ((TestDriveAndRentabike) context).jsonaddons(addons);
+                }
                /* if (context instanceof ProductDetailActivity) {
                     ((ProductDetailActivity) context).jsonaddons(addons);
                 }*/

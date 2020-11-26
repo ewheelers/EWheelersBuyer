@@ -171,7 +171,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ListView listView;
     private Animation fab_open, fab_close, fab_clock, fab_anticlock;
     RelativeLayout clrelay;
-    Dialog mBottomSheetDialog;
+    static Dialog mBottomSheetDialog;
     String attr_grp_cat_id;
     ArrayList<String> strings = new ArrayList<>();
 
@@ -316,7 +316,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         similarproductTitle = findViewById(R.id.similarproductstxt);
         dealers_List = findViewById(R.id.dealers_list);
 
-
         mBottomSheetDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         View sheetView = getLayoutInflater().inflate(R.layout.addons_layout, null);
         buywithtit = sheetView.findViewById(R.id.buywithtitle);
@@ -336,7 +335,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                 } else {
                     addTocart(selproductid, "Booknow");
                 }
-                button.setBackground(getResources().getDrawable(R.drawable.gray_button_background));
+                //button.setBackground(getResources().getDrawable(R.drawable.gray_button_background));
             }
         });
 
@@ -350,7 +349,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     jsonaddons("");
                     addTocart(selproductid, "Booknow");
                 }
-                textView.setTextColor(getResources().getColor(R.color.dark_gray));
+               // textView.setTextColor(getResources().getColor(R.color.dark_gray));
             }
         });
 
@@ -722,7 +721,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                     LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(ProductDetailActivity.this, RecyclerView.VERTICAL, false);
                     buywithlistview.setLayoutManager(linearLayoutManager2);
-                    addonsAdapter = new AddonsAdapter(ProductDetailActivity.this, buyDetailsList);
+                    addonsAdapter = new AddonsAdapter(ProductDetailActivity.this, buyDetailsList,"book");
                     buywithlistview.setAdapter(addonsAdapter);
                     addonsAdapter.notifyDataSetChanged();
 
@@ -1042,6 +1041,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 shopbanner = jsonObjectShop.getString("shop_banner");
                                 brand_name.setText(shop_name);
                                 Picasso.get().load(shoplogo).fit().into(logoImg);
+                                progressBar.setVisibility(GONE);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1508,7 +1508,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 String cartcount = jsonObjectData.getString("cartItemsCount");
                                 cartCount.setText(cartcount);
                                 if (buttontext.equals("BUY")) {
-
                                     Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
                                     i.putExtra("selid", selproductid);
                                     startActivity(i);
@@ -1587,8 +1586,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     public void onResume() {
         getProductDetails(productId);
         super.onResume();
+    }
 
-
+    @Override
+    public void onBackPressed(){
+        mBottomSheetDialog.dismiss();
+        finish();
     }
 
 }

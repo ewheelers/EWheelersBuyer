@@ -304,6 +304,12 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         cartListing();
     }
 
+    @Override
+    public void onBackPressed(){
+        ProductDetailActivity.mBottomSheetDialog.dismiss();
+        finish();
+    }
+
    /* @Override
     public void onBackPressed(){
         //super.onBackPressed();

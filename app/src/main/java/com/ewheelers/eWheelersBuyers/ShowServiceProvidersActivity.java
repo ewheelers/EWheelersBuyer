@@ -268,7 +268,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                     serviceProvidersAdapter.getFilter().filter(newText);
 
                 } else {
-                    serviceProvidersAdapter.getFilter().filter(newText);
+                    otherServicesAdapter.getFilter().filter(newText);
                 }
 
                 return false;

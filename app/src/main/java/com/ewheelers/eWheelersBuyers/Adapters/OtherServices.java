@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,13 +35,15 @@ import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolders> {
+public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolders> implements Filterable {
     private Context context;
     private List<ServiceProvidersClass> serviceProvidersClassList;
+    private List<ServiceProvidersClass> classeFilter;
 
     public OtherServices(Context context, List<ServiceProvidersClass> serviceProvidersClassList) {
         this.context = context;
         this.serviceProvidersClassList = serviceProvidersClassList;
+        classeFilter = new ArrayList<>(serviceProvidersClassList);
     }
 
     @NonNull
@@ -117,6 +121,39 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
         return serviceProvidersClassList.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<ServiceProvidersClass> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(classeFilter);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for (ServiceProvidersClass item : classeFilter) {
+                    if (item.getServiceprovider_address().toLowerCase().contains(filterPattern) || item.getServiceprovider_name().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            serviceProvidersClassList.clear();
+            serviceProvidersClassList.addAll((List) results.values);
+            notifyDataSetChanged();
+        }
+    };
+
+
     public class OtherHolders extends RecyclerView.ViewHolder {
         NetworkImageView netImage;
         TextView shop_Name, shop_Address, shopOwner_name, locate, contactno;
@@ -164,6 +201,8 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
         }
         context.startActivity(callIntent);
     }
+
+
 
     public void onShareClick(View v, String servicename, String number, double lat, double lon, String username, String usermobile) {
         List<Intent> targetShareIntents = new ArrayList<Intent>();

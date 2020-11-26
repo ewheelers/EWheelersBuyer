@@ -67,6 +67,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.BreakIterator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -101,18 +102,27 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
     Geocoder geocoder;
     List<Address> addresses;
     TextView deliveryprocess,short_descr, rentsecurity;
-    WebView prod_descript;
+    //WebView prod_descript;
     String deliverpolicy,selproductid;
     TextView changepickaddress;
+    TextView buywithtit,textView;
+    Button button;
+    RecyclerView buywithlistview;
+    private TextView rentTerm;
+    Dialog mBottomSheetDialog;
+    private AddonsAdapter addonsAdapter;
+    private List<AddonsClass> buyDetailsList = new ArrayList<>();
+    private String jsonaddon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_drive_and_rentabike);
         changepickaddress = findViewById(R.id.changepickaddress);
+        rentTerm = findViewById(R.id.rentTerms);
         changepickaddress.setOnClickListener(this);
         test_drive = findViewById(R.id.TestDrive);
-        prod_descript = findViewById(R.id.prod_descript);
+        //prod_descript = findViewById(R.id.prod_descript);
         short_descr = findViewById(R.id.short_descr);
         deliveryprocess = findViewById(R.id.delivery);
         linearLayoutrenting = findViewById(R.id.linearrent);
@@ -161,8 +171,21 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
         typeoflay = getIntent().getStringExtra("typeoflayout");
         productId = getIntent().getStringExtra("productid");
         quantity = getIntent().getStringExtra("qty");
+
+        mBottomSheetDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        View sheetView = getLayoutInflater().inflate(R.layout.addons_layout, null);
+        buywithtit = sheetView.findViewById(R.id.buywithtitle);
+        buywithlistview = sheetView.findViewById(R.id.buywith_listview);
+        button = sheetView.findViewById(R.id.addtoCart);
+        textView = sheetView.findViewById(R.id.skip);
+        progressBar = sheetView.findViewById(R.id.progress_addons);
+        textView.setTextColor(getResources().getColor(R.color.colorPrimary));
+        button.setBackground(getResources().getDrawable(R.drawable.button_bg));
+        mBottomSheetDialog.setContentView(sheetView);
+
         getProductDetails(productId,typeoflay);
         getSellerList(productId);
+
     }
 
     public void addcart(String productid, String startdate, String enddate) {
@@ -186,6 +209,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                                         message, Snackbar.LENGTH_LONG);
                                 mySnackbar.setAction("Opencart", new OpencartRentListner());
                                 mySnackbar.show();*/
+                                mBottomSheetDialog.dismiss();
                                 Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
                                 i.putExtra("selid", productId);
                                 startActivity(i);
@@ -224,6 +248,11 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                 data3.put("product_for", "2");
                 data3.put("rental_start_date", startdate);
                 data3.put("rental_end_date", enddate);
+                if (jsonaddon == null) {
+                    data3.put("addons", "");
+                } else {
+                    data3.put("addons", jsonaddon);
+                }
                 return data3;
 
             }
@@ -317,6 +346,10 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
     public void showTruitonDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void jsonaddons(String addons) {
+        jsonaddon = addons;
     }
 
     public static class DatePickerFragment extends DialogFragment implements
@@ -540,7 +573,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
                     String profDescription = jsonObjectdata.getString("product_description");
                     String shortDescription = jsonObjectdata.getString("brand_short_description");
-                    prod_descript.loadData(profDescription,"text/html","UTF-8");
+                   // prod_descript.loadData(profDescription,"text/html","UTF-8");
                     short_descr.setText(shortDescription);
                     selproductid = jsonObjectdata.getString("selprod_id");
                     String productname = jsonObjectdata.getString("product_name");
@@ -548,9 +581,31 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     String productmodel = jsonObjectdata.getString("product_model");
                     String rentPrice = jsonObjectdata.getString("rent_price");
                     String rentSecurity = jsonObjectdata.getString("sprodata_rental_security");
+                    String rentalTerms = jsonObjectdata.getString("sprodata_rental_terms");
                     String minrentduration = jsonObjectdata.getString("sprodata_minimum_rental_duration");
                     String brand_Id = jsonObjectdata.getString("brand_id");
                     String brand_Name = jsonObjectdata.getString("brand_name");
+
+                    JSONObject jsonobjectBuyTogether = dataJsonObject.getJSONObject("buyTogether");
+                    String buywithTitle = jsonobjectBuyTogether.getString("title");
+                    buywithtit.setText(buywithTitle);
+                    JSONArray jsonArraybuyWithData = jsonobjectBuyTogether.getJSONArray("data");
+                    for (int buytogetherobjects = 0; buytogetherobjects < jsonArraybuyWithData.length(); buytogetherobjects++) {
+                        JSONObject jsonObjectbuywith = jsonArraybuyWithData.getJSONObject(buytogetherobjects);
+                        String productimgurl = jsonObjectbuywith.getString("product_image_url");
+                        String productName = jsonObjectbuywith.getString("product_name");
+                        String productPrice = jsonObjectbuywith.getString("selprod_price");
+                        // String selectedProductId = jsonObjectbuywith.getString("selprod_product_id");
+                        String selectedProductId = jsonObjectbuywith.getString("selprod_id");
+
+                        AddonsClass productDetailsaddons = new AddonsClass();
+                        productDetailsaddons.setBuywithimageurl(productimgurl);
+                        productDetailsaddons.setBuywithproductname(productName);
+                        productDetailsaddons.setBuywithproductprice(productPrice);
+                        productDetailsaddons.setButwithselectedProductId(selectedProductId);
+                        // productDetails.setTypeoflayout(3);
+                        buyDetailsList.add(productDetailsaddons);
+                    }
 
                     JSONObject jsonObjectpolicies = dataJsonObject.getJSONObject("shop");
                     deliverpolicy = jsonObjectpolicies.getString("shop_delivery_policy");
@@ -579,6 +634,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                         test_drive.setText("Requesting Test Drive");
 
                     } else {
+                        rentTerm.setText(rentalTerms);
                         rentsecurity.setText("\u20B9 " + rentSecurity);
                         minduration.setText(minrentduration+ " Day(s)");
                         test_drive.setText("Rent a Bike");
@@ -588,6 +644,12 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                         totalPayment.setText("Total Payment : \u20B9 " + (Double.parseDouble(rentPrice) + Double.parseDouble(rentSecurity)));
                         linearLayouttest.setVisibility(View.GONE);
                         linearLayoutrenting.setVisibility(View.VISIBLE);
+
+                        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(TestDriveAndRentabike.this, RecyclerView.VERTICAL, false);
+                        buywithlistview.setLayoutManager(linearLayoutManager2);
+                        addonsAdapter = new AddonsAdapter(TestDriveAndRentabike.this, buyDetailsList,"rent");
+                        buywithlistview.setAdapter(addonsAdapter);
+                        addonsAdapter.notifyDataSetChanged();
 
                         SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
                         start_date_edt.addTextChangedListener(new TextWatcher() {
@@ -742,7 +804,22 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                 if (start_date_edt.getText().toString().isEmpty() || end_date_edt.getText().toString().isEmpty()) {
                     Toast.makeText(TestDriveAndRentabike.this, "Select dates", Toast.LENGTH_SHORT).show();
                 } else {
-                    addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                    mBottomSheetDialog.show();
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                        }
+                    });
+
+                    textView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            jsonaddons("");
+                            addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                        }
+                    });
+
                 }
                 break;
            /* case R.id.delivery:

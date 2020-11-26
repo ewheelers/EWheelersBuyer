@@ -123,12 +123,13 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
 
     public void getOrderslist(String keyword, String serviceTypeid) {
         mSwipeRefreshLayout.setRefreshing(true);
-        myOrdersModelList.clear();
         String url_link = Apis.orderslist;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                myOrdersModelList.clear();
+
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
@@ -173,10 +174,9 @@ public class MyOrdersActivity extends AppCompatActivity implements SwipeRefreshL
                     /*recyclerView.setLayoutAnimation(AnimationUtils.loadLayoutAnimation(MyOrdersActivity.this, R.anim.layoutanimationleft));
                     recyclerView.getAdapter().notifyDataSetChanged();
                     recyclerView.scheduleLayoutAnimation();*/
-
-                            myOrdersAdapter.notifyDataSetChanged();
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
+                        myOrdersAdapter.notifyDataSetChanged();
                     } else {
                         linearLayout.setVisibility(View.VISIBLE);
                     }

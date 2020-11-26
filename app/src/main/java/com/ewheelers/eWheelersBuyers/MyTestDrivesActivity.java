@@ -113,12 +113,12 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
 
     public void getAllTestdrives(String keyword) {
         mSwipeRefreshLayout.setRefreshing(true);
-        myTestDriveModelList.clear();
         String url_link = Apis.alltestdriverequests;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                myTestDriveModelList.clear();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
@@ -148,6 +148,7 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                         }
                         if(myTestDriveModelList.isEmpty()){
                             linearLayout.setVisibility(View.VISIBLE);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         }else {
                             linearLayout.setVisibility(View.GONE);
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyTestDrivesActivity.this, RecyclerView.VERTICAL, false);
@@ -155,10 +156,11 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                             myTestDrivesAdapter = new MyTestDrivesAdapter(MyTestDrivesActivity.this, myTestDriveModelList);
                             recyclerView.setAdapter(myTestDrivesAdapter);
                             mSwipeRefreshLayout.setRefreshing(false);
-                            myTestDrivesAdapter.notifyDataSetChanged();
                         }
+                        myTestDrivesAdapter.notifyDataSetChanged();
                     }else {
                         linearLayout.setVisibility(View.VISIBLE);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
 
                 } catch (JSONException e) {
@@ -188,6 +190,7 @@ public class MyTestDrivesActivity extends AppCompatActivity implements SwipeRefr
                 Map<String, String> hashMap = new HashMap<>();
                 hashMap.put("status", "-1");
                 hashMap.put("keyword", keyword);
+                hashMap.put("user_type", String.valueOf("1"));
                 return hashMap;
             }
 

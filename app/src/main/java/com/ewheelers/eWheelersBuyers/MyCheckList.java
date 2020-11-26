@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -30,26 +32,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MyCheckList extends AppCompatActivity {
+public class MyCheckList extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     RecyclerView show_list;
     BuyListAdapter buyListAdapter;
     List<buyingList> buyListList = new ArrayList<>();
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    TextView goback;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_check_list);
         show_list = findViewById(R.id.my_list);
-        getExcelList();
+        goback = findViewById(R.id.title);
+        goback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.post(new Runnable() {
+                                     @Override
+                                     public void run() {
+                                         mSwipeRefreshLayout.setRefreshing(true);
+                                         getExcelList();
+                                     }
+                                 }
+        );
     }
     private void getExcelList() {
-        final ProgressDialog loading = ProgressDialog.show(this, "loading...", "Please wait...", false, false);
+        mSwipeRefreshLayout.setRefreshing(true);
+        //final ProgressDialog loading = ProgressDialog.show(this, "loading...", "Please wait...", false, false);
         String url_link = "https://script.google.com/macros/s/AKfycbwGLwgCPJQHX2BzUBI31HljTpNCd2qHU8cPQGao6g2bXiVt90vd/exec?action=getItems";
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                buyListList.clear();
                 if (response.startsWith("<")) {
-                    loading.dismiss();
+                    //loading.dismiss();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 } else {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
@@ -57,6 +80,7 @@ public class MyCheckList extends AppCompatActivity {
                         if (jsonArray.length() == 0) {
 //                            empty_view.setVisibility(View.VISIBLE);
                             show_list.setVisibility(View.GONE);
+                            mSwipeRefreshLayout.setRefreshing(false);
                         } else {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
@@ -93,8 +117,10 @@ public class MyCheckList extends AppCompatActivity {
                             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MyCheckList.this, RecyclerView.VERTICAL,false);
                             show_list.setLayoutManager(linearLayoutManager);
                             show_list.setAdapter(buyListAdapter);
-                            loading.dismiss();
+                            mSwipeRefreshLayout.setRefreshing(false);
+
                         }
+                        buyListAdapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -105,7 +131,8 @@ public class MyCheckList extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
-                loading.dismiss();
+                mSwipeRefreshLayout.setRefreshing(false);
+
             }
         }) {
 
@@ -128,4 +155,8 @@ public class MyCheckList extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    @Override
+    public void onRefresh() {
+        getExcelList();
+    }
 }

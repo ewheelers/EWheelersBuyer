@@ -704,7 +704,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void logoutviaApi() {
-
         String url_link = Apis.logout;
         final RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {

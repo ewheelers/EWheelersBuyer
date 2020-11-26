@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     Snackbar snackbar = Snackbar.make(constraintLayout, "Permission denied. Allow phone permission to make a call", Snackbar.LENGTH_LONG);
                     View sbView = snackbar.getView();
-                    TextView textView = (TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text);
+                    TextView textView = (TextView) sbView.findViewById(R.id.snackbar_text);
                     textView.setTextColor(Color.YELLOW);
                     snackbar.show();
                     //Toast.makeText(getApplicationContext(), "Permission denied. Allow permission in App Settings for next Time", Toast.LENGTH_SHORT).show();

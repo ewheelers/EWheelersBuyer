@@ -104,7 +104,7 @@ public class RecommendProductsActivity extends AppCompatActivity  {
                         recyclerView.setAdapter(productdetailsAdapter);*/
                         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(RecommendProductsActivity.this, RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(linearLayoutManager2);
-                        addonsAdapter = new AddonsAdapter(RecommendProductsActivity.this, buyDetailsList);
+                        addonsAdapter = new AddonsAdapter(RecommendProductsActivity.this, buyDetailsList,"");
                         recyclerView.setAdapter(addonsAdapter);
                         addonsAdapter.notifyDataSetChanged();
                     }
