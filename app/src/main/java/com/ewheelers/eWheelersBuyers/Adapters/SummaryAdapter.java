@@ -42,7 +42,9 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryH
         holder.brandname.setText(cartListClassList.get(position).getBrandname());
         holder.tit.setText(cartListClassList.get(position).getProductName());
         List<String> strings = cartListClassList.get(position).getOptions();
-        holder.optins.setText(strings.toString());
+        if(strings!=null) {
+            holder.optins.setText(strings.toString());
+        }
         holder.price.setText("\u20B9 " + cartListClassList.get(position).getProductPrice());
         holder.qty.setText("Qty : "+cartListClassList.get(position).getProduct_qty());
         ImageLoader imageLoader = VolleySingleton.getInstance(context).getImageLoader();

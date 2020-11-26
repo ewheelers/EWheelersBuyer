@@ -54,6 +54,7 @@ public class QRPasses extends AppCompatActivity {
     String tokenValue;
     LinearLayout linearLayout;
     TextView empty_view;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +105,7 @@ public class QRPasses extends AppCompatActivity {
 
                         }
                     } else {
+                        linearLayout.setVisibility(View.GONE);
                         Toast.makeText(QRPasses.this, messg, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
@@ -114,6 +116,7 @@ public class QRPasses extends AppCompatActivity {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                linearLayout.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -144,38 +147,50 @@ public class QRPasses extends AppCompatActivity {
                     if (status.equals("1")) {
                         JSONObject jsonObjectData = jsonObject.getJSONObject("data");
                         JSONArray jsonArrayorders = jsonObjectData.getJSONArray("orders");
-                        for (int i = 0; i < jsonArrayorders.length(); i++) {
-                            JSONObject jsonObjectOrder = jsonArrayorders.getJSONObject(i);
-                            String orderid = jsonObjectOrder.getString("order_id");
-                            String order_date_added = jsonObjectOrder.getString("order_date_added");
-                            String order_net_amount = jsonObjectOrder.getString("order_net_amount");
-                            String op_selprod_title = jsonObjectOrder.getString("op_selprod_title");
-                            String op_product_name = jsonObjectOrder.getString("op_product_name");
-                            String op_selprod_options = jsonObjectOrder.getString("op_selprod_options");
-                            String op_brand_name = jsonObjectOrder.getString("op_brand_name");
-                            String op_qty = jsonObjectOrder.getString("op_qty");
-                            String opId = jsonObjectOrder.getString("op_id");
-                            String orderstatus_name = jsonObjectOrder.getString("orderstatus_name");
-                            String product_image_url = jsonObjectOrder.getString("product_image_url");
-                            if (orderstatus_name.equals("Payment Confirmed")) {
-                                MyOrdersModel myOrdersModel = new MyOrdersModel();
-                                myOrdersModel.setOrder_id(orderid);
-                                myOrdersModel.setOrderdateadded(order_date_added);
-                                myOrdersModel.setOrdernetamount(order_net_amount);
-                                myOrdersModel.setOp_selprod_title(op_selprod_title);
-                                myOrdersModel.setOp_product_name(op_product_name);
-                                myOrdersModel.setOp_selprod_options(op_selprod_options);
-                                myOrdersModel.setOrderstatus_name(orderstatus_name);
-                                myOrdersModel.setProduct_image_url(product_image_url);
-                                myOrdersModel.setOp_qty(op_qty);
-                                myOrdersModel.setOp_id(opId);
-                                generateBarCode(myOrdersModel);
+                        if(jsonArrayorders.length()!=0) {
+                            for (int i = 0; i < jsonArrayorders.length(); i++) {
+                                JSONObject jsonObjectOrder = jsonArrayorders.getJSONObject(i);
+                                String orderid = jsonObjectOrder.getString("order_id");
+                                String order_date_added = jsonObjectOrder.getString("order_date_added");
+                                String order_net_amount = jsonObjectOrder.getString("order_net_amount");
+                                String op_selprod_title = jsonObjectOrder.getString("op_selprod_title");
+                                String op_product_name = jsonObjectOrder.getString("op_product_name");
+                                String op_selprod_options = jsonObjectOrder.getString("op_selprod_options");
+                                String op_brand_name = jsonObjectOrder.getString("op_brand_name");
+                                String op_qty = jsonObjectOrder.getString("op_qty");
+                                String opId = jsonObjectOrder.getString("op_id");
+                                String orderstatus_name = jsonObjectOrder.getString("orderstatus_name");
+                                String product_image_url = jsonObjectOrder.getString("product_image_url");
+                                if (orderstatus_name.equals("Payment Confirmed")) {
+                                    MyOrdersModel myOrdersModel = new MyOrdersModel();
+                                    myOrdersModel.setOrder_id(orderid);
+                                    myOrdersModel.setOrderdateadded(order_date_added);
+                                    myOrdersModel.setOrdernetamount(order_net_amount);
+                                    myOrdersModel.setOp_selprod_title(op_selprod_title);
+                                    myOrdersModel.setOp_product_name(op_product_name);
+                                    myOrdersModel.setOp_selprod_options(op_selprod_options);
+                                    myOrdersModel.setOrderstatus_name(orderstatus_name);
+                                    myOrdersModel.setProduct_image_url(product_image_url);
+                                    myOrdersModel.setOp_qty(op_qty);
+                                    myOrdersModel.setOp_id(opId);
+                                    generateBarCode(myOrdersModel);
+                                }else {
+                                    linearLayout.setVisibility(View.GONE);
+                                    empty_view.setVisibility(View.VISIBLE);
+                                }
+
                             }
 
+                        }else {
+                            linearLayout.setVisibility(View.GONE);
+                            empty_view.setVisibility(View.VISIBLE);
                         }
 
                         // Log.i("orederslist",myOrdersModelList.toString());
 
+                    } else {
+                        Toast.makeText(QRPasses.this, msg, Toast.LENGTH_SHORT).show();
+                        linearLayout.setVisibility(View.GONE);
                     }
 
                 } catch (JSONException e) {
@@ -214,8 +229,8 @@ public class QRPasses extends AppCompatActivity {
     }
 
     private void generateBarCode(MyOrdersModel myOrdersModel) {
-        List<MyOrdersModel> stringsOrders = new ArrayList<>();
-        stringsOrders.add(myOrdersModel);
+        /*List<MyOrdersModel> stringsOrders = new ArrayList<>();
+        stringsOrders.add(myOrdersModel);*/
         String Login_url = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + myOrdersModel.getOp_id();
         final ImageRequest imageRequest = new ImageRequest(Login_url, new Response.Listener<Bitmap>() {
             @Override
@@ -241,36 +256,41 @@ public class QRPasses extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url_link, new com.android.volley.Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if(response.startsWith("<")){
+                if (response.startsWith("<") || response.isEmpty()) {
                     linearLayout.setVisibility(View.GONE);
                     empty_view.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         JSONArray jsonArray = jsonObject.getJSONArray("items");
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
-                            String orderid = jsonObjectdata.getString("orderid");
-                            String vehno = jsonObjectdata.getString("vehno");
-                            String vehmodel = jsonObjectdata.getString("vehmodel");
-                            String timing = jsonObjectdata.getString("timing");
-                            String address = jsonObjectdata.getString("address");
-                            if (orderid.equals(myOrdersModel.getOrder_id())) {
-                                myOrdersModel.setVehiclemodel(vehmodel);
-                                myOrdersModel.setVehicleno(vehno);
-                                myOrdersModel.setTimings(timing);
-                                myOrdersModel.setStatAddress(address);
-                                myOrdersModel.setBitmap(responseQr);
-                                myOrdersModelList.add(myOrdersModel);
+                        if (jsonArray.length() != 0) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
+                                String orderid = jsonObjectdata.getString("orderid");
+                                String vehno = jsonObjectdata.getString("vehno");
+                                String vehmodel = jsonObjectdata.getString("vehmodel");
+                                String timing = jsonObjectdata.getString("timing");
+                                String address = jsonObjectdata.getString("address");
+                                if (orderid.equals(myOrdersModel.getOrder_id())) {
+                                    myOrdersModel.setVehiclemodel(vehmodel);
+                                    myOrdersModel.setVehicleno(vehno);
+                                    myOrdersModel.setTimings(timing);
+                                    myOrdersModel.setStatAddress(address);
+                                    myOrdersModel.setBitmap(responseQr);
+                                    myOrdersModelList.add(myOrdersModel);
+                                }
                             }
+                            empty_view.setVisibility(View.GONE);
+                            linearLayout.setVisibility(View.GONE);
+                            recyclerViewQrlist.setVisibility(View.VISIBLE);
+                            qrListAdapter = new QrListAdapter(QRPasses.this, myOrdersModelList);
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(QRPasses.this, RecyclerView.VERTICAL, false);
+                            recyclerViewQrlist.setLayoutManager(linearLayoutManager);
+                            recyclerViewQrlist.setAdapter(qrListAdapter);
+                        }else {
+                            empty_view.setVisibility(View.VISIBLE);
+                            linearLayout.setVisibility(View.GONE);
                         }
-                        empty_view.setVisibility(View.GONE);
-                        linearLayout.setVisibility(View.GONE);
-                        recyclerViewQrlist.setVisibility(View.VISIBLE);
-                        qrListAdapter = new QrListAdapter(QRPasses.this, myOrdersModelList);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(QRPasses.this, RecyclerView.VERTICAL, false);
-                        recyclerViewQrlist.setLayoutManager(linearLayoutManager);
-                        recyclerViewQrlist.setAdapter(qrListAdapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -279,6 +299,8 @@ public class QRPasses extends AppCompatActivity {
         }, new com.android.volley.Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                empty_view.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 

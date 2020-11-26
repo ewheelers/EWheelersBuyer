@@ -37,7 +37,10 @@ public class ProductSpecificationsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_product_specifications, container, false);
         recyclerView = v.findViewById(R.id.specifications_list);
         ProductDescriptionActivity productDescriptionActivity = (ProductDescriptionActivity)getActivity();
-        List<ProductSpecifications> productSpecifications =  productDescriptionActivity.sendSpecification();
+        List<ProductSpecifications> productSpecifications = null;
+        if (productDescriptionActivity != null) {
+            productSpecifications = productDescriptionActivity.sendSpecification();
+        }
 
         productSpecificationsAdapter = new ProductSpecificationsAdapter(getActivity(),productSpecifications);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),RecyclerView.VERTICAL,false);

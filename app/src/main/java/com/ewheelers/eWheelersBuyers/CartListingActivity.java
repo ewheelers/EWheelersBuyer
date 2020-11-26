@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.icu.text.Edits;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,17 +36,18 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class CartListingActivity extends AppCompatActivity implements View.OnClickListener,SwipeRefreshLayout.OnRefreshListener {
+public class CartListingActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     RecyclerView cartListing;
     CartListingAdapter cartListingAdapter;
     List<CartListClass> cartListClassList = new ArrayList<>();
     String tokenvalue;
     String optionname, optionvalue_name;
     private int mStatusCode = 0;
-    Button placeOrder,clearcart;
+    Button placeOrder, clearcart;
     TextView cartEmpty;
     String addons;
     TextView total, tax, netpayab;
@@ -53,6 +55,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     SwipeRefreshLayout mSwipeRefreshLayout;
     String produt_id;
     LinearLayout linearLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +71,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         netpayab = findViewById(R.id.netpay);
         produt_id = getIntent().getStringExtra("selid");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
-       // Toast.makeText(this, "prod id: " + produt_id, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "prod id: " + produt_id, Toast.LENGTH_SHORT).show();
 
         placeOrder.setOnClickListener(this);
         clearcart.setOnClickListener(this);
@@ -145,6 +148,14 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             optionname = jsonObjectoptionList.getString("option_name");
                             optionvalue_name = jsonObjectoptionList.getString("optionvalue_name");
                             options.add(optionname + " : " + optionvalue_name);
+                        }
+
+                        Iterator iterator = jsonObjectListdata.keys();
+                        while (iterator.hasNext()) {
+                            String keyIs = (String) iterator.next();
+                            if (keyIs.equals("")) {
+
+                            }
                         }
 
                         CartListClass cartListClass = new CartListClass();
@@ -254,11 +265,11 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
                             if (getStatus.equals("1")) {
-                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                                 cartListingAdapter.notifyDataSetChanged();
                                 onRefresh();
-                            }else {
-                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -305,9 +316,13 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void onBackPressed(){
-        ProductDetailActivity.mBottomSheetDialog.dismiss();
-        finish();
+    public void onBackPressed() {
+        if (ProductDetailActivity.mBottomSheetDialog != null) {
+            ProductDetailActivity.mBottomSheetDialog.dismiss();
+            finish();
+        } else {
+            finish();
+        }
     }
 
    /* @Override

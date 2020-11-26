@@ -78,20 +78,21 @@ public class SellerListAdapter extends RecyclerView.Adapter<SellerListAdapter.Se
         if (Geocoder.isPresent()) {
 
             Address returnAddress = addresses.get(0);
-
-            String address = returnAddress.getAddressLine(0);
-            String localityString = returnAddress.getSubLocality();
-            String citys = returnAddress.getLocality();
-            String region_code = returnAddress.getCountryName();
-            String zipcode = returnAddress.getPostalCode();
-            String statenam = returnAddress.getAdminArea();
-            str1.append(address);
-            str2.append(localityString);
-            str3.append(citys);
-            str4.append(region_code);
-            str5.append(zipcode);
-            str6.append(statenam);
-            holder.sellerAddress.setText(str1);
+            if(returnAddress!=null) {
+                String address = returnAddress.getAddressLine(0);
+                String localityString = returnAddress.getSubLocality();
+                String citys = returnAddress.getLocality();
+                String region_code = returnAddress.getCountryName();
+                String zipcode = returnAddress.getPostalCode();
+                String statenam = returnAddress.getAdminArea();
+                str1.append(address);
+                str2.append(localityString);
+                str3.append(citys);
+                str4.append(region_code);
+                str5.append(zipcode);
+                str6.append(statenam);
+                holder.sellerAddress.setText(str1);
+            }
 
         }
 

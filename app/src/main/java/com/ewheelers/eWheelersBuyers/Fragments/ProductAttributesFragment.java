@@ -21,10 +21,10 @@ import java.util.List;
 public class ProductAttributesFragment extends Fragment {
     RecyclerView list2;
     CompareAdapter compareAdapter;
+
     public ProductAttributesFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -39,13 +39,16 @@ public class ProductAttributesFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_product_attributes, container, false);
         list2 = v.findViewById(R.id.listtwo);
-        ProductDescriptionActivity productDescriptionActivity = (ProductDescriptionActivity)getActivity();
-        List<Comparemodelclass> product_attributes =  productDescriptionActivity.sendAttributes();
-
+        ProductDescriptionActivity productDescriptionActivity = (ProductDescriptionActivity) getActivity();
+        List<Comparemodelclass> product_attributes = null;
+        if (productDescriptionActivity != null) {
+            product_attributes = productDescriptionActivity.sendAttributes();
+        }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         list2.setLayoutManager(linearLayoutManager);
         compareAdapter = new CompareAdapter(getActivity(), product_attributes);
         list2.setAdapter(compareAdapter);
+        compareAdapter.notifyDataSetChanged();
         return v;
     }
 

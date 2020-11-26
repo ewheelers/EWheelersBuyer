@@ -96,16 +96,16 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
     Button submitforRent;
     LinearLayout linearLayouttest, linearLayoutrenting;
     float daysBetween;
-    TextView totalPayment, minRentduration,minduration, lease_pday,rentalPrice, test_drive;
+    TextView totalPayment, minRentduration, minduration, lease_pday, rentalPrice, test_drive;
     NewGPSTracker newgps;
     Context mContext;
     Geocoder geocoder;
     List<Address> addresses;
-    TextView deliveryprocess,short_descr, rentsecurity;
+    TextView deliveryprocess, short_descr, rentsecurity;
     //WebView prod_descript;
-    String deliverpolicy,selproductid;
+    String deliverpolicy, selproductid;
     TextView changepickaddress;
-    TextView buywithtit,textView;
+    TextView buywithtit, textView;
     Button button;
     RecyclerView buywithlistview;
     private TextView rentTerm;
@@ -183,7 +183,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
         button.setBackground(getResources().getDrawable(R.drawable.button_bg));
         mBottomSheetDialog.setContentView(sheetView);
 
-        getProductDetails(productId,typeoflay);
+        getProductDetails(productId, typeoflay);
         getSellerList(productId);
 
     }
@@ -214,6 +214,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                                 i.putExtra("selid", productId);
                                 startActivity(i);
                             } else {
+                                mBottomSheetDialog.dismiss();
                                 Snackbar mySnackbar = Snackbar.make(findViewById(R.id.snak_layout),
                                         message, Snackbar.LENGTH_LONG);
                                 mySnackbar.show();
@@ -515,7 +516,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                             str4.append(region_code);
                             str5.append(zipcode);
                             str6.append(statenam);
-                            seller_address.setText(username + "\n" + str1 + "\nPhone : "+shopmobile);
+                            seller_address.setText(username + "\n" + str1 + "\nPhone : " + shopmobile);
 
                         }
 
@@ -554,7 +555,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
         queue.add(stringRequest);
     }
 
-    public void getProductDetails(String productid,String typeoflay) {
+    public void getProductDetails(String productid, String typeoflay) {
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.productdetails + productid;
         Log.i("url", serverurl);
@@ -573,7 +574,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
                     String profDescription = jsonObjectdata.getString("product_description");
                     String shortDescription = jsonObjectdata.getString("brand_short_description");
-                   // prod_descript.loadData(profDescription,"text/html","UTF-8");
+                    // prod_descript.loadData(profDescription,"text/html","UTF-8");
                     short_descr.setText(shortDescription);
                     selproductid = jsonObjectdata.getString("selprod_id");
                     String productname = jsonObjectdata.getString("product_name");
@@ -614,9 +615,9 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     JSONObject jsonObjectProductdetail = jsonArrayCollections.getJSONObject(0);
                     String imageurls = jsonObjectProductdetail.getString("product_image_url");
                     title.setText(productname + "(" + productmodel + ")");
-                    if(quantity!=null){
+                    if (quantity != null) {
                         qty.setText("Qty : " + quantity);
-                    }else {
+                    } else {
                         qty.setText("Qty : " + "1");
                     }
                     brand.setText(brand_Name);
@@ -636,7 +637,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                     } else {
                         rentTerm.setText(rentalTerms);
                         rentsecurity.setText("\u20B9 " + rentSecurity);
-                        minduration.setText(minrentduration+ " Day(s)");
+                        minduration.setText(minrentduration + " Day(s)");
                         test_drive.setText("Rent a Bike");
                         lease_pday.setText("\u20B9 " + rentPrice + " + Rental Security \u20B9 " + rentSecurity);
                         //minRentduration.setText("Retail Security : \u20B9 " + rentSecurity + "\nMinimum Rental Duration : " + minrentduration + " Day(s)");
@@ -647,7 +648,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
 
                         LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(TestDriveAndRentabike.this, RecyclerView.VERTICAL, false);
                         buywithlistview.setLayoutManager(linearLayoutManager2);
-                        addonsAdapter = new AddonsAdapter(TestDriveAndRentabike.this, buyDetailsList,"rent");
+                        addonsAdapter = new AddonsAdapter(TestDriveAndRentabike.this, buyDetailsList, "rent");
                         buywithlistview.setAdapter(addonsAdapter);
                         addonsAdapter.notifyDataSetChanged();
 
@@ -804,21 +805,27 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                 if (start_date_edt.getText().toString().isEmpty() || end_date_edt.getText().toString().isEmpty()) {
                     Toast.makeText(TestDriveAndRentabike.this, "Select dates", Toast.LENGTH_SHORT).show();
                 } else {
-                    mBottomSheetDialog.show();
-                    button.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
-                        }
-                    });
+                    if(buyDetailsList.size()!=0) {
+                        mBottomSheetDialog.show();
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                            }
+                        });
 
-                    textView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            jsonaddons("");
-                            addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
-                        }
-                    });
+                        textView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                jsonaddons("");
+                                addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                            }
+                        });
+                    }else {
+                        mBottomSheetDialog.dismiss();
+                        jsonaddons("");
+                        addcart(productId, start_date_edt.getText().toString(), end_date_edt.getText().toString());
+                    }
 
                 }
                 break;
@@ -832,8 +839,6 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                 break;*/
         }
     }
-
-
 
 
 }

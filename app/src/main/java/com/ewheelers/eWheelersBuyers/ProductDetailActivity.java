@@ -32,10 +32,12 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -127,7 +129,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     ImageLoader imageLoader;
     TextView textView_product_details, shareicon, offerstoshow;
     private InputMethodManager imm;
-    String shop_id,shop_name,shoplogo,shopbanner;
+    String shop_id, shop_name, shoplogo, shopbanner;
     String imageurls, productdescription, selproductid, productname, productprice, productmodel, isRent, testDriveEnable, booknowEnable, selbooknowEnable;
     String rentPrice, rentSecurity, bookPercentage, minrentduration;
     TextView brand, cost, totalreview, totalrating, buywithtit, similarproductTitle;
@@ -162,7 +164,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     String pro1, pro2, savedData, plength;
     SearchView editTextSearch;
     TextView changeTxt, addressdealer, moreby_brand;
-    String brand_Shortdesc, short_descript, brand_Name, brand_Id, shop_Id , shop_Name;
+    String brand_Shortdesc, short_descript, brand_Name, brand_Id, shop_Id, shop_Name;
     Button requestTestDrive;
     ExtendedFloatingActionButton extendedFloatingButton;
     Boolean isOpen = false;
@@ -189,6 +191,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     String shopmobile, username;
     LinearLayout goto_shop;
     ImageView logoImg;
+    RelativeLayout snack_layout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +202,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         productId = getIntent().getStringExtra("productid");
         getSellerList(productId);
         mContext = this;
+        snack_layout = findViewById(R.id.snak_layout);
         calltoseller = findViewById(R.id.call_seller);
         findaddress = findViewById(R.id.navigate_map);
         goto_shop = findViewById(R.id.goto_shop);
@@ -349,7 +353,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     jsonaddons("");
                     addTocart(selproductid, "Booknow");
                 }
-               // textView.setTextColor(getResources().getColor(R.color.dark_gray));
+                // textView.setTextColor(getResources().getColor(R.color.dark_gray));
             }
         });
 
@@ -392,6 +396,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
     public void getProductDetails(String productid) {
         mainprogress.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         productDetailsList.clear();
         buyDetailsList.clear();
         similarList.clear();
@@ -400,6 +405,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
         buttondata.clear();
         bannerslist.clear();
         optionselect.clear();
+        comparemodelclasses.clear();
         final RequestQueue queue = Volley.newRequestQueue(this);
         String serverurl = Apis.productdetails + productid;
         Log.i("url", serverurl);
@@ -719,12 +725,12 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     recyclerViewBanners.setAdapter(productdetailsAdapterbuywith);
                     productdetailsAdapterbuywith.notifyDataSetChanged();
 
+
                     LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(ProductDetailActivity.this, RecyclerView.VERTICAL, false);
                     buywithlistview.setLayoutManager(linearLayoutManager2);
-                    addonsAdapter = new AddonsAdapter(ProductDetailActivity.this, buyDetailsList,"book");
+                    addonsAdapter = new AddonsAdapter(ProductDetailActivity.this, buyDetailsList, "book");
                     buywithlistview.setAdapter(addonsAdapter);
                     addonsAdapter.notifyDataSetChanged();
-
 
                     LinearLayoutManager gridLayoutManagerSimilar = new LinearLayoutManager(ProductDetailActivity.this, RecyclerView.HORIZONTAL, false);
                     similarproductsview.setLayoutManager(gridLayoutManagerSimilar);
@@ -732,7 +738,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     similarproductsview.setAdapter(productdetailsAdapterSimilar);
                     productdetailsAdapterSimilar.notifyDataSetChanged();
                     mainprogress.setVisibility(View.GONE);
-
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -744,6 +750,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
             @Override
             public void onErrorResponse(VolleyError error) {
                 mainprogress.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
 
@@ -1589,7 +1596,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         mBottomSheetDialog.dismiss();
         finish();
     }

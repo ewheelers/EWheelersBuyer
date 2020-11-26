@@ -70,6 +70,11 @@ public class ProductDescriptionActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         ProductViewPagerAdapter adapter = new ProductViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ProductAttributesFragment(), att_title);

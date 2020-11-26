@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -169,6 +170,7 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
 
     public void gethomecollections() {
         progressBar.setVisibility(View.VISIBLE);
+        Objects.requireNonNull(getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         final RequestQueue queue = Volley.newRequestQueue(Objects.requireNonNull(getActivity()));
         String serverurl = Apis.home;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, serverurl, new com.android.volley.Response.Listener<String>() {
@@ -179,7 +181,6 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
                     if (status.equals("1")) {
-                        progressBar.setVisibility(View.INVISIBLE);
                         homeModelClasses.clear();
                         homeCollectionSliderList.clear();
 
@@ -476,8 +477,14 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
                         recyclerView.setAdapter(collectionAdapter);
                         //recyclerView.stopScroll();
                         collectionAdapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.INVISIBLE);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                     } else {
+                        progressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), "" + msg, Toast.LENGTH_SHORT).show();
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -489,6 +496,7 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.INVISIBLE);
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 VolleyLog.d("Main", "Error: " + error.getMessage());
                 Log.d("Main", "" + error.getMessage() + "," + error.toString());
             }
