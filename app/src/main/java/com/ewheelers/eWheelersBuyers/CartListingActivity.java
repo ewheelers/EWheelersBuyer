@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CartListingActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     RecyclerView cartListing;
@@ -55,6 +56,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
     SwipeRefreshLayout mSwipeRefreshLayout;
     String produt_id;
     LinearLayout linearLayout;
+    String type_of_lay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         tax = findViewById(R.id.tax);
         netpayab = findViewById(R.id.netpay);
         produt_id = getIntent().getStringExtra("selid");
+        type_of_lay = getIntent().getStringExtra("typeoflay");
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiprefresh);
         // Toast.makeText(this, "prod id: " + produt_id, Toast.LENGTH_SHORT).show();
 
@@ -122,7 +125,6 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                     String netpayable = jsonObjectNetpayable.getString("value");
                     netpayab.setText(netpayable);
 
-
                     JSONArray jsonArraycartList = dataJsonObject.getJSONArray("products");
                     for (int k = 0; k < jsonArraycartList.length(); k++) {
                         JSONObject jsonObjectListdata = jsonArraycartList.getJSONObject(k);
@@ -136,7 +138,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         JSONObject jsonObjectSelleraddressArray = jsonObjectListdata.getJSONObject("seller_address");
                         String shopname = jsonObjectSelleraddressArray.getString("shop_name");
 
-                       /* rentalprice = jsonObjectListdata.getString("sprodata_rental_price");
+                        /*rentalprice = jsonObjectListdata.getString("sprodata_rental_price");
                         rentalsecurity = jsonObjectListdata.getString("sprodata_rental_security");
                         rentStartdate = jsonObjectListdata.getString("rentalStartDate");
                         rentEnddate = jsonObjectListdata.getString("rentalEndDate");*/
@@ -150,13 +152,6 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             options.add(optionname + " : " + optionvalue_name);
                         }
 
-                        Iterator iterator = jsonObjectListdata.keys();
-                        while (iterator.hasNext()) {
-                            String keyIs = (String) iterator.next();
-                            if (keyIs.equals("")) {
-
-                            }
-                        }
 
                         CartListClass cartListClass = new CartListClass();
                         cartListClass.setBrandname(brandname);
@@ -173,9 +168,26 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                             cartListClass.setType(1);
                         }
                         cartListClass.setKeyvalue(key);
+
+                        Iterator iterator = jsonObjectListdata.keys();
+                        String rentStartdate = null;
+                        String rentEnddate = null;
+                        while (iterator.hasNext()){
+                            String stratkey = (String) iterator.next();
+                            if(stratkey.equals("rentalStartDate")){
+                                rentStartdate = jsonObjectListdata.getString("rentalStartDate");
+                                cartListClass.setRentStartdate(rentStartdate);
+                            }
+                            if(stratkey.equals("rentalEndDate")){
+                                rentEnddate = jsonObjectListdata.getString("rentalEndDate");
+                                cartListClass.setRentEnddate(rentEnddate);
+                            }
+
+                        }
                         cartListClassList.add(cartListClass);
 
                     }
+
 
                     if (cartListClassList.isEmpty()) {
                         cartEmpty.setVisibility(View.VISIBLE);
@@ -190,7 +202,6 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
                         cartListing.setAdapter(cartListingAdapter);
                         cartListingAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
-
                     }
 
 
@@ -242,6 +253,7 @@ public class CartListingActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.place_order:
                 Intent i = new Intent(getApplicationContext(), CartSummaryActivity.class);
+
                 startActivity(i);
                 break;
             case R.id.clearcart:

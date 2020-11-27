@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -153,7 +154,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         String shop_address_line_2 = jsonObjectSelleraddressArray.getString("shop_address_line_2");
                         String shopautocomplete = jsonObjectSelleraddressArray.getString("shop_auto_complete");
                         String shop_phone = jsonObjectSelleraddressArray.getString("shop_phone");
-
+                        String deliveryProcess = jsonObjectSelleraddressArray.getString("shop_delivery_policy");
                        // sellerAddress.setText(shopname + "\n" + shopcontact_name + "\n" + shopautocomplete + " " + shop_address_line_1 + " " + shop_address_line_2 + " \nPhone : " + shop_phone);
 
                         JSONArray jsonArrayOptions = jsonObjectListdata.getJSONArray("options");
@@ -173,6 +174,7 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                         cartListClass.setProductPrice(price);
                         cartListClass.setProduct_qty(quantity);
                         cartListClass.setShopname(shopname);
+                        cartListClass.setDeliveryPolicy(deliveryProcess);
                         cartListClass.setSellerAddress(shopname + "\n" + shopcontact_name + "\n" + shopautocomplete + " " + shop_address_line_1 + " " + shop_address_line_2 + " \nPhone : " + shop_phone);
 
                         if (options.isEmpty()) {
@@ -183,6 +185,23 @@ public class CartSummaryActivity extends AppCompatActivity implements View.OnCli
                             cartListClass.setType(1);
                         }
                         cartListClass.setKeyvalue(key);
+
+                        Iterator iterator = jsonObjectListdata.keys();
+                        String rentStartdate = null;
+                        String rentEnddate = null;
+                        while (iterator.hasNext()){
+                            String stratkey = (String) iterator.next();
+                            if(stratkey.equals("rentalStartDate")){
+                                rentStartdate = jsonObjectListdata.getString("rentalStartDate");
+                                cartListClass.setRentStartdate(rentStartdate);
+                            }
+                            if(stratkey.equals("rentalEndDate")){
+                                rentEnddate = jsonObjectListdata.getString("rentalEndDate");
+                                cartListClass.setRentEnddate(rentEnddate);
+                            }
+
+                        }
+
                         cartListClassList.add(cartListClass);
                     }
 

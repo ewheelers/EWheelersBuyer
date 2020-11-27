@@ -500,11 +500,10 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                     JSONObject jsonObjectAttributes = dataJsonObject.getJSONObject("attributes");
                     attTitle = jsonObjectAttributes.getString("title");
-                    JSONObject jsonObjectsubattarray = jsonObjectAttributes.getJSONObject("attributesArray");
+                   /* JSONObject jsonObjectsubattarray = jsonObjectAttributes.getJSONObject("attributesArray");
                     Iterator itera = jsonObjectsubattarray.keys();
                     while (itera.hasNext()) {
                         String key = (String) itera.next();
-                        //String value = jsonObjectsubattarray.getString(key);
                         Comparemodelclass comparemodelclass = new Comparemodelclass();
                         comparemodelclass.setHeading(key);
                         comparemodelclass.setTypeofLay(0);
@@ -514,7 +513,6 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                         while (subiterator.hasNext()) {
                             String subkey = (String) subiterator.next();
                             String subvalue = value.getString(subkey);
-                            // String valueOfheading = subkey + ":" + subvalue;
                             String valueOfheading = subkey;
                             String valueOfvalue = subvalue;
                             comparemodelclass = new Comparemodelclass();
@@ -523,7 +521,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                             comparemodelclass.setTypeofLay(1);
                             comparemodelclasses.add(comparemodelclass);
                         }
-                    }
+                    }*/
 
                     JSONObject jsonObjectProduct = dataJsonObject.getJSONObject("product");
                     JSONObject jsonObjectdata = jsonObjectProduct.getJSONObject("data");
@@ -582,6 +580,34 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
 
                     // productName.setText(productdescription);
                     cost.setText("\u20B9 " + productprice);
+
+
+                    if (productname.contains("Parking")) {
+
+                    } else {
+                        JSONObject jsonObjectsubattarray = jsonObjectAttributes.getJSONObject("attributesArray");
+                        Iterator itera = jsonObjectsubattarray.keys();
+                        while (itera.hasNext()) {
+                            String key = (String) itera.next();
+                            Comparemodelclass comparemodelclass = new Comparemodelclass();
+                            comparemodelclass.setHeading(key);
+                            comparemodelclass.setTypeofLay(0);
+                            comparemodelclasses.add(comparemodelclass);
+                            JSONObject value = jsonObjectsubattarray.getJSONObject(key);
+                            Iterator subiterator = value.keys();
+                            while (subiterator.hasNext()) {
+                                String subkey = (String) subiterator.next();
+                                String subvalue = value.getString(subkey);
+                                String valueOfheading = subkey;
+                                String valueOfvalue = subvalue;
+                                comparemodelclass = new Comparemodelclass();
+                                comparemodelclass.setValues(valueOfheading);
+                                comparemodelclass.setSubvalue(valueOfvalue);
+                                comparemodelclass.setTypeofLay(1);
+                                comparemodelclasses.add(comparemodelclass);
+                            }
+                        }
+                    }
 
                     String key = null;
                     String value = null;

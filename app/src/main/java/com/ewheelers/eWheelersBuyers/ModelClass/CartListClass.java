@@ -21,6 +21,8 @@ public class CartListClass {
     private String shopname;
     private String keyvalue;
     private String optionvalue;
+    private String rentalStartDate;
+    private String rentalEndDate;
     public static final int addon=0;
     public static final int rent=1;
 
@@ -33,8 +35,32 @@ public class CartListClass {
     public String total;
     public String rentStartdate;
     public String rentEnddate;
-
     private String sellerAddress;
+    private String deliveryPolicy;
+
+    public String getDeliveryPolicy() {
+        return deliveryPolicy;
+    }
+
+    public void setDeliveryPolicy(String deliveryPolicy) {
+        this.deliveryPolicy = deliveryPolicy;
+    }
+
+    public String getRentalStartDate() {
+        return rentalStartDate;
+    }
+
+    public void setRentalStartDate(String rentalStartDate) {
+        this.rentalStartDate = rentalStartDate;
+    }
+
+    public String getRentalEndDate() {
+        return rentalEndDate;
+    }
+
+    public void setRentalEndDate(String rentalEndDate) {
+        this.rentalEndDate = rentalEndDate;
+    }
 
     public String getTiming() {
         return timing;

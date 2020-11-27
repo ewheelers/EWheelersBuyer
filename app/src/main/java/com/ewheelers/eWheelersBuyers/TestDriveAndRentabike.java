@@ -212,6 +212,7 @@ public class TestDriveAndRentabike extends AppCompatActivity implements View.OnC
                                 mBottomSheetDialog.dismiss();
                                 Intent i = new Intent(getApplicationContext(), CartListingActivity.class);
                                 i.putExtra("selid", productId);
+                                i.putExtra("typeoflay",typeoflay);
                                 startActivity(i);
                             } else {
                                 mBottomSheetDialog.dismiss();

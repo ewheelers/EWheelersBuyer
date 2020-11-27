@@ -38,6 +38,14 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryH
 
     @Override
     public void onBindViewHolder(@NonNull SummaryAdapter.SummaryHolder holder, int position) {
+        if(cartListClassList.get(position).getRentStartdate()!=null && cartListClassList.get(position).getRentEnddate()!=null){
+            holder.rent_details.setVisibility(View.VISIBLE);
+            holder.start_date.setText("Start Date: " + cartListClassList.get(position).getRentStartdate());
+            holder.end_date.setText("End Date: " + cartListClassList.get(position).getRentEnddate());
+        } else {
+            holder.rent_details.setVisibility(View.GONE);
+        }
+        holder.delProcess.setText(cartListClassList.get(position).getDeliveryPolicy());
         holder.shopname.setText(cartListClassList.get(position).getShopname());
         holder.brandname.setText(cartListClassList.get(position).getBrandname());
         holder.tit.setText(cartListClassList.get(position).getProductName());
@@ -69,11 +77,15 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryH
     }
 
     public class SummaryHolder extends RecyclerView.ViewHolder {
-        TextView shopname, brandname, tit, optins, price, qty, sellerAddress, changepickaddress;
+        TextView shopname, brandname, tit, optins, price, qty, sellerAddress, changepickaddress,rent_details, start_date, end_date, delProcess;
         NetworkImageView image;
 
         public SummaryHolder(@NonNull View itemView) {
             super(itemView);
+            delProcess = itemView.findViewById(R.id.deli_procee);
+            rent_details = itemView.findViewById(R.id.rent_details);
+            start_date = itemView.findViewById(R.id.start_date);
+            end_date = itemView.findViewById(R.id.end_date);
             shopname = itemView.findViewById(R.id.shop_name);
             image = itemView.findViewById(R.id.image);
             brandname = itemView.findViewById(R.id.brand);

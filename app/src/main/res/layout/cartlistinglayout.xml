@@ -54,20 +54,32 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="title"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/options"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="options" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/price"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/rent_details"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="price" />
+                android:text="Rent Details"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout

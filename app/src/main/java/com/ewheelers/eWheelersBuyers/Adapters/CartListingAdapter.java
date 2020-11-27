@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -268,6 +269,13 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
 
                 break;
             default:
+                if(cartListClasses.get(position).getRentStartdate()!=null && cartListClasses.get(position).getRentEnddate()!=null){
+                    holder.rent_details.setVisibility(View.VISIBLE);
+                    holder.start_date.setText("Start Date: " + cartListClasses.get(position).getRentStartdate());
+                    holder.end_date.setText("End Date: " + cartListClasses.get(position).getRentEnddate());
+                } else {
+                    holder.rent_details.setVisibility(View.GONE);
+                }
                 holder.brandname.setText(cartListClasses.get(position).getBrandname());
                 List<String> strings = cartListClasses.get(position).getOptions();
                 holder.options.setText(strings.toString());
@@ -483,7 +491,7 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
     }
 
     public class MyCartListHolder extends RecyclerView.ViewHolder {
-        TextView shopname, title, options, price, quantity, brandname;
+        TextView shopname, title, options, price, quantity, brandname, rent_details, start_date, end_date;
         NetworkImageView image_url;
         Button addproduct, removeproduct;
         ImageView delete;
@@ -503,6 +511,9 @@ public class CartListingAdapter extends RecyclerView.Adapter<CartListingAdapter.
             removeproduct = itemView.findViewById(R.id.removeproduct);
             delete = itemView.findViewById(R.id.delete_image);
             item_lay = itemView.findViewById(R.id.item_lay);
+            rent_details = itemView.findViewById(R.id.rent_details);
+            start_date = itemView.findViewById(R.id.start_date);
+            end_date = itemView.findViewById(R.id.end_date);
             // duration = itemView.findViewById(R.id.duration);
         }
     }

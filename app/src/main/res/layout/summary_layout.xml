@@ -73,6 +73,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="qty" />
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/rent_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rent Details"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/start_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/end_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
     </LinearLayout>
@@ -89,7 +104,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pick-up Address"/>
@@ -105,16 +120,22 @@
         <TextView
             android:textColor="@color/Black"
             android:id="@+id/seller_address"
+            android:layout_marginTop="@dimen/padding_10"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Pick-up Address"/>
+            android:layout_height="wrap_content" />
         <TextView
             android:textSize="16sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delivery Process"
-            android:drawablePadding="@dimen/padding_10"
-            android:drawableEnd="@drawable/iicon"/>
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorPrimary"/>
+        <TextView
+            android:textColor="@color/Black"
+            android:id="@+id/deli_procee"
+            android:layout_marginTop="@dimen/padding_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 
