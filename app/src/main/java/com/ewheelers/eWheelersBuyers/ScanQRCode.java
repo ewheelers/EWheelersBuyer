@@ -77,6 +77,21 @@ public class ScanQRCode extends AppCompatActivity implements View.OnClickListene
         } else if (service_type.equals("Charge")) {
             textView.setText("Scan QR code displayed on the charging hub");
             scan_image.setImageResource(R.drawable.ic_electric_charge);
+        }else if (service_type.equals("Repair")) {
+            textView.setText("Scan QR code displayed on the Repair Shop");
+            scan_image.setImageResource(R.drawable.ic_mechanics);
+        }else if (service_type.equals("Puncture")) {
+            textView.setText("Scan QR code displayed on the Puncture Shop");
+            scan_image.setImageResource(R.drawable.ic_tyre);
+        }else if (service_type.equals("Batteries")) {
+            textView.setText("Scan QR code displayed on the Puncture Shop");
+            scan_image.setImageResource(R.drawable.ic_battery);
+        }else if (service_type.equals("Key Repair")) {
+            textView.setText("Scan QR code displayed on the Key Repair Shop");
+            scan_image.setImageResource(R.drawable.ic_key);
+        }else if (service_type.equals("Bike Wash")) {
+            textView.setText("Scan QR code displayed on the Bike Wash Shop");
+            scan_image.setImageResource(R.drawable.ic_waterwash);
         }
     }
 
