@@ -185,6 +185,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
 
         if (provider_is.equals("Charge")) {
             scanQr.setText("Scan Charge Hub QR Code to Book Charging Hours");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is + " Stations");
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.charging_station);
@@ -202,6 +203,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             getChipFilters("4");
         } else if (provider_is.equals("Repair")) {
             scanQr.setText("Scan Mechanic QR Code to Pay Service Charge");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.ic_mechanics);
@@ -209,6 +211,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             getProfileattributes();
         } else if (provider_is.equals("Puncture")) {
             scanQr.setText("Scan Puncture Hub QR Code to Pay Service Charge");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.ic_tyre);
@@ -217,14 +220,17 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
         } else if (provider_is.equals("Spares")) {
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
+            scanQr.setVisibility(View.GONE);
             // getProfileattributes();
             //url = "https://script.google.com/macros/s/AKfycbw1CBgKC8DKEeAnMRuBy3PwiL5CwcPx6nUIYNDEMrvA_ygtp_OB/exec?action=getItems";
         } else if (provider_is.equals("Accessories")) {
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
+            scanQr.setVisibility(View.GONE);
             //url = "https://script.google.com/macros/s/AKfycbwCazYe6eveZapEPtZVZUNCyZbz_GIww_Tncw1mbtDjlutAOWs/exec?action=getItems";
         } else if (provider_is.equals("Bike Wash")) {
             scanQr.setText("Scan Bike Wash Hub QR Code to Pay Service Charge");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.ic_waterwash);
@@ -232,6 +238,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             getProfileattributes();
         } else if (provider_is.equals("Batteries")) {
             scanQr.setText("Scan Battery Service Hub QR Code to Pay Service Charge");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.ic_battery);
@@ -239,6 +246,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             //url = "https://script.google.com/macros/s/AKfycbw51r-VxmtwgRPFsPdlEAet83eVInQ4QP_khnEHip0J9M5YurE0/exec?action=getItems";
         } else if (provider_is.equals("Key Repair")) {
             scanQr.setText("Scan Key Service Hub QR Code to Pay Service Charge");
+            scanQr.setVisibility(View.GONE);
             textView.setText(provider_is);
             relativeLayout.setVisibility(View.VISIBLE);
             leftImg.setBackgroundResource(R.drawable.ic_key);

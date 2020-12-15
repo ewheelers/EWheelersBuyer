@@ -15,6 +15,7 @@ public class SessionStorage {
     public static String tothrs = "totalhours";
     public static String stationaddress = "station";
     public static String productname = "productname";
+    public static String mobileno = "mobile";
 
     public static String dataToSave = "appData";
     public static String productslength = "length";

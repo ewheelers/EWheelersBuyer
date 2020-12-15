@@ -113,14 +113,14 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
         switch (itemType) {
             case ServiceProvidersClass.CHARGELAY:
                 if (holder instanceof ServiceProviderHolder) {
-                    populateItemRows2((ServiceProviderHolder) holder, position);
+                    populateItemRows2((ServiceProviderHolder) holder, position,"0");
                 } else if (holder instanceof LoadingViewHolder) {
                     showLoadingView((LoadingViewHolder) holder, position);
                 }
                 break;
             case ServiceProvidersClass.PARKING:
                 if (holder instanceof ServiceProviderHolder) {
-                    populateItemRows2((ServiceProviderHolder) holder, position);
+                    populateItemRows2((ServiceProviderHolder) holder, position,"1");
                 } else if (holder instanceof LoadingViewHolder) {
                     showLoadingView((LoadingViewHolder) holder, position);
                 }
@@ -249,7 +249,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private void populateItemRows2(ServiceProviderHolder holder, int position) {
+    private void populateItemRows2(ServiceProviderHolder holder, int position,String s) {
         // Toast.makeText(context, "lat:"+latitude+"lon:"+longitude, Toast.LENGTH_SHORT).show();
         String identifier = serviceProvidersClassList.get(position).getUaidentifier();
         StringBuilder stringBuild = new StringBuilder();
@@ -268,6 +268,11 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
         String typetitle = serviceProvidersClassList.get(position).getServiceProviderIs();
 
         if (openState.equals("1")) {
+            if(s.equals("1")) {
+                holder.chargehub.setVisibility(VISIBLE);
+            }else{
+                holder.chargehub.setVisibility(GONE);
+            }
             holder.open_state.setText("Open");
             holder.open_state.setTextColor(Color.parseColor("#00B300"));
             holder.chargehub.setEnabled(true);
@@ -282,6 +287,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
                 holder.chargehub.setTextColor(Color.parseColor("#9C3C34"));
             }
         } else {
+            holder.chargehub.setVisibility(VISIBLE);
             holder.open_state.setText("Close");
             holder.open_state.setTextColor(Color.parseColor("#9C3C34"));
             holder.chargehub.setEnabled(false);
@@ -378,7 +384,7 @@ public class ServiceProvidersAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
         //Log.i("numeris:",number);
         holder.timingsimg.setVisibility(VISIBLE);
-        holder.chargehub.setVisibility(VISIBLE);
+//        holder.chargehub.setVisibility(VISIBLE);
         holder.timingsimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

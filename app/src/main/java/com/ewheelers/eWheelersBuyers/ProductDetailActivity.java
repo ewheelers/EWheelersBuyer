@@ -582,7 +582,8 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                     cost.setText("\u20B9 " + productprice);
 
 
-                    if (productname.contains("Parking")) {
+                    if (productname.trim().contains("Park")||productname.trim().contains("Charg")||productname.trim().contains("Service")||productname.trim().contains("Repair")||productname.trim().contains("Spar")||productname.trim().contains("Access")||
+                            productname.trim().contains("Puncture")||productname.trim().contains("Batter")||productname.trim().contains("Key Repair")||productname.trim().contains("Bike Wash")) {
 
                     } else {
                         JSONObject jsonObjectsubattarray = jsonObjectAttributes.getJSONObject("attributesArray");

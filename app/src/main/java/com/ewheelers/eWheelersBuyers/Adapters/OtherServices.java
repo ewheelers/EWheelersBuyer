@@ -2,11 +2,15 @@ package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Parcelable;
@@ -14,7 +18,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -30,8 +37,11 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.ewheelers.eWheelersBuyers.ModelClass.ServiceProvidersClass;
 import com.ewheelers.eWheelersBuyers.R;
 import com.ewheelers.eWheelersBuyers.SPProductsListActivity;
+import com.ewheelers.eWheelersBuyers.SessionStorage;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,8 +94,89 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
         holder.mail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //openWhatsApp(serviceProvidersClassList.get(position).getServiceprovider_phone_number());
-                if (!serviceProvidersClassList.isEmpty()||serviceProvidersClassList!=null) {
+                final Dialog dialog = new Dialog(context);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setCancelable(false);
+                InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                assert manager != null;
+                manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                dialog.setContentView(R.layout.edit_number_layout);
+                TextView textViewClose = dialog.findViewById(R.id.close);
+                TextView txtview = dialog.findViewById(R.id.text_change);
+                EditText editText = dialog.findViewById(R.id.txt_dia);
+                TextView edit_txt = dialog.findViewById(R.id.edit);
+                TextView continue_dia = dialog.findViewById(R.id.proceed);
+                String buyer_ph = new SessionStorage().getStrings(context, SessionStorage.mobileno);
+                if (buyer_ph == null || buyer_ph.equals("")) {
+                    txtview.setText("Please give your's contact number. Service Provider will reach you");
+                    editText.setText("");
+                } else {
+                    txtview.setText("Is this your's contact number ? If not you can change here, so that Service Provider will reach you");
+                    editText.setText(buyer_ph);
+                }
+                textViewClose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    }
+                });
+                edit_txt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        editText.setEnabled(true);
+                        editText.setTextColor(Color.WHITE);
+                        editText.setBackgroundColor(R.drawable.background_drawable);
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        assert imm != null;
+                        imm.showSoftInput(v,InputMethodManager.SHOW_FORCED);
+                    }
+                });
+                continue_dia.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (editText.getText().toString().isEmpty()) {
+                            editText.setError("Enter Contact Number");
+                        } else {
+                            InputMethodManager manager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            assert manager != null;
+                            manager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            dialog.dismiss();
+                            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+                            builder.setTitle("Send Via ...");
+                            builder.setMessage("Use SMS or Watsapp to send request to have service. If the service provider not having Watsapp account, Please try to request with SMS.");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("via SMS", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String text = "eWheelers Customer Requesting Roadside Assistance. Contact No: "+ editText.getText().toString() + "\n\n My Location is: " + "http://maps.google.com/maps?daddr=" + serviceProvidersClassList.get(position).getCurrentlatitude() + "," + serviceProvidersClassList.get(position).getCurrentlongitude();
+                                    Uri uri = Uri.parse("smsto:" + serviceProvidersClassList.get(position).getServiceprovider_phone_number());
+                                    Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                                    intent.putExtra("sms_body", text);
+                                    context.startActivity(intent);
+                                }
+                            });
+                            builder.setNegativeButton("via Watsapp", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    openWhatsApp(serviceProvidersClassList.get(position).getServiceprovider_phone_number(), position,editText.getText().toString());
+                                }
+                            });
+                            builder.setNeutralButton("Close", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    builder.setCancelable(true);
+                                }
+                            });
+                            builder.show();
+                        }
+                    }
+                });
+                dialog.show();
+
+
+               /* if (!serviceProvidersClassList.isEmpty()||serviceProvidersClassList!=null) {
                     Intent intent = new Intent(context, SPProductsListActivity.class);
                     //intent.putExtra("uaid", serviceProvidersClassList.get(position).getSetuid());
                     intent.putExtra("name", serviceProvidersClassList.get(position).getServiceprovider_shopname());
@@ -97,7 +188,8 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
                     intent.putExtra("options", serviceProvidersClassList.get(position).getJsonServiceObject().toString());
                     intent.putExtra("serviceprovider", serviceProvidersClassList.get(position).getServiceProviderIs());
                     context.startActivity(intent);
-                }
+                }*/
+
             }
         });
 
@@ -114,6 +206,43 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
                 context.startActivity(intent);*/
             }
         });
+    }
+
+    public void openWhatsApp(String ph_no, int position, String contct) {
+        String text = "eWheelers Customer Requesting Roadside Assistance. Contact No: " +contct+ "\n\n My Location is: " + "http://maps.google.com/maps?daddr=" + serviceProvidersClassList.get(position).getCurrentlatitude() + "," + serviceProvidersClassList.get(position).getCurrentlongitude();
+        PackageManager packageManager = context.getPackageManager();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        try {
+            String url = "https://api.whatsapp.com/send?phone=91" + ph_no + "&text=" + URLEncoder.encode(text, "UTF-8");
+            i.setPackage("com.whatsapp");
+            i.setData(Uri.parse(url));
+            if (i.resolveActivity(packageManager) != null) {
+                context.startActivity(i);
+            } else {
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+                builder.setTitle("Use Message app ...");
+                builder.setMessage("Wats app not installed in Your Mobile. Use Message app instead of Watsapp !");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Open SMS", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Uri uri = Uri.parse("smsto:" + ph_no);
+                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                        intent.putExtra("sms_body", text);
+                        context.startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        builder.setCancelable(true);
+                    }
+                });
+                builder.show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -202,49 +331,5 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
         context.startActivity(callIntent);
     }
 
-
-
-    public void onShareClick(View v, String servicename, String number, double lat, double lon, String username, String usermobile) {
-        List<Intent> targetShareIntents = new ArrayList<Intent>();
-        Intent shareIntent = new Intent();
-        shareIntent.setAction(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        List<ResolveInfo> resInfos = context.getPackageManager().queryIntentActivities(shareIntent, 0);
-        if (!resInfos.isEmpty()) {
-            for (ResolveInfo resInfo : resInfos) {
-                String packageName = resInfo.activityInfo.packageName;
-                Log.i("Package Name", packageName + number);
-                if (packageName.contains("com.whatsapp") || packageName.contains("com.android.mms")) {
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(packageName, resInfo.activityInfo.name));
-                    if (packageName.equals("com.whatsapp")) {
-                        intent.setAction(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_TEXT, username + " Requesting for " + servicename + " Service\n" + context.getResources().getString(R.string.contact) + " : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
-                        intent.putExtra("jid", "91" + number + "@s.whatsapp.net");
-                    }
-
-                    if (packageName.equals("com.android.mms")) {
-                        //intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setAction(Intent.ACTION_VIEW);
-                        intent.setData(Uri.parse("smsto:"));
-                        intent.setType("vnd.android-dir/mms-sms");
-                        intent.putExtra("address", number);
-                        intent.putExtra("sms_body", username + " Requesting for " + servicename + " Service\n" + context.getResources().getString(R.string.contact) + " : " + usermobile + "\nLocate: " + "https://maps.google.com/?q=" + lat + "," + lon);
-                    }
-
-                    intent.setPackage(packageName);
-                    targetShareIntents.add(intent);
-                }
-            }
-            if (!targetShareIntents.isEmpty()) {
-                Intent chooserIntent = Intent.createChooser(targetShareIntents.remove(0), "Choose app to share");
-                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetShareIntents.toArray(new Parcelable[]{}));
-                context.startActivity(chooserIntent);
-            } else {
-                Toast.makeText(context, "Do not Have Intent", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 
 }

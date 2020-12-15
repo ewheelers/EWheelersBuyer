@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.se.omapi.Session;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +52,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -155,6 +157,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     if(user_phone.isEmpty()){
                         Mobile.setText("xx-xxxxxxxxxx(update with edit option)");
                     }else {
+                        SessionStorage.saveString(Objects.requireNonNull(getActivity()),SessionStorage.mobileno,user_phone);
                         Mobile.setText(user_phone);
                     }
 

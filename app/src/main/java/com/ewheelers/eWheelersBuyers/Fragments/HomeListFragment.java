@@ -42,6 +42,7 @@ import com.android.volley.toolbox.Volley;
 import com.ewheelers.eWheelersBuyers.Adapters.AllebikesAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.HomeCollectionAdapter;
 import com.ewheelers.eWheelersBuyers.Adapters.SlidingImage_Adapter;
+import com.ewheelers.eWheelersBuyers.LoginActivity;
 import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.CirclePageIndicator;
 import com.ewheelers.eWheelersBuyers.ModelClass.HomeCollectionProducts;
@@ -482,7 +483,10 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
 
                     } else {
                         progressBar.setVisibility(View.INVISIBLE);
-                        Toast.makeText(getActivity(), "" + msg, Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(i);
+                        getActivity().finish();
+                        Toast.makeText(getActivity(), "Expired Re-Login", Toast.LENGTH_SHORT).show();
                         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                     }

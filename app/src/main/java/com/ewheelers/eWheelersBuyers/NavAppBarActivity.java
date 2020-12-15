@@ -137,8 +137,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
 
     private Toast toast;
     private long lastBackPressTime = 0;
-    private String[] permissions = {"android.hardware.camera.flash", "android.permission.FLASHLIGHT", "android.permission.CAMERA", "android.hardware.camera.autofocus", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
-    int requestCode = 200;
     TextView passes;
 
     @Override
@@ -146,9 +144,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_app_bar);
         tokenValue = new SessionStorage().getStrings(this, SessionStorage.tokenvalue);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(permissions, requestCode);
-        }
 
         getuser_location = findViewById(R.id.fetch_location);
         passes = findViewById(R.id.passes);
@@ -719,7 +714,7 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                         startActivity(i);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "something: "+msg, Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
@@ -828,7 +823,10 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
                         navView.getOrCreateBadge(R.id.navigation_alerts).setNumber(Integer.parseInt(unreadnoti));
 
                     } else {
-                        Toast.makeText(NavAppBarActivity.this, "" + msg, Toast.LENGTH_SHORT).show();
+                        /*Intent i = new Intent(getApplicationContext(),LoginActivity.class);
+                        startActivity(i);
+                        finish();*/
+                        //Toast.makeText(NavAppBarActivity.this, "testing" + msg, Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
