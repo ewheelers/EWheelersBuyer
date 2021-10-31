@@ -35,6 +35,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
@@ -519,7 +520,7 @@ public class HomeListFragment extends Fragment implements View.OnClickListener {
             }
 
         };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 1, 1.0f));
         queue.add(stringRequest);
     }
 

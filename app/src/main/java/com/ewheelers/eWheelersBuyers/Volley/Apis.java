@@ -61,7 +61,8 @@ public class Apis {
     public static String spproductslist = base+"products/get-seller-products-by-criteria";
     public static String sellerlistprofile = base+"home/get-seller-list-by-profile-attributes";
     public static String sellerprofileattributes = base+"home/get-seller-profile-attributes";
-
+    public static String validateOtp = base+"guest-user/validate-otp";
+    public static String resendotp = base+"guest-user/resend-otp/";
     public static String passwordUpdate = base+"account/update-password";
 
 

@@ -931,7 +931,6 @@ public class NavAppBarActivity extends AppCompatActivity implements NavigationVi
     public void onSuccess(AppUpdateInfo appUpdateInfo) {
         Log.e("abc", "abc");
 
-
         if (appUpdateInfo.updateAvailability()
                 == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
             // If an in-app update is already running, resume the update.

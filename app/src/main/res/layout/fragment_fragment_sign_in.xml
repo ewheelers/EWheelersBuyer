@@ -7,11 +7,39 @@
     android:background="@color/colorWhite"
     android:orientation="vertical"
     tools:context=".Fragments.FragmentSignIn">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:textColor="@color/colorPrimary"
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="@dimen/dimen_5dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Password Login"></TextView>
+        <TextView
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="@dimen/dimen_5dp"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="OTP Login"></TextView>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <LinearLayout
+            android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -28,7 +56,7 @@
                 android:background="@drawable/border_bg"
                 android:drawableLeft="@drawable/email"
                 android:drawablePadding="10dp"
-                android:hint="User name / Email Id"
+                android:hint="User name"
                 android:padding="10dp"
                 android:textSize="17sp"></EditText>
 
@@ -115,7 +143,13 @@
 
             </LinearLayout>
         </LinearLayout>
+
+
+
+
+
     </ScrollView>
+
 </LinearLayout>
 
 

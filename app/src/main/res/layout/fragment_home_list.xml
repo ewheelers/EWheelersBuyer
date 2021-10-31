@@ -58,4 +58,5 @@
             app:fabSize="normal"
             android:drawableTop="@drawable/ic_arrow_upward" />
     </RelativeLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
