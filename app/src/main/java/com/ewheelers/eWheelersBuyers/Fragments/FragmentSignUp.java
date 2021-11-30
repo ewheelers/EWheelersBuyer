@@ -1,7 +1,10 @@
 package com.ewheelers.eWheelersBuyers.Fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -10,8 +13,10 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
+import android.telephony.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +40,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ewheelers.eWheelersBuyers.BroadcastReceiver.SmsReceiver;
+import com.ewheelers.eWheelersBuyers.Interface.SmsListener;
 import com.ewheelers.eWheelersBuyers.LoginActivity;
+import com.ewheelers.eWheelersBuyers.Notifications.SharedPrefManager;
 import com.ewheelers.eWheelersBuyers.R;
+import com.ewheelers.eWheelersBuyers.Utilities.Constants;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.kinda.alert.KAlertDialog;
 
@@ -63,7 +72,11 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
     RadioGroup radioGroupbtn;
     RadioButton radioOtpbtn;
     String otpSelect;
-
+    private int first = -100, second = -100, third = -100, fourth = -100;
+    EditText et1, et2, et3, et4;
+    String UserIdAR;
+    AlertDialog dismissDailog;
+    View viewAR;
     public FragmentSignUp() {
         // Required empty public constructor
     }
@@ -166,6 +179,56 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
         return v;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+    IntentFilter filter = new IntentFilter("android.provider.Telephony.SMS_RECEIVED");
+    private BroadcastReceiver smsBroadcastReceiver=new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.e("smsBroadcastReceiver", "onReceive");
+            Log.d("isFrom...", "OTPSignUp.");
+            Bundle data = intent.getExtras();
+            Boolean b;
+            Object[] pdus = (Object[]) data.get("pdus");
+            for (int i = 0; i < pdus.length; i++) {
+                SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) pdus[i]);
+                String sender = smsMessage.getDisplayOriginatingAddress();
+                String messageBody = smsMessage.getMessageBody();
+                b = messageBody.contains("eWheelers.in");
+                String messageText = messageBody.replaceAll("[^0-9]", "");   // contains otp
+                if (b && messageText.length() == 4) {
+                    et1.setText(String.valueOf(messageText.charAt(0)));
+
+                    et2.setText(String.valueOf(messageText.charAt(1)));
+
+                    et3.setText(String.valueOf(messageText.charAt(2)));
+
+                    et4.setText(String.valueOf(messageText.charAt(3)));
+
+
+                    hideProgressBarDialog(messageText);
+
+                }
+            }
+        }
+    };
+    private void hideProgressBarDialog(String otppp) {
+        try{
+            if(dismissDailog != null){
+                dismissDailog.dismiss();
+                if (UserIdAR != null) {
+                    otpValidation(dismissDailog,viewAR,UserIdAR, otppp, otpSelect);
+                } else {
+                    dismissDailog.dismiss();
+                    Toast.makeText(getActivity(), "Device Id Not Found !!! Please Try Later", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }catch (Exception e){
+
+        }
+    }
     public boolean isValidPassword(final String password) {
         Pattern pattern;
         Matcher matcher;
@@ -207,6 +270,8 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
                                 JSONObject jsonObject = new JSONObject(response);
                                 int getStatus = Integer.parseInt(jsonObject.getString("status"));
                                 if (getStatus != 0) {
+                                    Constants.isFromSignUp  = true;
+                                    Constants.isFromOTPLogin = false;
                                     pDialog.dismiss();
                                     sign_up.setVisibility(View.GONE);
                                     int status = jsonObject.getInt("status");
@@ -217,18 +282,30 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
                                     View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.success_layout, viewGroup, false);
                                     TextView textView = dialogView.findViewById(R.id.message);
                                     TextView otpMsg = dialogView.findViewById(R.id.otpmsg);
-                                    EditText otpstr1 = dialogView.findViewById(R.id.otpstr1);
-                                    EditText otpstr2 = dialogView.findViewById(R.id.otpstr2);
-                                    EditText otpstr3 = dialogView.findViewById(R.id.otpstr3);
-                                    EditText otpstr4 = dialogView.findViewById(R.id.otpstr4);
+                                    et1 = dialogView.findViewById(R.id.otpstr1);
+                                    et2 = dialogView.findViewById(R.id.otpstr2);
+                                    et3 = dialogView.findViewById(R.id.otpstr3);
+                                    et4 = dialogView.findViewById(R.id.otpstr4);
                                     TextView countDown = dialogView.findViewById(R.id.countOtpSec);
                                     Button button = dialogView.findViewById(R.id.buttonOk);
+                                    first = -100;
+                                    second = -100;
+                                    third = -100;
+                                    fourth = -100;
+                                    et1.setText("");
+                                    et2.setText("");
+                                    et3.setText("");
+                                    et4.setText("");
+                                    et1.requestFocus();
                                     textView.setText(smsg);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                     builder.setView(dialogView);
                                     final AlertDialog alertDialog = builder.create();
                                     alertDialog.show();
                                     alertDialog.setCancelable(false);
+                                    dismissDailog = alertDialog;
+                                    viewAR = v;
+                                    UserIdAR = usedId;
                                     new CountDownTimer(30000, 1000) {
 
                                         public void onTick(long millisUntilFinished) {
@@ -256,9 +333,10 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
                                             return false;
                                         }
                                     };
-                                    otpstr1.setOnKeyListener(key);
-                                    otpstr2.setOnKeyListener(key);
-                                    otpstr3.setOnKeyListener(key);
+                                    et1.addTextChangedListener(new GenericTextWatcher(et1));
+                                    et2.addTextChangedListener(new GenericTextWatcher(et2));
+                                    et3.addTextChangedListener(new GenericTextWatcher(et3));
+                                    et4.addTextChangedListener(new GenericTextWatcher(et4));
                                     if (otpSelect.equals("2")) {
                                         otpMsg.setText("OTP sent to the Phone - Verify the OTP by entering 4 digit number");
                                     } else if (otpSelect.equals("1")) {
@@ -268,11 +346,12 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
                                     button.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            if (otpstr1.getText().toString().isEmpty() || otpstr2.getText().toString().isEmpty() || otpstr3.getText().toString().isEmpty() || otpstr4.getText().toString().isEmpty()) {
-                                                showfailedDialog(getActivity(), v, "Not entered 4 digit OTP code");
 
+                                            if (first != -100 && second != -100 && third != -100 && fourth != -100) {
+                                                String resultingOtp = String.valueOf(first) + String.valueOf(second) + String.valueOf(third) + String.valueOf(fourth);
+                                                otpValidation(alertDialog,v,usedId, resultingOtp, otpSelect);
                                             } else {
-                                                otpValidation(alertDialog,v,usedId, otpstr1.getText().toString(), otpstr2.getText().toString(), otpstr3.getText().toString(), otpstr4.getText().toString(), otpSelect);
+                                                showfailedDialog(getActivity(), v, "Not entered 4 digit OTP code");
                                             }
                                       /*  Intent intent = new Intent(getActivity(), HomeActivity.class);
                                         startActivity(intent);
@@ -339,6 +418,7 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
         };
         strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(strRequest);
+
     }
 
     private void resendOTP(View v, TextView countid, String usedId) {
@@ -407,7 +487,7 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
         queue.add(strRequest);
     }
 
-    private void otpValidation(AlertDialog alertDialog, View v, String userId, String otpstr1, String otpstr2, String otpstr3, String otpstr4, String otpSelect) {
+    private void otpValidation(AlertDialog alertDialog, View v, String userId, String otpStr, String otpSelect) {
         pDialog.show();
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String url = Apis.validateOtp;
@@ -464,7 +544,7 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
 
             protected Map<String, String> getParams() {
                 Map<String, String> data3 = new HashMap<String, String>();
-                data3.put("uo_otp",(otpstr1+otpstr2+otpstr3+otpstr4));
+                data3.put("uo_otp",otpStr);
                 data3.put("user_id", String.valueOf(userId));
                 data3.put("sendOtpOn", String.valueOf(otpSelect));
                 return data3;
@@ -550,5 +630,75 @@ public class FragmentSignUp extends Fragment implements View.OnClickListener, Te
         }
 
 
+    }
+    public class GenericTextWatcher implements TextWatcher {
+        private View view;
+
+        private GenericTextWatcher(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            // TODO Auto-generated method stub
+            String text = editable.toString();
+            switch (view.getId()) {
+
+                case R.id.otpstr1:
+                    if (text.length() == 1) {
+                        Log.d("first", text);
+                        first = Integer.parseInt(text);
+                        et2.requestFocus();
+                    } else if (text.equals("") || text.length() == 0) {
+                        first = -100;
+                    }
+                    break;
+                case R.id.otpstr2:
+                    if (text.length() == 1) {
+                        Log.d("second", text);
+                        second = Integer.parseInt(text);
+                        et3.requestFocus();
+                    } else if (text.equals("") || text.length() == 0) {
+                        second = -100;
+                    }
+                    break;
+                case R.id.otpstr3:
+                    if (text.length() == 1) {
+                        Log.d("third", text);
+                        third = Integer.parseInt(text);
+                        et4.requestFocus();
+                    } else if (text.equals("") || text.length() == 0) {
+                        third = -100;
+                    }
+                    break;
+                case R.id.otpstr4:
+                    if (text.length() == 1) {
+                        Log.d("fourth", text);
+                        fourth = Integer.parseInt(text);
+                    } else if (text.equals("") || text.length() == 0) {
+                        fourth = -100;
+                        hideSoftKeyboard();
+                    }
+                    break;
+
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+        }
+    }
+    public void hideSoftKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 }

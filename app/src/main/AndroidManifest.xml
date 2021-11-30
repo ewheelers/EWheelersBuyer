@@ -20,6 +20,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="com.example.mapdemo.permission.MAPS_RECEIVE" />
 
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+
+
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -257,6 +262,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <receiver android:name=".BroadcastReceiver.SmsReceiver">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver"

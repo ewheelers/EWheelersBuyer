@@ -64,6 +64,7 @@ public class Apis {
     public static String validateOtp = base+"guest-user/validate-otp";
     public static String resendotp = base+"guest-user/resend-otp/";
     public static String passwordUpdate = base+"account/update-password";
+    public static String sendloginOtp = base+"guest-user/send-login-otp";
 
 
 }

@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     ViewPagerAdapter viewPagerAdapter;
     TextView textView_call;
     ImageView imageView;
-    private String[] permissions = {"android.hardware.camera.flash", "android.permission.FLASHLIGHT", "android.permission.CAMERA", "android.hardware.camera.autofocus", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"};
+    private String[] permissions = {"android.hardware.camera.flash", "android.permission.FLASHLIGHT", "android.permission.CAMERA", "android.hardware.camera.autofocus", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.CALL_PHONE", "android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION","android.permission.RECEIVE_SMS"};
     int requestCode = 200;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
