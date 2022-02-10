@@ -1,7 +1,10 @@
 package com.ewheelers.eWheelersBuyers;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,10 +12,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -89,6 +94,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     //HorizontalScrollView horizontalScrollView;
     RelativeLayout relativeLayout;
     Button scanQr;
+    int count = 0;
     ImageView imageViewclose;
     RecyclerView recyclerViewchargeFilters;
     // Spinner type_spinner, charge_spinner;
@@ -102,6 +108,10 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     RecyclerView spinnerlist;
     JSONObject jsonObjectServicetype;
     LinearLayout linearLayoutPasses;
+    int pagination = 1;
+    String scrollOption;
+    JSONObject scrollJsonObjectType ;
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,6 +154,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
         // getSupportActionBar().setTitle(provider_is + " Services");
         longitude = new NavAppBarActivity().setlongitude();
         latitude = new NavAppBarActivity().setlatitude();
+        Log.d("latlongs...",""+longitude+".."+latitude);
         //Toast.makeText(ShowServiceProvidersActivity.this, "lat:"+latitude+" long:"+longitude, Toast.LENGTH_SHORT).show();
         chipall.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -282,6 +293,29 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 return false;
             }
         });
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = recyclerView.getScrollY(); // For ScrollView
+                int scrollX = recyclerView.getScrollX(); // For HorizontalScrollView
+                // DO SOMETHING WITH THE SCROLL COORDINATES
+                if (scrollY == recyclerView.getChildAt(0).getMeasuredHeight() - recyclerView.getMeasuredHeight()) {
+                    // in this method we are incrementing page number,
+                    // making progress bar visible and calling get data method.
+                    count++;
+                    // on below line we are making our progress bar visible.
+
+                    if (count == serviceProvidersClassesList.size()) {
+                        // on below line we are again calling
+                        // a method to load data in our array list.
+                        getItems(scrollOption,scrollJsonObjectType);
+                    }
+                }
+            }
+        });
+
 
 
     }
@@ -380,6 +414,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             }
 
         };
+        Log.e("Service....",stringRequest.toString());
         // Add the realibility on the connection.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
@@ -394,6 +429,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             @Override
             public void onResponse(String response) {
                 try {
+                    Log.d("Response..",""+response);
                     JSONObject jsonObject = new JSONObject(response);
                     String status = jsonObject.getString("status");
                     String msg = jsonObject.getString("msg");
@@ -446,6 +482,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
 
         };
         // Add the realibility on the connection.
+        Log.e("Service....",stringRequest.toString());
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
     }
@@ -501,6 +538,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
             }
 
         };
+        Log.e("Service....",stringRequest.toString());
         // Add the realibility on the connection.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);
@@ -663,6 +701,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 data3.put("options", options);
                 data3.put("pageSize", "1000");
                 data3.put("page", "1");
+                Log.d("latlongs...",data3.toString());
                 return data3;
             }
         };
@@ -672,7 +711,13 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
     }
 
     public void getItems(String options, JSONObject jsonObjectType) {
-        serviceProvidersClassesList.clear();
+        Log.d("Options...",options+".."+jsonObjectType.toString());
+        if( pagination == 1){
+            scrollOption = options;
+            scrollJsonObjectType = jsonObjectType;
+            serviceProvidersClassesList.clear();
+        }
+
         String url_link = Apis.sellerlistprofile;
         final RequestQueue queue = Volley.newRequestQueue(this);
         //pDialog.show();
@@ -686,6 +731,7 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                     if (status.equals("1")) {
                         JSONObject jsonObject1 = jsonObject.getJSONObject("data");
                         JSONArray jsonArray = jsonObject1.getJSONArray("result");
+                        Log.e("PostData....","listsize.."+jsonArray.length());
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
                             String shopid = jsonObjectdata.getString("shop_id");
@@ -723,56 +769,24 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                             empty_view.setVisibility(View.VISIBLE);
                             recyclerView.setVisibility(View.GONE);
                         } else {
-                            empty_view.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
-                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
-                            recyclerView.setLayoutManager(linearLayoutManager);
-                            otherServicesAdapter = new OtherServices(ShowServiceProvidersActivity.this, serviceProvidersClassesList);
-                            recyclerView.setAdapter(otherServicesAdapter);
-                            otherServicesAdapter.notifyDataSetChanged();
+                            if(pagination > 1 ){
+                                otherServicesAdapter.notifyDataSetChanged();
+                            }else{
+                                empty_view.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
+                                recyclerView.setLayoutManager(linearLayoutManager);
+                                otherServicesAdapter = new OtherServices(ShowServiceProvidersActivity.this, serviceProvidersClassesList);
+                                recyclerView.setAdapter(otherServicesAdapter);
+                                otherServicesAdapter.notifyDataSetChanged();
+                            }
+
                             pDialog.dismiss();
                         }
                     } else {
                         Toast.makeText(ShowServiceProvidersActivity.this, "failed to load:" + msg, Toast.LENGTH_SHORT).show();
                     }
 
-                    // FROM EXCEL sheets
-
-                   /* JSONArray jsonArray = jsonObject.getJSONArray("items");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObjectdata = jsonArray.getJSONObject(i);
-                        String Service_Provider_name = jsonObjectdata.getString("Service Provider name");
-                        String Service_Provider_shopname = jsonObjectdata.getString("Service ProviderShop Name");
-                        String Service_Provider_phonenumber = jsonObjectdata.getString("Phone Number");
-                        String Service_Provider_alternatenumber = jsonObjectdata.getString("Alternate Nnumber");
-                        String Service_Provider_emailid = jsonObjectdata.getString("Email Id");
-                        String Service_Provider_adress = jsonObjectdata.getString("Address");
-                        String Service_Provider_latitude = jsonObjectdata.getString("Latitude");
-                        String Service_Provider_longitude = jsonObjectdata.getString("Longitude");
-
-                        ServiceProvidersClass serviceProvidersClass = new ServiceProvidersClass();
-                        serviceProvidersClass.setServiceprovider_name(Service_Provider_name);
-                        serviceProvidersClass.setServiceprovider_shopname(Service_Provider_shopname);
-                        serviceProvidersClass.setServiceprovider_phone_number(Service_Provider_phonenumber);
-                        serviceProvidersClass.setServiceprovider_alternate_number(Service_Provider_alternatenumber);
-                        serviceProvidersClass.setServiceprovider_emailid(Service_Provider_emailid);
-                        serviceProvidersClass.setServiceprovider_address(Service_Provider_adress);
-                        serviceProvidersClass.setServiceprovider_latitude(Service_Provider_latitude);
-                        serviceProvidersClass.setServiceprovider_longitude(Service_Provider_longitude);
-                        serviceProvidersClass.setServiceProviderIs(provider_is);
-                        serviceProvidersClass.setCurrentlatitude(latitude);
-                        serviceProvidersClass.setCurrentlongitude(longitude);
-                        serviceProvidersClass.setTypeofLayout(1);
-                        //getDistance(latitude, longitude, Service_Provider_latitude, Service_Provider_longitude, serviceProvidersClass);
-
-                        serviceProvidersClassesList.add(serviceProvidersClass);
-                    }
-
-                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowServiceProvidersActivity.this, RecyclerView.VERTICAL, false);
-                    recyclerView.setLayoutManager(linearLayoutManager);
-                    serviceProvidersAdapter = new ServiceProvidersAdapter(ShowServiceProvidersActivity.this, serviceProvidersClassesList);
-                    recyclerView.setAdapter(serviceProvidersAdapter);
-                    serviceProvidersAdapter.notifyDataSetChanged();*/
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -802,10 +816,14 @@ public class ShowServiceProvidersActivity extends AppCompatActivity implements V
                 data3.put("options", options);
                 data3.put("latitude", String.valueOf(latitude));
                 data3.put("longitude", String.valueOf(longitude));
+                data3.put("page",""+pagination);
+                Log.e("PostData....",data3.toString());
                 return data3;
+
             }
 
         };
+        Log.e("Service....",stringRequest.toString());
         // Add the realibility on the connection.
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         queue.add(stringRequest);

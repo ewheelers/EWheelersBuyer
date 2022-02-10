@@ -2,6 +2,7 @@ package com.ewheelers.eWheelersBuyers.Adapters;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,10 @@ public class SlidingImage_Adapter extends PagerAdapter {
         final ImageView imageView = (ImageView) imageLayout.findViewById(R.id.image);
 
       //  imageView.setImageResource(Integer.parseInt(IMAGES.get(position)));
-        Picasso.get().load(IMAGES.get(position)).fit().into(imageView);
+
+        if(IMAGES.get(position) != null)
+        Picasso.with(context).load(IMAGES.get(position)).fit().into(imageView);
+
 
         view.addView(imageLayout, 0);
 

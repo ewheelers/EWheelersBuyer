@@ -166,7 +166,7 @@ public class SPProductsListActivity extends AppCompatActivity {
                                 String shopurl = jsonObject1.getString("shop_banner_url");
                                 String baseurl = "https://ewheelers.in" + shopurl;
                                 //Toast.makeText(SPProductsListActivity.this, baseurl, Toast.LENGTH_SHORT).show();
-                                Picasso.get().load(baseurl).into(networkImageView);
+                                Picasso.with(SPProductsListActivity.this).load(baseurl).into(networkImageView);
                                 /*ImageLoader imageLoaderbaner = VolleySingleton.getInstance(SPProductsListActivity.this).getImageLoader();
                                 imageLoaderbaner.get(baseurl, ImageLoader.getImageListener(networkImageView, R.drawable.ic_dashboard_black_24dp, android.R.drawable.ic_dialog_alert));
                                 networkImageView.setImageUrl(baseurl, imageLoaderbaner);*/

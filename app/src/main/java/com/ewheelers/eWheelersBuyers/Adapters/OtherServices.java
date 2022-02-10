@@ -264,7 +264,7 @@ public class OtherServices extends RecyclerView.Adapter<OtherServices.OtherHolde
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 for (ServiceProvidersClass item : classeFilter) {
-                    if (item.getServiceprovider_address().toLowerCase().contains(filterPattern) || item.getServiceprovider_name().toLowerCase().contains(filterPattern)) {
+                    if (item.getServiceprovider_address().toLowerCase().contains(filterPattern) || item.getServiceprovider_name().toLowerCase().contains(filterPattern) || item.getServiceprovider_shopname().toLowerCase().contains(filterPattern) || item.getServiceprovider_phone_number().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
                 }

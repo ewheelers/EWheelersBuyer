@@ -1,7 +1,10 @@
 package com.ewheelers.eWheelersBuyers.Volley;
 
 public class Apis {
+    //live url
     public static String base = "https://www.ewheelers.in/app-api/2.0/";
+    //stage url
+    /*public static String base = "https://www.beta.ewheelers.in/app-api/2.0/";*/
     public static String login = base + "guest-user/login";
     public static String logout = base+ "guest-user/logout";
     public static String register = base + "guest-user/register";

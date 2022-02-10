@@ -802,7 +802,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
     }
 
     public void onClickcalled(String url) {
-        Picasso.get()
+        Picasso.with(ProductDetailActivity.this)
                 .load(url)
                 .placeholder(R.drawable.ic_dashboard_black_24dp)
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)
@@ -1074,7 +1074,7 @@ public class ProductDetailActivity extends AppCompatActivity implements View.OnC
                                 shoplogo = jsonObjectShop.getString("shop_logo");
                                 shopbanner = jsonObjectShop.getString("shop_banner");
                                 brand_name.setText(shop_name);
-                                Picasso.get().load(shoplogo).fit().into(logoImg);
+                                Picasso.with(ProductDetailActivity.this).load(shoplogo).fit().into(logoImg);
                                 progressBar.setVisibility(GONE);
                             }
                         } catch (JSONException e) {

@@ -58,7 +58,7 @@ public class ProductDescriptionActivity extends AppCompatActivity {
 
         Log.i("intentstrings",ImageView+ProName+ProPrice);
 
-        Picasso.get().load(ImageView).placeholder(R.drawable.ic_dashboard_black_24dp).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(imageView);
+        Picasso.with(ProductDescriptionActivity.this).load(ImageView).placeholder(R.drawable.ic_dashboard_black_24dp).networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE).into(imageView);
         proName.setText("( "+Model+" ) "+ProName);
         proPrice.setText("\u20B9 "+ProPrice);
 

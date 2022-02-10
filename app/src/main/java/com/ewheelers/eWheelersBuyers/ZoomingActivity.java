@@ -120,7 +120,7 @@ public class ZoomingActivity extends AppCompatActivity {
     }
 
     public void onClickcalled(String url) {
-        Picasso.get()
+        Picasso.with(ZoomingActivity.this)
                 .load(url)
                 .placeholder(R.drawable.ic_dashboard_black_24dp)
                 .networkPolicy(NetworkPolicy.NO_CACHE, NetworkPolicy.NO_STORE)

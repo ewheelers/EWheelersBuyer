@@ -1,5 +1,6 @@
 package com.ewheelers.eWheelersBuyers;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
@@ -52,6 +53,7 @@ import com.ewheelers.eWheelersBuyers.Adapters.FiltersAdapter;
 import com.ewheelers.eWheelersBuyers.ModelClass.AllebikesModelClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.FilterListClass;
 import com.ewheelers.eWheelersBuyers.ModelClass.SubFilterModelClass;
+import com.ewheelers.eWheelersBuyers.Utilities.EndlessRecyclerOnScrollListener;
 import com.ewheelers.eWheelersBuyers.Volley.Apis;
 import com.ewheelers.eWheelersBuyers.Volley.VolleySingleton;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -120,7 +122,9 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
     Chip chipall;
     Button floatingactionbutton;
     NestedScrollView nestedScrollView;
-
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    public boolean loading = true;
+    int pageNumber=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -631,6 +635,46 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
             }
         });
 //        getCollectionProducts(collectionid);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+         recyclerView.setLayoutManager(linearLayoutManager);
+
+
+
+        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int current_page) {
+                // do something...
+                Toast.makeText(ShowAlleBikesActivity.this," "+current_page,Toast.LENGTH_SHORT).show();
+                pageNumber = pageNumber+1;
+                getOnlyRentProducts("1", "test_drive", "");
+            }
+        });
+        /*recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) { //check for scroll down
+                    visibleItemCount = linearLayoutManager.getChildCount();
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+
+                    if (loading) {
+                        if (pastVisiblesItems  == (allebikelist.size()-1)) {
+                            loading = false;
+                            Log.v("...", "Last Item Wow !");
+                            // Do pagination.. i.e. fetch new data
+                            getOnlyRentProducts("1", "test_drive", "");
+                            pageNumber = pageNumber+1;
+                            loading = true;
+                        }
+                    }
+                }
+            }
+        });*/
     }
 
     private void getBrandbannerurl(String collection_id, String brandedid) {
@@ -1263,8 +1307,8 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                                 } else {
                                     allebikesAdapter = new AllebikesAdapter(ShowAlleBikesActivity.this, allebikelist);
                                     recyclerView.setAdapter(allebikesAdapter);
-                                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
-                                    recyclerView.setLayoutManager(linearLayoutManager);
+                                    /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ShowAlleBikesActivity.this, RecyclerView.VERTICAL, false);
+                                    recyclerView.setLayoutManager(linearLayoutManager);*/
                                     allebikesAdapter.notifyDataSetChanged();
                                     progressBar.setVisibility(GONE);
                                 }
@@ -1301,11 +1345,14 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                     data3.put("producttype", strings.toString());
                     data3.put("tdrive", testdrive);
                     data3.put("sortBy", sorting);
+                    data3.put("pageSize","20");
+                    data3.put("page",""+pageNumber);
                 }
 
                 return data3;
             }
         };
+        Log.d("Request...",strRequest.toString());
         strRequest.setRetryPolicy(new DefaultRetryPolicy(10000, 1, 1.0f));
         VolleySingleton.getInstance(this).addToRequestQueue(strRequest);
     }
@@ -2041,6 +2088,7 @@ public class ShowAlleBikesActivity extends AppCompatActivity implements View.OnC
                     public void onResponse(String response) {
 
                         try {
+                            Log.d("Response..",response);
                             JSONObject jsonObject = new JSONObject(response);
                             String getStatus = jsonObject.getString("status");
                             String message = jsonObject.getString("msg");
